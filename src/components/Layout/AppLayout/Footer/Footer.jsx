@@ -115,7 +115,7 @@ const Footer = () => {
                       placeholder="Your email address"
                       aria-label="Recipient's username"
                       aria-describedby="basic-addon2"
-                      className='form-widget-footer'
+                      className=''
                     />
                     <Button className='' id="button-addon2">
                       <img width={18} src={IMAGES.SEND_ICON} alt="" />

@@ -19,7 +19,9 @@ import phoneIcon from "./phone.png"
 import sendIcon from "./send.png"
 import googleStore from "./google-store.png"
 import appleStore from "./apple-store.png"
-
+import searchMenu from "./search-menu.png"
+import locationIcon from "./location.png"
+import flag from "./flag.png"
 
 const IMAGES = {
     LOGO: logo,
@@ -43,6 +45,9 @@ const IMAGES = {
     SEND_ICON: sendIcon,
     GOOGLE_STORE: googleStore,
     APPLE_STORE: appleStore,
+    SEARCH_MENU: searchMenu,
+    LOCATION_ICON: locationIcon,
+    FLAG_ICON: flag,
 }
 
 export default IMAGES;

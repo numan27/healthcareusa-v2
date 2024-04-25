@@ -3,8 +3,8 @@ import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from "../../../../assets/images"
 import PATH from "../../../../utils/path"
-import LanguageToggle from "./LanguageToggle"
-import { Box, GenericButton, Typography } from '../../../../components/GenericComponents';
+// import LanguageToggle from "./LanguageToggle"
+import { Box, GenericButton, GenericSelect, Typography } from '../../../../components/GenericComponents';
 // import { FiPlusCircle } from 'react-icons/fi';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 
@@ -20,19 +20,14 @@ const Header = () => {
         padding="7px 0px"
       >
         <Container fluid
-          className='d-flex justify-content-between'
+          className='d-flex justify-content-end'
         >
-
-          <div className='d-flex align-items-center'>
-            <LanguageToggle />
-          </div>
-
           <Box
             background="#EAFFFF"
             border="1px solid #50D1C9"
             padding="3.5px 4px 3.5px 12px"
             className="rounded-5 d-flex align-items-center gap-2 getStartedBtn-container"
-            >
+          >
             <Typography className="mb-0 d-sm-block d-none" as="p" color="#06312E" size="14px" lineHeight="21px">
               Looking to Promote Your Practice?
             </Typography>
@@ -55,6 +50,41 @@ const Header = () => {
               <Nav.Link href={PATH.BLOG} className={`nav-link navLink ${location.pathname === PATH.BLOG ? 'active' : ''}`}>Blog</Nav.Link>
               <Nav.Link href={PATH.RESOURCES} className={`nav-link navLink ${location.pathname === PATH.RESOURCES ? 'active' : ''}`}>Resources</Nav.Link>
               <Nav.Link href={PATH.CONTACT} className={`nav-link navLink ${location.pathname === PATH.CONTACT ? 'active' : ''}`}>Contact Us</Nav.Link>
+
+              <div className='d-flex align-items-center ms-lg-4 mb-lg-0 mb-3'>
+                  <GenericSelect
+                    className="w-100-md"
+                    width="130px"
+                    minwidth="94px"
+                    borderColor="transparent"
+                    bgcolor="transparent"
+                    placeholder="English"
+                    placeholderColor="#333333"
+                    imageComponent={IMAGES.FLAG_ICON}
+                    options={[
+                      {
+                        label: "English",
+                        value: "EN",
+                      },
+                      {
+                        label: "Spanish",
+                        value: "Es",
+                      },
+                      {
+                        label: "French",
+                        value: "Fr",
+                      },
+                    ]}
+                  />
+
+
+                </div>
+              {/* <Form.Select className='lang-select mt-1' aria-label="Default select example">
+                <option className='main-option'>English</option>
+                <option value="1">Spanish</option>
+                <option value="2">French</option>
+              </Form.Select> */}
+
             </Nav>
             <Nav className="ms-lg-4">
               <div className='d-sm-block d-grid'>

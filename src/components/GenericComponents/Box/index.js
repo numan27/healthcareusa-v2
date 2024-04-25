@@ -14,7 +14,7 @@ const BoxContainer = styled.div`
   border-color: ${(props) => props.borderColor};
   color: ${(props) => props.color};
   border-style: ${(props) => props.borderStyle};
-  border-radius: ${(props) => props.borderradius};
+  // border-radius: ${(props) => props.borderradius};
   min-height: ${(props) => props.minHeight};
   max-height: ${(props) => props.maxHeight};
   /* && {
