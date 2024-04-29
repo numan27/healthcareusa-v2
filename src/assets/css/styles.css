@@ -1,3 +1,5 @@
+/* Custom */
+
 body {
     overflow-x: hidden;
     font-family: "Plus Jakarta Sans", sans-serif !important;
@@ -6,6 +8,14 @@ body {
 ::placeholder {
     color: #333333 !important;
     font-size: 16px !important;
+}
+
+.custom-shadow {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+}
+
+.custom-border {
+    border: 1px solid #E4E4E4 !important;
 }
 
 .form-widget-footer::placeholder {
@@ -20,7 +30,8 @@ body {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
-.lang-select{
+
+.lang-select {
     width: fit-content !important;
     border: 0 !important;
     color: #333333 !important;
@@ -31,8 +42,15 @@ body {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
 }
-.lang-select:focus{
+
+.lang-select:focus {
     box-shadow: none !important;
+}
+
+.mui-loader {
+    position: absolute;
+    left: 50% !important;
+    top: 50%;
 }
 
 
@@ -107,11 +125,6 @@ body {
     background-position: right center;
 }
 
-.custom-shadow {
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
-}
-
-
 .btn-grad {
     background-image: linear-gradient(to right, #314755 0%, #26a0da 51%, #314755 100%);
     margin: 10px;
@@ -137,6 +150,9 @@ body {
     transition: all 0.2s ease-in-out !important;
 }
 
+.cursor-pointer{
+    cursor: pointer !important;
+}
 
 /* Navbar */
 
@@ -205,6 +221,30 @@ body {
 
 .border-start-lg {
     border-left: 1px solid #e5e5e5;
+}
+
+/* Modal */
+
+.link-box:hover {
+    background-color: #50D1C9;
+}
+
+.modal-link {
+    font-size: 16px !important;
+    color: #23262F;
+    font-weight: 400;
+    text-decoration: none !important;
+}
+
+.modal-link:hover {
+    font-weight: 600;
+    text-decoration: underline !important;
+}
+
+.box-link-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
 }
 
 /* Services */
@@ -329,6 +369,9 @@ body {
     color: inherit;
 }
 
+/* Listings Page */
+
+
 /* Media Queries */
 
 @media screen and (max-width: 1200px) {
@@ -372,6 +415,13 @@ body {
 
     .hero {
         height: auto !important;
+    }
+
+    .box-link-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding-left: 25px !important;
+        padding-right: 25px !important;
     }
 }
 
@@ -440,4 +490,17 @@ body {
     h4 {
         font-size: 0.9rem !important;
     }
+
+    .box-link-grid {
+        grid-template-columns: repeat(1, 1fr);
+        gap: 10px;
+    }
 }
+
+/* .bootstrap-demo .toggle::after {
+    color: black;
+    content: '\f078';
+    font-family: 'FontAwesome';
+    font-size: 10px;
+    font-style: normal;
+  } */

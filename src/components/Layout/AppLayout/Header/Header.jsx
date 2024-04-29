@@ -1,15 +1,25 @@
-import React from 'react';
+/* eslint-disable */
+import { useState } from 'react';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from "../../../../assets/images"
 import PATH from "../../../../utils/path"
 // import LanguageToggle from "./LanguageToggle"
 import { Box, GenericButton, GenericSelect, Typography } from '../../../../components/GenericComponents';
-// import { FiPlusCircle } from 'react-icons/fi';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
+import LoginModal from '../../../../pages/Auth/LoginModal';
 
 const Header = () => {
   const location = useLocation();
+  const [loginModalState, setLoginModalState] = useState(false);
+
+  const OpenModal = () => {
+    setLoginModalState(true);
+  };
+
+  const CloseModal = () => {
+    setLoginModalState(false);
+  };
 
   return (
     <>
@@ -36,69 +46,68 @@ const Header = () => {
             </Button>
           </Box>
         </Container>
-
       </Box>
 
-      <Navbar className='bg-white nav-bar px-xl-3 py-lg-3 py-1' expand="lg">
+      <Navbar className='bg-white nav-bar px-xl-3 py-lg-3 py-1 custom-shadow' expand="lg">
         <Container className="py-md-4 py-sm-3 py-2" fluid>
-          <Link to="/"><img className='logo' width="250" src={IMAGES.LOGO} alt="logo" /></Link>
+          <Link to={PATH.HOME}><img className='logo' width="250" src={IMAGES.LOGO} alt="logo" /></Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link href={PATH.HOME} className={`nav-link navLink ${location.pathname === '/' ? 'active' : ''}`}>Home</Nav.Link>
-              <Nav.Link href={PATH.ABOUT} className={`nav-link navLink ${location.pathname === PATH.ABOUT ? 'active' : ''}`}>About Us</Nav.Link>
-              <Nav.Link href={PATH.BLOG} className={`nav-link navLink ${location.pathname === PATH.BLOG ? 'active' : ''}`}>Blog</Nav.Link>
-              <Nav.Link href={PATH.RESOURCES} className={`nav-link navLink ${location.pathname === PATH.RESOURCES ? 'active' : ''}`}>Resources</Nav.Link>
-              <Nav.Link href={PATH.CONTACT} className={`nav-link navLink ${location.pathname === PATH.CONTACT ? 'active' : ''}`}>Contact Us</Nav.Link>
+              <Link to={PATH.HOME} className={`nav-link navLink ${location.pathname === '/' ? 'active' : ''}`}>Home</Link>
+              <Link to={PATH.ABOUT} className={`nav-link navLink ${location.pathname === PATH.ABOUT ? 'active' : ''}`}>About Us</Link>
+              <Link to={PATH.BLOG} className={`nav-link navLink ${location.pathname === PATH.BLOG ? 'active' : ''}`}>Blog</Link>
+              <Link to={PATH.RESOURCES} className={`nav-link navLink ${location.pathname === PATH.RESOURCES ? 'active' : ''}`}>Resources</Link>
+              <Link to={PATH.CONTACT} className={`nav-link navLink ${location.pathname === PATH.CONTACT ? 'active' : ''}`}>Contact Us</Link>
 
               <div className='d-flex align-items-center ms-lg-4 mb-lg-0 mb-3'>
-                  <GenericSelect
-                    className="w-100-md"
-                    width="130px"
-                    minwidth="94px"
-                    borderColor="transparent"
-                    bgcolor="transparent"
-                    placeholder="English"
-                    placeholderColor="#333333"
-                    imageComponent={IMAGES.FLAG_ICON}
-                    options={[
-                      {
-                        label: "English",
-                        value: "EN",
-                      },
-                      {
-                        label: "Spanish",
-                        value: "Es",
-                      },
-                      {
-                        label: "French",
-                        value: "Fr",
-                      },
-                    ]}
-                  />
-
-
-                </div>
-              {/* <Form.Select className='lang-select mt-1' aria-label="Default select example">
-                <option className='main-option'>English</option>
-                <option value="1">Spanish</option>
-                <option value="2">French</option>
-              </Form.Select> */}
-
+                <GenericSelect
+                  className="w-100-md"
+                  width="130px"
+                  minwidth="94px"
+                  borderColor="transparent"
+                  bgcolor="transparent"
+                  placeholder="English"
+                  placeholderColor="#333333"
+                  imageComponent={IMAGES.FLAG_ICON}
+                  options={[
+                    {
+                      label: "English",
+                      value: "EN",
+                    },
+                    {
+                      label: "Spanish",
+                      value: "Es",
+                    },
+                    {
+                      label: "French",
+                      value: "Fr",
+                    },
+                  ]}
+                />
+              </div>
             </Nav>
             <Nav className="ms-lg-4">
               <div className='d-sm-block d-grid'>
-                <Button className='secondaryButton'>
+                <Button onClick={OpenModal} className='secondaryButton'>
                   <img className='me-1' src={IMAGES.LOGIN_ICON} alt="" />
                   Sign In
                 </Button>
                 <GenericButton className="mx-sm-2 my-sm-0 my-2">
-                  <HiOutlinePlusCircle className='mb-1' size={20} /> Add Listing
+                  <HiOutlinePlusCircle className='' size={20} /> Add Listing
                 </GenericButton>
               </div>
             </Nav>
           </Navbar.Collapse>
         </Container>
+
+        {loginModalState && (
+          <LoginModal
+            show={loginModalState}
+            onHide={CloseModal}
+            title=""
+          />
+        )}
       </Navbar>
     </>
   );

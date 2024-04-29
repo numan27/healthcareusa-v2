@@ -23,6 +23,10 @@ function RouterConfig() {
         element={<PublicRoute element={<WEB_PAGES.ABOUT />} />}
       />
       <Route
+        path={PATH.LISTINGS}
+        element={<PublicRoute element={<WEB_PAGES.LISTINGS />} />}
+      />
+      <Route
         path={PATH.BLOG}
         element={<PublicRoute element={<WEB_PAGES.BLOG />} />}
       />

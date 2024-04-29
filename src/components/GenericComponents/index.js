@@ -3,6 +3,11 @@ import GenericButton from "./Button"
 import Box from "./Box"
 import GenericBadge from "./Badge"
 import GenericSelect from "./SelectDropdown"
+import GenericModal from "./Modal"
+import GenericMultiSelect from "./MultiselectDropdown"
+import CheckboxDropdown from "./CheckboxDropdown"
+import PrimaryDropdown from "./PrimaryDropdown"
+import GenericIconButton from "./IconButton"
 
 export {
     Typography,
@@ -10,4 +15,9 @@ export {
     Box,
     GenericBadge,
     GenericSelect,
+    GenericModal,
+    GenericMultiSelect,
+    CheckboxDropdown,
+    PrimaryDropdown,
+    GenericIconButton,
 };

@@ -1,17 +1,33 @@
-import React from 'react'
+import { useState } from 'react'
 import { Col, Form, InputGroup, Row } from 'react-bootstrap'
 import { FiChevronRight } from 'react-icons/fi';
 import { IoSearch } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+// import { Link, useNavigate } from 'react-router-dom';
 import { Box, GenericButton, GenericSelect, Typography } from '../../../components/GenericComponents'
 import IMAGES from '../../../assets/images';
+import ExploreMoreModal from './ExploreMoreModal';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
+  const [exploreModalState, setExploreModalState] = useState(false);
+
+  const OpenModal = () => {
+    setExploreModalState(true);
+  };
+
+  const CloseModal = () => {
+    setExploreModalState(false);
+  };
+
+  // const navigate = useNavigate();
+
+  // const handleNavigate = () => {
+  //   navigate("/listings");
+  // }
 
   const boxData = [
     {
       title: "Products & Services",
-      linkPath: "",
       imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
       serviceList: [
         { service: "Pharmacies", singleServiceLink: "" },
@@ -22,7 +38,6 @@ const Hero = () => {
     },
     {
       title: "Products & Services",
-      linkPath: "/explore-services",
       imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
       serviceList: [
         { service: "Pharmacies" },
@@ -33,7 +48,6 @@ const Hero = () => {
     },
     {
       title: "Products & Services",
-      linkPath: "/explore-services",
       imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
       serviceList: [
         { service: "Pharmacies" },
@@ -44,7 +58,6 @@ const Hero = () => {
     },
     {
       title: "Products & Services",
-      linkPath: "/explore-services",
       imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
       serviceList: [
         { service: "Pharmacies" },
@@ -55,7 +68,6 @@ const Hero = () => {
     },
     {
       title: "Products & Services",
-      linkPath: "/explore-services",
       imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
       serviceList: [
         { service: "Pharmacies" },
@@ -66,7 +78,6 @@ const Hero = () => {
     },
     {
       title: "Products & Services",
-      linkPath: "/explore-services",
       imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
       serviceList: [
         { service: "Pharmacies" },
@@ -77,7 +88,6 @@ const Hero = () => {
     },
     {
       title: "Products & Services",
-      linkPath: "/explore-services",
       imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
       serviceList: [
         { service: "Pharmacies" },
@@ -88,7 +98,6 @@ const Hero = () => {
     },
     {
       title: "Products & Services",
-      linkPath: "/explore-services",
       imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
       serviceList: [
         { service: "Pharmacies" },
@@ -209,14 +218,16 @@ const Hero = () => {
                 <ul className='list-unstyled'>
                   {data.serviceList.map((item, index) => (
                     <li className='mb-2' key={index}>
-                      <Link className='text-decoration-none service-item' to={data.serviceList.singleServiceLink}>
-                        {item.service}
-                      </Link>
+                      {/* <Link className='text-decoration-none service-item' to={data.serviceList.singleServiceLink}> */}
+                      <a className='text-decoration-none service-item' href="/listings">
+                      {item.service}
+                      </a>
+                      {/* </Link> */}
                     </li>
                   ))}
                 </ul>
 
-                <Link to={data.linkPath} className='service-link'>
+                <Link background="transparent" border="0" color="#50D1C9" onClick={OpenModal} className='service-link'>
                   Explore More <FiChevronRight className='transition-2' size={18} color='#6BE2C4' />
                 </Link>
               </Box>
@@ -224,7 +235,15 @@ const Hero = () => {
           </div>
         </Box>
       </div>
-    </div >
+
+      {exploreModalState && (
+        <ExploreMoreModal
+          show={exploreModalState}
+          onHide={CloseModal}
+          title="All Doctors"
+        />
+      )}
+    </div>
   )
 }
 

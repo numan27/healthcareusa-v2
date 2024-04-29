@@ -12,6 +12,8 @@ const StyledBadge = styled.div`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   border-radius: ${(props) => props.borderRadius};
+  border-color: ${(props) => props.borderColor};
+  border: ${(props) => props.border || "1px solid #2964E11A"};
   font-weight: 600 !important;
   display: inline-flex;
   align-items: center;
@@ -37,6 +39,8 @@ function GenericBadge({
   width,
   height,
   borderRadius,
+  borderColor,
+  border,
   text,
   showRemoveButton,
   removeIcon,
@@ -64,6 +68,8 @@ function GenericBadge({
       width={width}
       height={height}
       borderRadius={borderRadius}
+      borderColor={borderColor}
+      border={border}
       className={className}
       onClick={handleClick}
     >
@@ -90,6 +96,8 @@ GenericBadge.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
   borderRadius: PropTypes.string,
+  border: PropTypes.bool,
+  borderColor: PropTypes.string,
   text: PropTypes.string.isRequired,
   showRemoveButton: PropTypes.bool,
   removeIcon: PropTypes.element,
@@ -104,6 +112,8 @@ GenericBadge.defaultProps = {
   width: "",
   height: "",
   borderRadius: "40px",
+  border: false,
+  borderColor: "#2964E11A",
   showRemoveButton: false,
   removeIcon: null,
 };

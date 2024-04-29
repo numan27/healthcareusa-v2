@@ -22,6 +22,7 @@ import appleStore from "./apple-store.png"
 import searchMenu from "./search-menu.png"
 import locationIcon from "./location.png"
 import flag from "./flag.png"
+import doctorListProfile from "./doctor-list-profile.png"
 
 const IMAGES = {
     LOGO: logo,
@@ -48,6 +49,7 @@ const IMAGES = {
     SEARCH_MENU: searchMenu,
     LOCATION_ICON: locationIcon,
     FLAG_ICON: flag,
+    DOCTOR_LIST_PROFILE: doctorListProfile,
 }
 
 export default IMAGES;

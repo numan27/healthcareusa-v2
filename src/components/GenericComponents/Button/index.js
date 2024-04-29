@@ -52,7 +52,6 @@ const StyledButton = styled(Button)`
     color: ${(props) => props.focusColor}!important;
     box-shadow: ${(props) => props.focusBoxBackground};
   }
-  // font-family: "Axiforma Regular";
 `;
 
 export default function GenericButton({ children, ...props }) {
