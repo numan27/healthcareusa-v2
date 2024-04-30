@@ -7,7 +7,7 @@ import PATH from "../../../../utils/path"
 // import LanguageToggle from "./LanguageToggle"
 import { Box, GenericButton, GenericSelect, Typography } from '../../../../components/GenericComponents';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
-import LoginModal from '../../../../pages/Auth/LoginModal';
+import AuthenticationModal from '../../../../pages/Auth';
 
 const Header = () => {
   const location = useLocation();
@@ -102,7 +102,7 @@ const Header = () => {
         </Container>
 
         {loginModalState && (
-          <LoginModal
+          <AuthenticationModal
             show={loginModalState}
             onHide={CloseModal}
             title=""

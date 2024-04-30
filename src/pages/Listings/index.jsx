@@ -226,7 +226,7 @@ const Listings = () => {
             </div>
 
 
-            <AdsSection margin={3} padding={0} />
+            <AdsSection  margin={3} padding={0} />
 
             <div className='my-4 pt-2'>
               <Typography as="h2" className="mb-0" color="#23262F" size="24px" lineHeight="36px" weight="700">

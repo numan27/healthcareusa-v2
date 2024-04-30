@@ -129,6 +129,10 @@ body {
     background-position: right center;
 }
 
+.primary-color {
+    color: #50D1C9 !important;
+}
+
 .btn-grad {
     background-image: linear-gradient(to right, #314755 0%, #26a0da 51%, #314755 100%);
     margin: 10px;
@@ -379,8 +383,23 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 }
-.section-responsive-border{
+
+.section-responsive-border {
     border-right: 1px solid #E4E4E4;
+}
+
+/* Auth */
+
+.auth-modal input {
+    border: 1px solid #B1B1B1;
+    border-radius: 6px;
+    height: 50px;
+}
+
+.auth-modal input:focus {
+    border-color: #50D1C9;
+    outline: 1px solid #50D1C9;
+    box-shadow: none;
 }
 
 /* Media Queries */
@@ -484,10 +503,12 @@ body {
         border: .5px solid #e5e5e5 !important;
         border-radius: 6px !important;
     }
-    .profile-status{
+
+    .profile-status {
         top: 10px !important;
     }
-    .section-responsive-border{
+
+    .section-responsive-border {
         border-right: 0 !important;
     }
 }
