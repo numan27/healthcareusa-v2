@@ -14,6 +14,10 @@ body {
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
 }
 
+.custom-shadow-2 {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
 .custom-border {
     border: 1px solid #E4E4E4 !important;
 }
@@ -82,7 +86,7 @@ body {
 
 .secondaryButton:hover,
 .secondaryButton:focus {
-    background-color: #c2bfbf !important;
+    background-color: #d1d1d1 !important;
 }
 
 .outlineButton {
@@ -150,7 +154,7 @@ body {
     transition: all 0.2s ease-in-out !important;
 }
 
-.cursor-pointer{
+.cursor-pointer {
     cursor: pointer !important;
 }
 
@@ -371,6 +375,13 @@ body {
 
 /* Listings Page */
 
+.profile-btn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+.section-responsive-border{
+    border-right: 1px solid #E4E4E4;
+}
 
 /* Media Queries */
 
@@ -472,6 +483,12 @@ body {
     .border-start-lg {
         border: .5px solid #e5e5e5 !important;
         border-radius: 6px !important;
+    }
+    .profile-status{
+        top: 10px !important;
+    }
+    .section-responsive-border{
+        border-right: 0 !important;
     }
 }
 

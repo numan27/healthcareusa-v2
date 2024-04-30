@@ -13,9 +13,11 @@ const StyledBadge = styled.div`
   height: ${(props) => props.height};
   border-radius: ${(props) => props.borderRadius};
   border-color: ${(props) => props.borderColor};
+  // text-transform: ${(props) => props.textUppercase ? props.textUppercase : "uppercase"} !important;
   border: ${(props) => props.border || "1px solid #2964E11A"};
   font-weight: 600 !important;
   display: inline-flex;
+  text-transform: uppercase;
   align-items: center;
   justify-content: center;
 `;
@@ -40,6 +42,7 @@ function GenericBadge({
   height,
   borderRadius,
   borderColor,
+  textUppercase,
   border,
   text,
   showRemoveButton,
@@ -69,6 +72,7 @@ function GenericBadge({
       height={height}
       borderRadius={borderRadius}
       borderColor={borderColor}
+      textUppercase={textUppercase}
       border={border}
       className={className}
       onClick={handleClick}
@@ -98,6 +102,7 @@ GenericBadge.propTypes = {
   borderRadius: PropTypes.string,
   border: PropTypes.bool,
   borderColor: PropTypes.string,
+  textUppercase: PropTypes.bool,
   text: PropTypes.string.isRequired,
   showRemoveButton: PropTypes.bool,
   removeIcon: PropTypes.element,
@@ -114,6 +119,7 @@ GenericBadge.defaultProps = {
   borderRadius: "40px",
   border: false,
   borderColor: "#2964E11A",
+  textUppercase: false,
   showRemoveButton: false,
   removeIcon: null,
 };

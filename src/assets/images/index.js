@@ -23,6 +23,14 @@ import searchMenu from "./search-menu.png"
 import locationIcon from "./location.png"
 import flag from "./flag.png"
 import doctorListProfile from "./doctor-list-profile.png"
+import doctorLogo from "./doctor-logo.png"
+import phoneCircle from "./phone-circle.png"
+import phoneBtnIcon from "./phone-btn-icon.png"
+import mapBtnIcon from "./map-btn-icon.png"
+import webBtnIcon from "./web-btn-icon.png"
+import profileCompanyLogo from "./profile-company-logo.png"
+import adsVertical from "./ads-vertical.png"
+import map from "./map.png"
 
 const IMAGES = {
     LOGO: logo,
@@ -50,6 +58,14 @@ const IMAGES = {
     LOCATION_ICON: locationIcon,
     FLAG_ICON: flag,
     DOCTOR_LIST_PROFILE: doctorListProfile,
+    DOCTOR_LOGO: doctorLogo,
+    PHONE_CIRCLE: phoneCircle,
+    PHONE_BTN_ICON: phoneBtnIcon,
+    MAP_BTN_ICON: mapBtnIcon,
+    WEB_BTN_ICON: webBtnIcon,
+    PROFILE_COMPANY_LOGO: profileCompanyLogo,
+    ADS_VERTICAL_IMG: adsVertical,
+    MAP_IMG: map
 }
 
 export default IMAGES;

@@ -32,6 +32,10 @@ const StyledButton = styled(Button)`
   min-width: ${(props) => props.minWidth};
   max-width: ${(props) => props.maxWidth};
   font-size: ${(props) => props.fsize};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: ${(props) => props.gap};
   color: ${(props) => props.color};
   border-color: ${(props) => props.borderColor} !important;
   width: ${(props) => props.width};
@@ -71,6 +75,7 @@ GenericButton.propTypes = {
   fweight: PropTypes.string,
   fsize: PropTypes.string,
   border: PropTypes.string,
+  gap: PropTypes.string,
   boxShadow: PropTypes.bool,
   children: PropTypes.node,
   onClick: PropTypes.func,
@@ -89,6 +94,7 @@ GenericButton.defaultProps = {
   fsize: "14px",
   border: "",
   height: "40px",
+  gap: "10px",
   boxShadow: "",
   children: null,
   onClick: () => { },

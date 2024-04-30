@@ -33,7 +33,7 @@ export default function RangeSlider({ defaultValue = [20, 37], min = 0, max = 10
     };
 
     return (
-        <SliderContainer>
+        <SliderContainer className="pt-1">
             <Slider
                 getAriaLabel={() => 'Range'}
                 value={value}
@@ -43,6 +43,7 @@ export default function RangeSlider({ defaultValue = [20, 37], min = 0, max = 10
                 max={max}
                 step={step}
                 getAriaValueText={valuetext}
+                className='mt-2'
             />
         </SliderContainer>
     );

@@ -64,7 +64,7 @@ const Header = () => {
                 <GenericSelect
                   className="w-100-md"
                   width="130px"
-                  minwidth="94px"
+                  minWidth="94px"
                   borderColor="transparent"
                   bgcolor="transparent"
                   placeholder="English"
@@ -88,12 +88,12 @@ const Header = () => {
               </div>
             </Nav>
             <Nav className="ms-lg-4">
-              <div className='d-sm-block d-grid'>
+              <div className='d-flex align-items-center justify-content-lg-end flex-wrap gap-2'>
                 <Button onClick={OpenModal} className='secondaryButton'>
                   <img className='me-1' src={IMAGES.LOGIN_ICON} alt="" />
                   Sign In
                 </Button>
-                <GenericButton className="mx-sm-2 my-sm-0 my-2">
+                <GenericButton className="my-sm-0 my-2">
                   <HiOutlinePlusCircle className='' size={20} /> Add Listing
                 </GenericButton>
               </div>
