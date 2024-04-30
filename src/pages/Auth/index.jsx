@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import PropTypes from "prop-types"
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import GenericModal from '../../components/GenericComponents/Modal';
 import { Box, GenericButton, Typography } from '../../components/GenericComponents';
 import { Link } from 'react-router-dom';
-import { LuEye } from 'react-icons/lu';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 // import Visibility from "@mui/icons-material/Visibility";
 // import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -39,8 +38,8 @@ const AuthenticationModal = ({ show, onHide, title }) => {
                         </Typography>
                         <Form.Control type={showPassword ? "text" : "password"} placeholder="Enter Password" />
 
-                        <span onClick={() => setShowPassword(!showPassword)} style={{right: '10px'}} className='position-absolute top-50 cursor-pointer'>
-                           {showPassword ? (<BsEye size={20} color="#98A2B3" />) : (<BsEyeSlash  size={20} color="#98A2B3" />)} 
+                        <span onClick={() => setShowPassword(!showPassword)} style={{ right: '10px' }} className='position-absolute top-50 cursor-pointer'>
+                            {showPassword ? (<BsEye size={20} color="#98A2B3" />) : (<BsEyeSlash size={20} color="#98A2B3" />)}
                         </span>
                     </Form.Group>
                     <div className='pt-2'>
