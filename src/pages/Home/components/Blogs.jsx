@@ -35,7 +35,7 @@ const Blogs = () => {
                         Trending Topics in Healthcare
                     </Typography>
 
-                    <GenericButton color="#fff" fsize="16px" fweight="700" hoverBgColor="transparent" hoverColor="#122A41">
+                    <GenericButton color="#fff" size="16px" weight="700" hoverBgColor="transparent" hoverColor="#122A41">
                         See All Articals <FaArrowRight color="#fff" />
                     </GenericButton>
                 </div>

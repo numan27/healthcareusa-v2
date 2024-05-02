@@ -31,6 +31,18 @@ import webBtnIcon from "./web-btn-icon.png"
 import profileCompanyLogo from "./profile-company-logo.png"
 import adsVertical from "./ads-vertical.png"
 import map from "./map.png"
+import map2 from "./map-2.png"
+import detailsImage1 from "./details-image-1.png"
+import detailsImage2 from "./details-image-2.png"
+import detailedProfileImg from "./detailed-profile-img.png"
+import premiumIcon from "./premium-icon.png"
+import profileBadge from "./profile-badge.png"
+import relatedBlogImg from "./related-blog-img.png"
+import relatedBlogProfile from "./related-blog-profile.png"
+import shareIcon from "./share-icon.png"
+import bookmarkIcon from "./bookmark-icon.png"
+import copyIcon from "./copy-icon.png"
+import locationIcon2 from "./location-2.png"
 
 const IMAGES = {
     LOGO: logo,
@@ -65,7 +77,19 @@ const IMAGES = {
     WEB_BTN_ICON: webBtnIcon,
     PROFILE_COMPANY_LOGO: profileCompanyLogo,
     ADS_VERTICAL_IMG: adsVertical,
-    MAP_IMG: map
+    MAP_IMG: map,
+    MAP_IMG_2: map2,
+    DETAILS_IMAGE_1: detailsImage1,
+    DETAILS_IMAGE_2: detailsImage2,
+    DETAILED_PROFILE_IMG: detailedProfileImg,
+    PREMIUM_ICON: premiumIcon,
+    PROFILE_BADGE: profileBadge,
+    RELATED_BLOG_IMG: relatedBlogImg,
+    RELATED_BLOG_PROFILE: relatedBlogProfile,
+    SHARE_ICON: shareIcon,
+    BOOKMARK_ICON: bookmarkIcon,
+    COPY_ICON: copyIcon,
+    LOCATION_ICON_2: locationIcon2,
 }
 
 export default IMAGES;

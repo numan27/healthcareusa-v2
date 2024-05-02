@@ -388,6 +388,31 @@ body {
     border-right: 1px solid #E4E4E4;
 }
 
+/* Listing Details Page */
+.profile-gallery .gallery-img-container:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.blog-shadow {
+    box-shadow: 0px 20px 50px 0px #12112714 !important;
+}
+
+.related-blog-img {
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+}
+
+.profile-media-img-1 {
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+}
+
+.profile-media-img-3 {
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
 /* Auth */
 
 .auth-modal input {
@@ -420,7 +445,7 @@ body {
     }
 
     h4 {
-        font-size: 1.4rem !important;
+        /* font-size: 1.4rem !important; */
     }
 
     .logo {
@@ -487,7 +512,7 @@ body {
     }
 
     h4 {
-        font-size: 1.4rem !important;
+        font-size: 1rem !important;
     }
 
     .w-100-md {
@@ -510,6 +535,18 @@ body {
 
     .section-responsive-border {
         border-right: 0 !important;
+    }
+
+    .related-blog-img {
+        border-top-left-radius: 7px !important;
+        border-top-right-radius: 7px !important;
+        border-bottom-left-radius: 0 !important;
+    }
+
+    .profile-media-img-1,
+    .profile-media-img-2,
+    .profile-media-img-3 {
+        border-radius: 7px !important;
     }
 }
 

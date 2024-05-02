@@ -1,8 +1,7 @@
 /*eslint-disable*/
-import { useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { RxCross2 } from "react-icons/rx";
+import { GoDotFill } from "react-icons/go";
 
 const StyledBadge = styled.div`
   background-color: ${(props) => props.background};
@@ -13,24 +12,13 @@ const StyledBadge = styled.div`
   height: ${(props) => props.height};
   border-radius: ${(props) => props.borderRadius};
   border-color: ${(props) => props.borderColor};
-  // text-transform: ${(props) => props.textUppercase ? props.textUppercase : "uppercase"} !important;
   border: ${(props) => props.border || "1px solid #2964E11A"};
   font-weight: 600 !important;
   display: inline-flex;
   text-transform: uppercase;
   align-items: center;
   justify-content: center;
-`;
-
-const RemoveButton = styled.button`
-  &:hover svg {
-    color: #000 !important;
-  }
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: red;
-  margin-left: 5px;
+  gap: 4px;
 `;
 
 function GenericBadge({
@@ -42,19 +30,13 @@ function GenericBadge({
   height,
   borderRadius,
   borderColor,
-  textUppercase,
   border,
   text,
-  showRemoveButton,
-  removeIcon,
+  statusText,
   className,
   onClickFunction,
 }) {
-  const [isRemoved, setRemoved] = useState(false);
-
-  const handleRemove = () => {
-    setRemoved(true);
-  };
+  const status = statusText.toLowerCase();
 
   const handleClick = () => {
     if (onClickFunction) {
@@ -62,7 +44,7 @@ function GenericBadge({
     }
   };
 
-  return isRemoved ? null : (
+  return (
     <StyledBadge
       background={background}
       color={color}
@@ -72,21 +54,21 @@ function GenericBadge({
       height={height}
       borderRadius={borderRadius}
       borderColor={borderColor}
-      textUppercase={textUppercase}
       border={border}
       className={className}
       onClick={handleClick}
     >
-      {text}
-      {showRemoveButton && (
-        <RemoveButton onClick={handleRemove}>
-          {removeIcon ? (
-            removeIcon
-          ) : (
-            <RxCross2 className="fs-5" color="#DADADA" />
-          )}
-        </RemoveButton>
+      {status === "open" && (
+        <span className="d-flex align-items-center">
+          <GoDotFill className="fs-5" color="#00B293" />
+        </span>
       )}
+      {status === "close" && (
+        <span className="d-flex align-items-center">
+          <GoDotFill className="fs-5" color="#E91515" />
+        </span>
+      )}
+      {text}
     </StyledBadge>
   );
 }
@@ -104,8 +86,7 @@ GenericBadge.propTypes = {
   borderColor: PropTypes.string,
   textUppercase: PropTypes.bool,
   text: PropTypes.string.isRequired,
-  showRemoveButton: PropTypes.bool,
-  removeIcon: PropTypes.element,
+  statusText: PropTypes.string.isRequired,
   onClickFunction: PropTypes.func,
 };
 
@@ -120,8 +101,9 @@ GenericBadge.defaultProps = {
   border: false,
   borderColor: "#2964E11A",
   textUppercase: false,
-  showRemoveButton: false,
-  removeIcon: null,
+  statusText: "",
 };
 
+
 export default GenericBadge;
+

@@ -3,6 +3,7 @@ const PATH = {
   HOME: "/",
   ABOUT: "/about",
   LISTINGS: "/listings",
+  LISTING_DETAILS: "/listing-details",
 
 };
 

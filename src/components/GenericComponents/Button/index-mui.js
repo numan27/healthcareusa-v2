@@ -9,8 +9,8 @@ const StyledButton = styled(Button)`
   border: ${(props) => props.border || "none"};
   border-radius: ${(props) => props.radius || "4px"};
   padding: ${(props) => props.padding || "8px 16px"};
-  font-size: ${(props) => props.fsize || "14px"};
-  font-weight: ${(props) => props.fweight || "600"};
+  font-size: ${(props) => props.size || "14px"};
+  font-weight: ${(props) => props.weight || "600"};
   width: ${(props) => props.width || "auto"};
   height: ${(props) => props.height || "auto"};
   &:hover {
@@ -28,8 +28,8 @@ CustomButton.propTypes = {
   border: PropTypes.string,
   radius: PropTypes.string,
   padding: PropTypes.string,
-  fsize: PropTypes.string,
-  fweight: PropTypes.string,
+  size: PropTypes.string,
+  weight: PropTypes.string,
   width: PropTypes.string,
   height: PropTypes.string,
   hoverBgColor: PropTypes.string,
