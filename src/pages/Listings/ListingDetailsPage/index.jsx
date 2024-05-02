@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Container, Row, Col, } from 'react-bootstrap';
 import { LuChevronDown, LuChevronUp } from 'react-icons/lu';
 import { useLocation } from 'react-router-dom';
+import { FaFacebookF, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { RiInstagramFill } from 'react-icons/ri';
 import AppLayout from '../../../components/Layout/AppLayout/AppLayout';
 import { Box, GenericBadge, GenericButton, Typography } from '../../../components/GenericComponents';
 import IMAGES from '../../../assets/images';
@@ -82,6 +84,13 @@ const ListingDetailsPage = () => {
     { label: "Atrial Fibrillation" },
     { label: "Bile Duct Cancer" },
     { label: "Liner" },
+  ]
+
+  const listingDetailSocial = [
+    { icon: <FaFacebookF size={18} color='#23262F' /> },
+    { icon: <FaTwitter size={18} color='#23262F' /> },
+    { icon: <RiInstagramFill size={18} color='#23262F' /> },
+    { icon: <FaYoutube size={18} color='#23262F' /> },
   ]
 
   return (
@@ -250,6 +259,7 @@ const ListingDetailsPage = () => {
             lg={3}
             md={6}
             className='pb-4'>
+
             <Box className='w-100 mb-3 rounded-3'>
               <img src={IMAGES.MAP_IMG_2} className='img-fluid' alt='map' />
 
@@ -328,17 +338,35 @@ const ListingDetailsPage = () => {
                   </Row>
                 </div>
 
-                <div className='pt-3 px-3'>
-                  <Box
-                    width="40px"
-                    height="40px"
-                    className="border rounded-5">
+                <div className='pt-3 px-3 d-flex gap-2 flex-wrap'>
+                  {listingDetailSocial.map((items) => (
+                    <Box
+                      width="44px"
+                      height="44px"
+                      className="border rounded-5 d-flex  align-items-center justify-content-center">
+                      {items.icon}
+                    </Box>
+                  ))}
 
-
-                  </Box>
                 </div>
 
               </Box>
+            </Box>
+
+            <Box className='w-100 mb-3 rounded-3'>
+              <div>
+                <Typography as='h3' className='mb-0' color='#23262F' size='18px' lineHeight='27px' weight='600'>
+                  Opening Times
+                </Typography>
+                <GenericBadge
+                  background="#D0FFF1"
+                  color="#14A077"
+                  borderColor="transparent"
+                  text="Open"
+                  padding="6px 10px"
+                  className="text-capitalize"
+                />
+              </div>
             </Box>
             <div>
               <img src={IMAGES.ADS_VERTICAL_IMG} className='img-fluid' alt='ads' />
