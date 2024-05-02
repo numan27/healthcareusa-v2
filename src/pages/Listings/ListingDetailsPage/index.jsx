@@ -87,10 +87,20 @@ const ListingDetailsPage = () => {
   ]
 
   const listingDetailSocial = [
-    { icon: <FaFacebookF size={18} color='#23262F' /> },
-    { icon: <FaTwitter size={18} color='#23262F' /> },
-    { icon: <RiInstagramFill size={18} color='#23262F' /> },
-    { icon: <FaYoutube size={18} color='#23262F' /> },
+    { icon: <FaFacebookF size={18} color='#23262F' />, link: "#" },
+    { icon: <FaTwitter size={18} color='#23262F' />, link: "#" },
+    { icon: <RiInstagramFill size={18} color='#23262F' />, link: "#" },
+    { icon: <FaYoutube size={18} color='#23262F' />, link: "#" },
+  ]
+
+  const scheduleData = [
+    { day: "Mo" },
+    { day: "Tu" },
+    { day: "We" },
+    { day: "Th" },
+    { day: "Fr" },
+    { day: "Sa" },
+    { day: "Su" },
   ]
 
   return (
@@ -119,7 +129,7 @@ const ListingDetailsPage = () => {
                 <Box
                   width="100%"
                   padding="16px 23px"
-                  className="rounded-2 custom-border mt-5 d-flex align-items-center flex-md-row flex-column gap-4 position-relative ">
+                  className="rounded-2 custom-border mt-4 d-flex align-items-center flex-md-row flex-column gap-4 position-relative ">
 
                   <Box className="rounded-5 position-relative">
                     <img width={132} height={132} className='rounded-5 ' src={IMAGES.DETAILED_PROFILE_IMG} alt="" />
@@ -260,7 +270,7 @@ const ListingDetailsPage = () => {
             md={6}
             className='pb-4'>
 
-            <Box className='w-100 mb-3 rounded-3'>
+            <Box className='w-100 mb-4 rounded-3'>
               <img src={IMAGES.MAP_IMG_2} className='img-fluid' alt='map' />
 
               <Box className="border py-3 rounded-bottom-3">
@@ -340,22 +350,22 @@ const ListingDetailsPage = () => {
 
                 <div className='pt-3 px-3 d-flex gap-2 flex-wrap'>
                   {listingDetailSocial.map((items) => (
-                    <Box
-                      width="44px"
-                      height="44px"
-                      className="border rounded-5 d-flex  align-items-center justify-content-center">
-                      {items.icon}
-                    </Box>
+                    <a href={items.link}>
+                      <Box
+                        width="44px"
+                        height="44px"
+                        className="border rounded-5 d-flex  align-items-center justify-content-center">
+                        {items.icon}
+                      </Box>
+                    </a>
                   ))}
-
                 </div>
-
               </Box>
             </Box>
 
-            <Box className='w-100 mb-3 rounded-3'>
-              <div>
-                <Typography as='h3' className='mb-0' color='#23262F' size='18px' lineHeight='27px' weight='600'>
+            <Box className='w-100 mb-4 rounded-3 border pt-4'>
+              <div className='d-flex justify-content-between px-3 mb-3'>
+                <Typography as='h3' className='mb-0' color='#23262F' size='17px' lineHeight='27px' weight='600'>
                   Opening Times
                 </Typography>
                 <GenericBadge
@@ -367,6 +377,35 @@ const ListingDetailsPage = () => {
                   className="text-capitalize"
                 />
               </div>
+
+              {scheduleData.map((items) => (
+                <Box
+                  background={(items.day === 'Mo' && '#E4E4E4') || '#fff'}
+                  width="100%"
+                  className="py-3 border-bottom"
+                >
+                  {items.day === 'Mo' ? (
+                    <div className="d-flex align-items-center justify-content-between ps-3 pe-4">
+                      <Typography as='h5' className='mb-0' color='#23262F' size='16px' lineHeight='24px' weight='600'>
+                        {items.day}
+                      </Typography>
+                      <Typography as='h5' className='mb-0' color='#23262F' size='16px' lineHeight='24px' weight='600'>
+                        09:00 am - 05:30 pm
+                      </Typography>
+                    </div>
+                  ) : (
+                    <div className="d-flex align-items-center justify-content-between ps-3 pe-4">
+                      <Typography as='h5' className='mb-0' color='#64666C' size='16px' lineHeight='24px' weight='400'>
+                        {items.day}
+                      </Typography>
+                      <Typography as='h5' className='mb-0' color='#64666C' size='16px' lineHeight='24px' weight='400'>
+                        09:00 am - 05:30 pm
+                      </Typography>
+                    </div>
+                  )}
+                </Box>
+              ))}
+
             </Box>
             <div>
               <img src={IMAGES.ADS_VERTICAL_IMG} className='img-fluid' alt='ads' />
