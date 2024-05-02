@@ -1,15 +1,26 @@
 import React from 'react'
 import { Box, GenericBadge, GenericButton, Typography } from '../../../components/GenericComponents'
 import { Col, Row } from 'react-bootstrap'
+import { Link, useNavigate } from 'react-router-dom'
+// import { v4 as uuidv4 } from 'uuid';
 import IMAGES from '../../../assets/images'
 import { GoDotFill } from 'react-icons/go'
 
 const ProfileCard = ({ jsonData, enableSponsoredProfile, columnPadding }) => {
 
+    const navigate = useNavigate();
+
+    const handleNavigate = (event, data) => {
+        event.preventDefault();
+        const jsonDataString = JSON.stringify(data);
+        navigate(`/listing-details?jsonData=${encodeURIComponent(jsonDataString)}`);
+    };
+
     return (
         <>
             {jsonData.map((data) => (
                 <Box
+                    // key={uuidv4()}
                     padding="16px"
                     width="100%"
                     className="custom-border rounded position-relative mb-4">
@@ -23,13 +34,17 @@ const ProfileCard = ({ jsonData, enableSponsoredProfile, columnPadding }) => {
                         <Col className={`d-flex flex-column justify-content-between ${columnPadding ? 'ps-1' : ''}`}>
                             <div className='d-flex flex-sm-row flex-column justify-content-between align-items-sm-center'>
                                 <div>
-                                    <Typography as="h2" color="#23262F" weight="700" size="24px" lineHeight="36px">
-                                        {data.doctorName}
-                                    </Typography>
+                                    <Link
+                                        className='text-decoration-none'
+                                        onClick={(event) => handleNavigate(event, data)}>
+                                        <Typography as="h2" color="#23262F" weight="700" size="24px" lineHeight="36px">
+                                            {data.doctorName}
+                                        </Typography>
+                                    </Link>
 
                                     <div className='d-flex gap-2'>
                                         <GenericBadge
-                                            text={data.speciality}
+                                            text={data.designation}
                                             fontSize="12px"
                                             weight="700"
                                             color="#64666C"

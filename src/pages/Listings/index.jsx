@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Card, Form, InputGroup, Container, Row, Col } from 'react-bootstrap'
 import { Box, CheckboxDropdown, GenericIconButton, Typography } from '../../components/GenericComponents'
+import { v4 as uuidv4 } from 'uuid';
 import AppLayout from '../../components/Layout/AppLayout/AppLayout'
 import AdsSection from "../../components/Shared/AdsSection"
 import RangeSlider from './components/RangeSlider'
 import IMAGES from '../../assets/images'
-import { FaCircleInfo } from 'react-icons/fa6'
 import ProfileCard from './components/ProfileCard'
-// import { useNavigate } from 'react-router-dom'
+import { FaCircleInfo } from 'react-icons/fa6'
 
 const Listings = () => {
 
@@ -16,8 +16,6 @@ const Listings = () => {
   const handleTemperatureChange = (newValue) => {
     setTemperatureRange(newValue);
   };
-
-  // const navigate = useNavigate();
 
   const genderOptions = [
     { id: "1", label: "Male" },
@@ -37,9 +35,10 @@ const Listings = () => {
 
   const sponsoredProfileData = [
     {
+      id: uuidv4(),
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -49,9 +48,10 @@ const Listings = () => {
       status: "Open"
     },
     {
+      id: uuidv4(),
       img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      doctorName: "Dr. Azhar Abbas",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -64,8 +64,8 @@ const Listings = () => {
 
   const allResultsData = [
     {
-      doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      doctorName: "Dr. Javed Iqbal",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -75,7 +75,7 @@ const Listings = () => {
     {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -85,7 +85,7 @@ const Listings = () => {
     {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -95,7 +95,7 @@ const Listings = () => {
     {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -105,7 +105,7 @@ const Listings = () => {
     {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -115,7 +115,7 @@ const Listings = () => {
     {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -125,7 +125,7 @@ const Listings = () => {
     {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -135,7 +135,7 @@ const Listings = () => {
     {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
-      speciality: "CHIROPRACTORS",
+      designation: "CHIROPRACTORS",
       languages: "French, Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
@@ -222,11 +222,12 @@ const Listings = () => {
               <ProfileCard
                 enableSponsoredProfile
                 columnPadding
-                jsonData={sponsoredProfileData} />
+                jsonData={sponsoredProfileData}
+              />
             </div>
 
 
-            <AdsSection  margin={3} padding={0} />
+            <AdsSection margin={3} padding={0} />
 
             <div className='my-4 pt-2'>
               <Typography as="h2" className="mb-0" color="#23262F" size="24px" lineHeight="36px" weight="700">

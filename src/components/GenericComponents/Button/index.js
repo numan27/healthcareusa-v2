@@ -31,7 +31,7 @@ const StyledButton = styled(Button)`
   border: ${(props) => props.border} !important;
   min-width: ${(props) => props.minWidth};
   max-width: ${(props) => props.maxWidth};
-  font-size: ${(props) => props.fsize};
+  font-size: ${(props) => props.size};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,7 +40,7 @@ const StyledButton = styled(Button)`
   border-color: ${(props) => props.borderColor} !important;
   width: ${(props) => props.width};
   height: ${(props) => props.height};
-  font-weight: ${(props) => props.fweight};
+  font-weight: ${(props) => props.weight};
   &:hover {
     color: ${(props) => props.hoverColor} !important;
     background: ${(props) => props.hoverBgColor} !important;
@@ -72,8 +72,8 @@ GenericButton.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
   padding: PropTypes.string,
-  fweight: PropTypes.string,
-  fsize: PropTypes.string,
+  weight: PropTypes.string,
+  size: PropTypes.string,
   border: PropTypes.string,
   gap: PropTypes.string,
   boxShadow: PropTypes.bool,
@@ -90,8 +90,8 @@ GenericButton.defaultProps = {
   width: "",
   padding: "8px 16px",
   borderColor: "#50D1C9",
-  fweight: "600",
-  fsize: "14px",
+  weight: "600",
+  size: "14px",
   border: "",
   height: "40px",
   gap: "10px",
