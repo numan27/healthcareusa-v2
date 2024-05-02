@@ -9,8 +9,8 @@ const StyledSelecte = styled(Select)`
     border-color: ${(props) => props.borderColor};
     background: ${(props) => props.bgcolor};
     min-width: ${(props) => props.minwidth};
-    width: ${(props) => props.width};
-    // width: 100%;
+    // width: ${(props) => props.width};
+    width: 100%;
     height: 100%;
     min-height: ${(props) => props.minheight};
     max-height: ${(props) => props.maxheight};
@@ -30,12 +30,13 @@ const StyledSelecte = styled(Select)`
     padding-bottom: 0px !important;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
     width: ${(props) => props.width};
+    z-index: 999 !important;
   }
   .react-select__option {
     background-color: transparent;
     color: #333333;
   }
-  .react-select__option--is-selected,
+  // .react-select__option--is-selected,
   .react-select__option:hover {
     background-color: #00C1B6;
     color: #fff !important;
@@ -45,6 +46,7 @@ const StyledSelecte = styled(Select)`
   }
   .react-select__indicators .react-select__indicator {
     color: ${(props) => props.iconColor} !important;
+    stroke-width: 0px !important;
   }
   .react-select__placeholder {
     color: ${(props) => props.placeholderColor} !important;
@@ -83,13 +85,13 @@ const customStyles = {
 
 const customComponents = ({ imageComponent }) => ({
   SingleValue: ({ children, ...props }) => (
-    <div>
-      {imageComponent && <img width={24} src={imageComponent} alt="icon" />} {children}
+    <div className="d-flex align-items-center gap-1">
+      {imageComponent && <img width={20} src={imageComponent} alt="icon" />} {children}
     </div>
   ),
   Placeholder: ({ children, ...props }) => (
-    <div>
-      {imageComponent && <img className="me-1" width={24} src={imageComponent} alt="icon" />} {children}
+    <div className="d-flex align-items-center gap-1">
+      {imageComponent && <img className="" width={20} src={imageComponent} alt="icon" />} {children}
     </div>
   ),
 });

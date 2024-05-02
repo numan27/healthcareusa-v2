@@ -7,6 +7,7 @@ import { Box, GenericButton, GenericSelect, Typography } from '../../../componen
 import IMAGES from '../../../assets/images';
 import ExploreMoreModal from './ExploreMoreModal';
 import { Link } from 'react-router-dom';
+import PATH from '../../../utils/path';
 
 const Hero = () => {
   const [exploreModalState, setExploreModalState] = useState(false);
@@ -218,11 +219,11 @@ const Hero = () => {
                 <ul className='list-unstyled'>
                   {data.serviceList.map((item, index) => (
                     <li className='mb-2' key={index}>
-                      {/* <Link className='text-decoration-none service-item' to={data.serviceList.singleServiceLink}> */}
-                      <a className='text-decoration-none service-item' href="/listings">
-                      {item.service}
-                      </a>
-                      {/* </Link> */}
+                      <Link className='text-decoration-none service-item' to={PATH.LISTINGS}>
+                        {/* <a className='text-decoration-none service-item' href="/listings"> */}
+                        {item.service}
+                        {/* </a> */}
+                      </Link>
                     </li>
                   ))}
                 </ul>

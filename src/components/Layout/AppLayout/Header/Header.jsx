@@ -63,12 +63,12 @@ const Header = () => {
               <div className='d-flex align-items-center ms-lg-4 mb-lg-0 mb-3'>
                 <GenericSelect
                   className="w-100-md"
-                  width="130px"
-                  minWidth="94px"
+                  minWidth="120px"
                   borderColor="transparent"
                   bgcolor="transparent"
                   placeholder="English"
                   placeholderColor="#333333"
+                  iconColor="#06312E"
                   imageComponent={IMAGES.FLAG_ICON}
                   options={[
                     {

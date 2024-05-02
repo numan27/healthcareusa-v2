@@ -4,8 +4,8 @@ import { RiInstagramFill } from "react-icons/ri";
 import { GrLocation } from "react-icons/gr";
 import { Link } from 'react-router-dom';
 import IMAGES from "../../../../assets/images";
-import { Typography } from '../../../GenericComponents';
-import LanguageToggle from '../Header/LanguageToggle';
+import { GenericSelect, Typography } from '../../../GenericComponents';
+// import LanguageToggle from '../Header/LanguageToggle';
 
 const Footer = () => {
   const socialIcons = [
@@ -168,7 +168,31 @@ const Footer = () => {
                 </Typography>
 
                 <div className='d-none d-lg-block'>
-                  <LanguageToggle />
+                  {/* <LanguageToggle /> */}
+                  <GenericSelect
+                    className="w-100-md"
+                    minWidth="120px"
+                    borderColor="transparent"
+                    bgcolor="transparent"
+                    placeholder="English"
+                    menuPlacement="auto"
+                    placeholderColor="#333333"
+                    imageComponent={IMAGES.FLAG_ICON}
+                    options={[
+                      {
+                        label: "English",
+                        value: "EN",
+                      },
+                      {
+                        label: "Spanish",
+                        value: "Es",
+                      },
+                      {
+                        label: "French",
+                        value: "Fr",
+                      },
+                    ]}
+                  />
                 </div>
               </Col>
 
