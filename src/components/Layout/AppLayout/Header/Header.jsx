@@ -1,24 +1,30 @@
-/* eslint-disable */
+
 import { useState } from 'react';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from "../../../../assets/images"
 import PATH from "../../../../utils/path"
-// import LanguageToggle from "./LanguageToggle"
 import { Box, GenericButton, GenericSelect, Typography } from '../../../../components/GenericComponents';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
-import AuthenticationModal from '../../../../pages/Auth';
+import SignInModal from '../../../../pages/Auth/SignIn';
+import ForgotPassword from '../../../../pages/Auth/ForgotPassword';
+import SignUpModal from '../../../../pages/Auth/SignUp';
 
 const Header = () => {
   const location = useLocation();
-  const [loginModalState, setLoginModalState] = useState(false);
-
-  const OpenModal = () => {
-    setLoginModalState(true);
-  };
+  const [forgetPassModalShow, setForgetPassModalShow] = useState(false);
+  const [signInModalShow, setSignInModalShow] = useState(false);
+  const [signUpModalShow, setSignUpModalShow] = useState(false);
 
   const CloseModal = () => {
-    setLoginModalState(false);
+    setSignInModalShow(false);
+    setForgetPassModalShow(false);
+    setSignUpModalShow(false);
+  };
+
+  const openSignInModal = () => {
+    setSignUpModalShow(false); // Close sign-up modal if it's open
+    setSignInModalShow(true);
   };
 
   return (
@@ -48,7 +54,7 @@ const Header = () => {
         </Container>
       </Box>
 
-      <Navbar className='bg-white nav-bar px-xl-3 py-lg-3 py-1 custom-shadow' expand="lg">
+      <Navbar className='bg-white nav-bar px-xl-3 py-lg-3 py-1 custom-shadow' expand="xl">
         <Container className="py-md-4 py-sm-3 py-2" fluid>
           <Link to={PATH.HOME}><img className='logo' width="250" src={IMAGES.LOGO} alt="logo" /></Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -60,9 +66,9 @@ const Header = () => {
               <Link to={PATH.RESOURCES} className={`nav-link navLink ${location.pathname === PATH.RESOURCES ? 'active' : ''}`}>Resources</Link>
               <Link to={PATH.CONTACT} className={`nav-link navLink ${location.pathname === PATH.CONTACT ? 'active' : ''}`}>Contact Us</Link>
 
-              <div className='d-flex align-items-center ms-lg-4 mb-lg-0 mb-3'>
+              <div className='d-flex align-items-center ms-xl-4 mb-xl-0 mb-sm-3 mb-1'>
                 <GenericSelect
-                  className="w-100-md"
+                  // className="w-100-md"
                   minWidth="120px"
                   borderColor="transparent"
                   bgcolor="transparent"
@@ -87,9 +93,11 @@ const Header = () => {
                 />
               </div>
             </Nav>
-            <Nav className="ms-lg-4">
-              <div className='d-flex align-items-center justify-content-lg-end flex-wrap gap-2'>
-                <Button onClick={OpenModal} className='secondaryButton'>
+            <Nav className="ms-xl-4">
+              <div className='d-flex align-items-center justify-content-xl-end flex-wrap gap-2'>
+                <Button
+                  onClick={openSignInModal}
+                  className='secondaryButton'>
                   <img className='me-1' src={IMAGES.LOGIN_ICON} alt="" />
                   Sign In
                 </Button>
@@ -101,9 +109,27 @@ const Header = () => {
           </Navbar.Collapse>
         </Container>
 
-        {loginModalState && (
-          <AuthenticationModal
-            show={loginModalState}
+        {signInModalShow && (
+          <SignInModal
+            show={signInModalShow}
+            onHide={CloseModal}
+            moveToForgetPassword={() => {
+              setSignInModalShow(false);
+              setForgetPassModalShow(true);
+            }}
+          />
+        )}
+
+        {forgetPassModalShow && (
+          <ForgotPassword
+            show={forgetPassModalShow}
+            onHide={CloseModal}
+            title=""
+          />
+        )}
+        {signUpModalShow && (
+          <SignUpModal
+            show={signUpModalShow}
             onHide={CloseModal}
             title=""
           />

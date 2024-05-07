@@ -10,8 +10,12 @@ body {
     font-size: 16px !important;
 }
 
+.custom-shadow-services {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+}
+
 .custom-shadow {
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 15px 0px !important;
 }
 
 .custom-shadow-2 {
@@ -82,6 +86,7 @@ body {
     border-color: transparent !important;
     font-size: 14px !important;
     padding: 8px 16px !important;
+    height: 40px !important;
 }
 
 .secondaryButton:hover,
@@ -213,9 +218,9 @@ body {
     width: 100%;
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: center center;
+    /* background-position: center center !important; */
     overflow: hidden;
-    height: 100vh;
+    height: 93vh;
 }
 
 .search-bar input {
@@ -429,6 +434,12 @@ body {
 
 /* Media Queries */
 
+@media screen and (max-width: 1400px) {
+    .AdsSectionTop {
+        margin-top: 260px !important;
+    }
+}
+
 @media screen and (max-width: 1200px) {
     .service-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -437,15 +448,20 @@ body {
     .blogs-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .AdsSectionTop {
+        margin-top: 500px !important;
+    }
+
+    .navLink.active,
+    .navLink:focus {
+        border-color: transparent !important;
+    }
 }
 
 @media screen and (max-width: 1024px) {
     .service-grid {
         grid-template-columns: repeat(2, 1fr);
-    }
-
-    h4 {
-        /* font-size: 1.4rem !important; */
     }
 
     .logo {
@@ -455,17 +471,17 @@ body {
 
 @media screen and (max-width: 992px) {
 
-    .navLink.active,
+    /* .navLink.active,
     .navLink:focus {
         border-color: transparent !important;
-    }
+    } */
 
     .service-section {
         position: static !important;
     }
 
     .AdsSectionTop {
-        margin-top: 0 !important;
+        margin-top: 0px !important;
     }
 
     .hero {
@@ -571,11 +587,3 @@ body {
         gap: 10px;
     }
 }
-
-/* .bootstrap-demo .toggle::after {
-    color: black;
-    content: '\f078';
-    font-family: 'FontAwesome';
-    font-size: 10px;
-    font-style: normal;
-  } */

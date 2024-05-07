@@ -68,7 +68,7 @@ const Footer = () => {
     <div className='footer pt-2'>
       <Container className="pt-md-4 pt-2" fluid>
         <Row>
-          <Col sm={10} xs={11} className='mx-sm-auto mx-4'>
+          <Col sm={9} md={10} xs={11} className='mx-sm-auto mx-4'>
 
             <Row className='py-4 border-bottom'>
               <Col lg={6} className='px-lg-0 d-flex align-items-center justify-content-center justify-content-lg-start mb-4 mb-lg-0' >
@@ -125,8 +125,8 @@ const Footer = () => {
               </Col>
 
               {/* Links */}
-              <Col className='' lg={7}>
-                <div className='d-flex flex-sm-row flex-column justify-content-lg-around justify-content-between flex-wrap'>
+              <Col className='ms-auto' lg={8}>
+                <div className='d-flex flex-sm-row flex-column justify-content-lg-between justify-content-between flex-wrap'>
                   {ListData.map((item, index) => (
                     <div key={index} className='mb-sm-0 mb-3'>
                       <Typography className="mb-3" as="h3" color="#23262F" size="14px" weight="800" lineHeight="24px">
@@ -144,7 +144,7 @@ const Footer = () => {
                 </div>
               </Col>
 
-              <Col className='d-flex justify-content-lg-end pe-lg-0 mt-lg-0 mt-3' lg={2}>
+              {/* <Col className='d-flex justify-content-lg-end pe-lg-0 mt-lg-0 mt-3' lg={2}>
                 <div className=''>
                   <Typography className="mb-3" as="h3" color="#23262F" size="14px" weight="800" lineHeight="24px">
                     Download App
@@ -158,7 +158,7 @@ const Footer = () => {
                     </a>
                   </div>
                 </div>
-              </Col>
+              </Col> */}
             </Row>
 
             <Row className='my-3 d-flex flex-lg-row flex-column-reverse justify-content-between'>

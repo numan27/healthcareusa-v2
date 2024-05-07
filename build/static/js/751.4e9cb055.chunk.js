@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkhealthcareusa=self.webpackChunkhealthcareusa||[]).push([[751],{9751:function(e,n,t){t.r(n);var c=t(9448),s=t(184);n.default=function(){return(0,s.jsx)("div",{children:(0,s.jsx)(c.Z,{children:(0,s.jsx)("div",{className:"min-vh-100 d-flex justify-content-center align-items-center",children:(0,s.jsx)("h1",{children:"About Page content"})})})})}}}]);
-//# sourceMappingURL=751.4e9cb055.chunk.js.map
