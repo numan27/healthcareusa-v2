@@ -62,6 +62,7 @@ const ProfileCard = ({ jsonData, enableSponsoredProfile, columnPadding }) => {
                                                 color="#64666C"
                                                 borderColor="#E4E4E4"
                                                 background="#fff"
+                                                className="border"
                                             />
                                         </div>
                                     ) : (

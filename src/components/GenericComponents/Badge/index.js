@@ -11,7 +11,7 @@ const StyledBadge = styled.div`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   border-radius: ${(props) => props.borderRadius};
-  border-color: ${(props) => props.borderColor} !important;
+  border-color: ${(props) => props.borderColor || '#E4E4E4'};
   border: ${(props) => props.border} !important;
   font-weight: ${(props) => props.weight};
   // font-weight: 600 !important;
@@ -104,7 +104,7 @@ GenericBadge.defaultProps = {
   height: "",
   borderRadius: "40px",
   border: false,
-  borderColor: "transparent",
+  borderColor: "#E4E4E4",
   textUppercase: false,
   statusText: "",
 };
