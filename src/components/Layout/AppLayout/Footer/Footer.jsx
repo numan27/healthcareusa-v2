@@ -4,8 +4,10 @@ import { RiInstagramFill } from "react-icons/ri";
 import { GrLocation } from "react-icons/gr";
 import { Link } from 'react-router-dom';
 import IMAGES from "../../../../assets/images";
-import { GenericSelect, Typography } from '../../../GenericComponents';
-// import LanguageToggle from '../Header/LanguageToggle';
+import { Typography } from '../../../GenericComponents';
+import LanguageSelect from '../../../Shared/LanguageSelect';
+import SendIcon from '../../../../assets/SVGs/Send';
+import PhoneIcon from '../../../../assets/SVGs/Phone';
 
 const Footer = () => {
   const socialIcons = [
@@ -92,7 +94,7 @@ const Footer = () => {
               {/* Form */}
               <Col className='ps-0' lg={3}>
                 <div className='d-flex align-items-center gap-3 mb-3'>
-                  <img width={36} src={IMAGES.PHONE_ICON} alt="" />
+                  <PhoneIcon />
                   <div className='d-flex flex-column'>
                     <Typography className="mb-1" as="span" lineHeight="16px" size="12px" weight="500" color="#1D1D1D">Need help? 24/7 </Typography>
                     <Typography as="span" lineHeight="26px" size="16px" weight="700" color="#1D1D1D">001-1234-88888</Typography>
@@ -118,7 +120,7 @@ const Footer = () => {
                       className=''
                     />
                     <Button className='' id="button-addon2">
-                      <img width={18} src={IMAGES.SEND_ICON} alt="" />
+                      <SendIcon />
                     </Button>
                   </InputGroup>
                 </Form>
@@ -135,7 +137,7 @@ const Footer = () => {
                       <ul className='list-unstyled footer-list'>
                         {item.list.map((listItem, listIndex) => (
                           <li key={listIndex}>
-                            <Link to={listItem.link}>{listItem.title}</Link>
+                            <Link className='transition-2' to={listItem.link}>{listItem.title}</Link>
                           </li>
                         ))}
                       </ul>
@@ -143,22 +145,6 @@ const Footer = () => {
                   ))}
                 </div>
               </Col>
-
-              {/* <Col className='d-flex justify-content-lg-end pe-lg-0 mt-lg-0 mt-3' lg={2}>
-                <div className=''>
-                  <Typography className="mb-3" as="h3" color="#23262F" size="14px" weight="800" lineHeight="24px">
-                    Download App
-                  </Typography>
-                  <div className='d-flex flex-lg-column gap-2 flex-wrap'>
-                    <a href="/#">
-                      <img width={135} height={40} src={IMAGES.GOOGLE_STORE} alt="" />
-                    </a>
-                    <a className='' href="/#">
-                      <img width={135} height={40} src={IMAGES.APPLE_STORE} alt="" />
-                    </a>
-                  </div>
-                </div>
-              </Col> */}
             </Row>
 
             <Row className='my-3 d-flex flex-lg-row flex-column-reverse justify-content-between'>
@@ -168,31 +154,7 @@ const Footer = () => {
                 </Typography>
 
                 <div className='d-none d-lg-block'>
-                  {/* <LanguageToggle /> */}
-                  <GenericSelect
-                    className="w-100-md"
-                    minWidth="120px"
-                    borderColor="transparent"
-                    bgcolor="transparent"
-                    placeholder="English"
-                    menuPlacement="auto"
-                    placeholderColor="#333333"
-                    imageComponent={IMAGES.FLAG_ICON}
-                    options={[
-                      {
-                        label: "English",
-                        value: "EN",
-                      },
-                      {
-                        label: "Spanish",
-                        value: "Es",
-                      },
-                      {
-                        label: "French",
-                        value: "Fr",
-                      },
-                    ]}
-                  />
+                  <LanguageSelect />
                 </div>
               </Col>
 

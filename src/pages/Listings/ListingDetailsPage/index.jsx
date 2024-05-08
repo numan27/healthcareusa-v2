@@ -4,16 +4,21 @@ import { LuChevronDown, LuChevronUp } from 'react-icons/lu';
 import { useLocation } from 'react-router-dom';
 import { FaFacebookF, FaTwitter, FaYoutube } from 'react-icons/fa';
 import { RiInstagramFill } from 'react-icons/ri';
+import { MdShield } from 'react-icons/md';
 import AppLayout from '../../../components/Layout/AppLayout/AppLayout';
 import { Box, GenericBadge, GenericButton, Typography } from '../../../components/GenericComponents';
 import IMAGES from '../../../assets/images';
 import AdsSection from '../../../components/Shared/AdsSection';
 import RelatedArticles from './components/RelatedArticles';
+import CopyIcon from '../../../assets/SVGs/Copy';
+import BookmarkIcon from "../../../assets/SVGs/Bookmark"
+import ShareIcon from "../../../assets/SVGs/Share"
 
 const ListingDetailsPage = () => {
   const location = useLocation();
   const [jsonData, setJsonData] = useState(null);
   const [showMore, setShowMore] = useState(false);
+  const [copyIconVisible, setCopyIconVisible] = useState(false);
 
   const toggleShowMore = () => {
     setShowMore(!showMore);
@@ -103,6 +108,20 @@ const ListingDetailsPage = () => {
     { day: "Su" },
   ]
 
+  const addressText = "156 William St f16 100 wall street\nnew York, NY 10036";
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(addressText)
+      .then(() => {
+        console.log('Address copied to clipboard');
+        // Will add further logic here, like showing a toast message
+      })
+      .catch(err => {
+        console.error('Failed to copy address to clipboard:', err);
+        // Handle error, show error message, etc.
+      });
+  };
+
   return (
     <AppLayout>
       <Container className='min-vh-100 pt-4 pb-5'>
@@ -134,8 +153,8 @@ const ListingDetailsPage = () => {
                   <Box className="rounded-5 position-relative">
                     <img width={132} height={132} className='rounded-5 ' src={IMAGES.DETAILED_PROFILE_IMG} alt="" />
 
-                    <span style={{ top: '12px', right: '-2px' }} className='rounded-5 p-1 position-absolute border bg-white'>
-                      <img width={24} src={IMAGES.PREMIUM_ICON} alt="" />
+                    <span style={{ top: '12px', right: '-2px', height: '30px', width: '30px' }} className='rounded-5 p-1 position-absolute border bg-white d-flex align-items-center justify-content-center'>
+                      <MdShield size={18} color='#ef9b00' />
                     </span>
 
                     <div style={{ bottom: '6px', right: '2px' }} className='position-absolute'>
@@ -193,8 +212,8 @@ const ListingDetailsPage = () => {
                       className='pt-2 position-absolute d-flex flex-sm-row flex-column-reverse  align-items-center gap-2'>
 
                       <div className='d-flex gap-2'>
-                        <img className='cursor-pointer' width={16} src={IMAGES.BOOKMARK_ICON} alt="" />
-                        <img className='cursor-pointer' width={16} src={IMAGES.SHARE_ICON} alt="" />
+                        <BookmarkIcon />
+                        <ShareIcon />
                       </div>
                       <GenericBadge
                         statusText='Open'
@@ -275,18 +294,20 @@ const ListingDetailsPage = () => {
 
               <Box className="border py-3 rounded-bottom-3">
 
-                <div className='px-3 border-bottom pb-3'>
+                <div
+                  className='px-3 border-bottom pb-3'
+                  onMouseEnter={() => setCopyIconVisible(true)}
+                  onMouseLeave={() => setCopyIconVisible(false)}
+                >
                   <div className="d-flex justify-content-between align-items-start">
                     <div className='d-flex align-items-start gap-3'>
                       <img width={18} src={IMAGES.LOCATION_ICON_2} alt="" />
                       <div>
                         <div>
                           <Typography as='p' className='mb-0' color='#23262F' size='12px' lineHeight='18px' weight='400'>
-                            156 William St f16 100 wall street
-                            new York, NY 10036
+                            {addressText}
                           </Typography>
                         </div>
-
                         <GenericButton
                           background="transparent"
                           color="#00C1B6"
@@ -302,7 +323,11 @@ const ListingDetailsPage = () => {
                         </GenericButton>
                       </div>
                     </div>
-                    <img className='cursor-pointer' width={20} src={IMAGES.COPY_ICON} alt="" />
+                    {copyIconVisible && (
+                      <span onClick={copyToClipboard} className='cursor-pointer'>
+                        <CopyIcon />
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -354,7 +379,7 @@ const ListingDetailsPage = () => {
                       <Box
                         width="44px"
                         height="44px"
-                        className="border rounded-5 d-flex  align-items-center justify-content-center">
+                        className="border rounded-5 d-flex align-items-center justify-content-center">
                         {items.icon}
                       </Box>
                     </a>

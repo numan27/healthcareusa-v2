@@ -28,19 +28,19 @@ const Blogs = () => {
     ]
 
     return (
-        <Box background="#50D1C9" className="w-100 py-5">
+        <Box background="#00C1B6" className="w-100 py-5">
             <Container className="pt-2">
                 <div className="d-flex flex-md-row flex-column align-items-center justify-content-between mb-md-0 mb-4">
                     <Typography className="mobile-text-center" as="h3" size="32px" color="#fff" lineHeight="48px" weight="700">
                         Trending Topics in Healthcare
                     </Typography>
 
-                    <GenericButton color="#fff" size="16px" weight="700" hoverBgColor="transparent" hoverColor="#122A41">
-                        See All Articals <FaArrowRight color="#fff" />
+                    <GenericButton className="blogs-cta transition-2" color="#fff" size="16px" weight="700" hoverBgColor="transparent" hoverColor="#122A41">
+                        See All Articles <FaArrowRight className="blogs-arrow transition-2" color="#fff" />
                     </GenericButton>
                 </div>
 
-                <div className="blogs-grid pb-4 mt-2">
+                <div className="blogs-grid pb-4 mt-2 pt-2">
                     {blogsData.map((items, index) => (
                         <Card className="custom-shadow border-0">
                             <Card.Img variant="top" src={items.blogImg} />

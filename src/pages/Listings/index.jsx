@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Form, InputGroup, Container, Row, Col } from 'react-bootstrap'
+import { Form, InputGroup, Container, Row, Col } from 'react-bootstrap'
 import { Box, CheckboxDropdown, GenericIconButton, Typography } from '../../components/GenericComponents'
 import { v4 as uuidv4 } from 'uuid';
 import AppLayout from '../../components/Layout/AppLayout/AppLayout'
@@ -8,6 +8,7 @@ import RangeSlider from './components/RangeSlider'
 import IMAGES from '../../assets/images'
 import ProfileCard from './components/ProfileCard'
 import { FaCircleInfo } from 'react-icons/fa6'
+import SearchIcon from '../../assets/SVGs/Search';
 
 const Listings = () => {
 
@@ -32,6 +33,21 @@ const Listings = () => {
     { id: "2", label: "Option 2" },
     { id: "3", label: "Option 3" },
   ];
+  const hospitalAffiliationOptions = [
+    { id: "1", label: "Option 1" },
+    { id: "2", label: "Option 2" },
+    { id: "3", label: "Option 3" },
+  ];
+  const timingOptions = [
+    { id: "1", label: "Option 1" },
+    { id: "2", label: "Option 2" },
+    { id: "3", label: "Option 3" },
+  ];
+  const discountOptions = [
+    { id: "1", label: "Option 1" },
+    { id: "2", label: "Option 2" },
+    { id: "3", label: "Option 3" },
+  ];
 
   const sponsoredProfileData = [
     {
@@ -39,7 +55,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -52,7 +68,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Azhar Abbas",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -66,7 +82,7 @@ const Listings = () => {
     {
       doctorName: "Dr. Javed Iqbal",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -76,7 +92,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -86,7 +102,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -96,7 +112,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -106,7 +122,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -116,7 +132,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -126,7 +142,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -136,7 +152,7 @@ const Listings = () => {
       img: IMAGES.DOCTOR_LIST_PROFILE,
       doctorName: "Dr. Kimberly Douglas, MD",
       designation: "CHIROPRACTORS",
-      languages: "French, Spanish",
+      languages: "French . Spanish",
       doctorLogoImg: IMAGES.DOCTOR_LOGO,
       distance: "0.3",
       address: "156 William St Fl 6 New York, NY 10038",
@@ -154,15 +170,35 @@ const Listings = () => {
         <Row>
           {/* Left Content */}
           <Col lg={9}>
+
+            {/* Public Announcement */}
+            <Box
+              radius="4px"
+              border="1px solid #EF2929"
+              width="100%"
+              // height="34px"
+              background="#FEEAE9"
+              padding="8px 16px"
+              className="d-flex align-items-center gap-2 mb-3"
+            >
+              <FaCircleInfo className='' size={16} color='#EF2929' />
+              <Typography className="mb-0" as="span" size="12px" color="#EF2929" weight="500" lineHeight="15px">
+                Public Service Announcements (PSA)   FDA Approves Wegovy for Heart Attack Prevention. (FDA)
+              </Typography>
+
+            </Box>
+
             {/* Search */}
-            <Card className='border-0 custom-shadow-2 p-4'>
-              <Form className='h-100'>
+            <Box border="1px solid #E4E4E4" radius="8px" className='custom-shadow-2 py-3 px-4 w-100'>
+              <Form className='h-100 p-1'>
                 <Row className='d-flex align-items-center '>
-                  <Col md={6} className='d-flex align-items-center gap-2 section-responsive-border pe-4'>
-                    <Typography className="text-nowrap" as="span" color="#00C1B6" weight="700" lineHeight="18px">
+                  <Col md={6} className='d-flex align-items-center gap-2 section-responsive-border pe-4 pt-4'>
+                    <Typography className="text-nowrap mt-2" as="span" color="#00C1B6" weight="700" lineHeight="18px">
                       Near Me
                     </Typography>
+
                     <RangeSlider
+                      className="mt-3"
                       defaultValue={temperatureRange}
                       min={0}
                       max={100}
@@ -171,7 +207,7 @@ const Listings = () => {
                     />
                   </Col>
 
-                  <Col md={6} className='d-flex align-items-center '>
+                  <Col md={6} className='d-flex align-items-center'>
                     <InputGroup className="search-bar">
                       <Form.Control
                         placeholder="Key words or company"
@@ -183,26 +219,22 @@ const Listings = () => {
 
                     <div className='ms-1'>
                       <GenericIconButton
-                        icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M14 14L16.5 16.5" stroke="white" stroke-width="1.5" stroke-linejoin="round" />
-                          <path d="M16.4333 18.5252C15.8556 17.9475 15.8556 17.0109 16.4333 16.4333C17.0109 15.8556 17.9475 15.8556 18.5252 16.4333L21.5667 19.4748C22.1444 20.0525 22.1444 20.9891 21.5667 21.5667C20.9891 22.1444 20.0525 22.1444 19.4748 21.5667L16.4333 18.5252Z" stroke="white" stroke-width="1.5" stroke-linecap="round" />
-                          <path d="M16 9C16 5.13401 12.866 2 9 2C5.13401 2 2 5.13401 2 9C2 12.866 5.13401 16 9 16C12.866 16 16 12.866 16 9Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" />
-                        </svg>}
+                        icon={<SearchIcon />}
                       />
                     </div>
                   </Col>
                 </Row>
               </Form>
-            </Card>
+            </Box>
 
             {/* Filters */}
             <div className='my-3 d-flex flex-wrap gap-2'>
               <CheckboxDropdown title="Gender" items={genderOptions} />
               <CheckboxDropdown title="Languages" items={languageOptions} />
               <CheckboxDropdown title="Condition" items={conditionOptions} />
-              <CheckboxDropdown title="Hospital Affiliation" items={conditionOptions} />
-              <CheckboxDropdown title="Timing" items={conditionOptions} />
-              <CheckboxDropdown title="Discounts" items={conditionOptions} />
+              <CheckboxDropdown title="Hospital Affiliation" items={hospitalAffiliationOptions} />
+              <CheckboxDropdown title="Timing" items={timingOptions} />
+              <CheckboxDropdown title="Discounts" items={discountOptions} />
             </div>
 
             <div className='pt-3 mb-3'>

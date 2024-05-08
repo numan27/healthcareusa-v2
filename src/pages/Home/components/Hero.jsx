@@ -8,6 +8,8 @@ import IMAGES from '../../../assets/images';
 import ExploreMoreModal from './ExploreMoreModal';
 import { Link } from 'react-router-dom';
 import PATH from '../../../utils/path';
+import { GrLocation } from 'react-icons/gr';
+import SquareMenu from '../../../assets/SVGs/SquareMenu';
 
 const Hero = () => {
   const [exploreModalState, setExploreModalState] = useState(false);
@@ -19,12 +21,6 @@ const Hero = () => {
   const CloseModal = () => {
     setExploreModalState(false);
   };
-
-  // const navigate = useNavigate();
-
-  // const handleNavigate = () => {
-  //   navigate("/listings");
-  // }
 
   const boxData = [
     {
@@ -132,7 +128,7 @@ const Hero = () => {
                 <Form className='h-100 d-flex flex-md-row flex-column align-items-center justify-content-between'>
                   <InputGroup className="search-bar border-search-md">
                     <InputGroup.Text className='bg-white border-0 p-2' id="basic-addon1">
-                      <img width={24} src={IMAGES.SEARCH_MENU} alt="icon" />
+                      <SquareMenu />
                     </InputGroup.Text>
                     <Form.Control
                       placeholder="Key words or company"
@@ -152,7 +148,7 @@ const Hero = () => {
                       bgcolor="transparent"
                       placeholder="city, state or zip"
                       placeholderColor="#333333"
-                      imageComponent={IMAGES.LOCATION_ICON}
+                      imageComponent={<GrLocation color='#06312E' size={24} />}
                       options={[
                         {
                           label: "New York, NY",
@@ -207,7 +203,7 @@ const Hero = () => {
                 <ul className='list-unstyled'>
                   {data.serviceList.map((item, index) => (
                     <li className='mb-2' key={index}>
-                      <Link className='text-decoration-none service-item' to={PATH.LISTINGS}>
+                      <Link className='text-decoration-none service-item transition-2' to={PATH.LISTINGS}>
                         {item.service}
                       </Link>
                     </li>

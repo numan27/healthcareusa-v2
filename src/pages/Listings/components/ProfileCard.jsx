@@ -3,8 +3,12 @@ import { Box, GenericBadge, GenericButton, Typography } from '../../../component
 import { Col, Row } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 // import { v4 as uuidv4 } from 'uuid';
-import IMAGES from '../../../assets/images'
 import { GoDotFill } from 'react-icons/go'
+import CallIcon from '../../../assets/SVGs/Call'
+import MapIcon from '../../../assets/SVGs/Map'
+import InternetIcon from '../../../assets/SVGs/Internet'
+import DoctorLocationIcon from '../../../assets/SVGs/DoctorLocation'
+import PhoneCircleIcon from '../../../assets/SVGs/PhoneCircle'
 
 const ProfileCard = ({ jsonData, enableSponsoredProfile, columnPadding }) => {
 
@@ -41,28 +45,41 @@ const ProfileCard = ({ jsonData, enableSponsoredProfile, columnPadding }) => {
                                             {data.doctorName}
                                         </Typography>
                                     </Link>
+                                    {enableSponsoredProfile ? (
+                                        <div className='d-flex gap-2'>
+                                            <GenericBadge
+                                                text={data.designation}
+                                                fontSize="12px"
+                                                weight="700"
+                                                color="#64666C"
+                                                background="#F0F0F0"
+                                                borderColor="transparent"
+                                            />
+                                            <GenericBadge
+                                                text={data.languages}
+                                                fontSize="12px"
+                                                weight="500"
+                                                color="#64666C"
+                                                borderColor="#E4E4E4"
+                                                background="#fff"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className='d-flex align-items-center gap-2'>
+                                            <Typography style={{ borderRight: "1.5px solid #64666C" }} className="text-uppercase pe-2" as="label" color="#64666C" weight="500" size="14px" lineHeight="16px">
+                                                {data.designation}
+                                            </Typography>
+                                            <Typography className="text-uppercase" as="label" color="#64666C" weight="500" size="14px" lineHeight="16px">
+                                                {data.languages}
+                                            </Typography>
+                                        </div>
+                                    )}
 
-                                    <div className='d-flex gap-2'>
-                                        <GenericBadge
-                                            text={data.designation}
-                                            fontSize="12px"
-                                            weight="700"
-                                            color="#64666C"
-                                        />
-                                        <GenericBadge
-                                            text={data.languages}
-                                            fontSize="12px"
-                                            weight="500"
-                                            color="#64666C"
-                                            borderColor="#E4E4E4"
-                                            background="#fff"
-                                        />
-                                    </div>
 
                                     <div className='mt-3 d-flex align-items-center gap-2'>
                                         <Box width="65px" height="65px"
                                             className="custom-border rounded d-flex flex-column align-items-center justify-content-center ">
-                                            <img width={44} src={data.doctorLogoImg} alt="" />
+                                            <DoctorLocationIcon />
                                             <Typography as="span" color="#23262F" weight="700" size="12px" lineHeight="15px">
                                                 {data.distance} ml
                                             </Typography>
@@ -75,12 +92,12 @@ const ProfileCard = ({ jsonData, enableSponsoredProfile, columnPadding }) => {
                                         </Box>
                                     </div>
 
-                                    <div className='d-flex align-items-center gap-2 mt-3'>
-                                        <img width={21} src={IMAGES.PHONE_CIRCLE} alt="icon" />
+                                    <Link to="#" className='d-flex align-items-center gap-2 mt-3 link'>
+                                        <PhoneCircleIcon />
                                         <Typography className="mb-0" as="h5" color="#23262F" weight="700" size="16px" lineHeight="24px">
                                             {data.phone}
                                         </Typography>
-                                    </div>
+                                    </Link>
                                 </div>
                                 {enableSponsoredProfile && (
                                     <img className="mt-4" width={100} src={data.profileCompanyLogoImg} alt="" />
@@ -90,15 +107,16 @@ const ProfileCard = ({ jsonData, enableSponsoredProfile, columnPadding }) => {
                             {enableSponsoredProfile && (
                                 <div className='d-flex align-items-end flex-wrap flex-sm-nowrap gap-2 mt-2xl-0 mt-3'>
                                     <GenericButton
+                                        borderColor="transparent"
                                         background={data.status === 'Close' ? '#23262F' : '#00C1B6'}
-                                        hoverBgColor={data.status === 'Close' ? '#23262F' : '#50D1C9'}
+                                        hoverBgColor={data.status === 'Close' ? '#23262F' : '#00ADA2'}
                                         gap="15px" height="46px" width="100%" className="">
-                                        <img width={24} src={IMAGES.PHONE_BTN_ICON} alt="" />
+                                        <CallIcon />
                                         Call
                                     </GenericButton>
 
                                     <GenericButton
-                                        borderColor="#F3F3F3"
+                                        borderColor="transparent"
                                         hoverBgColor="#e3e3e3"
                                         hoverColor="#23262F"
                                         color="#23262F"
@@ -106,20 +124,20 @@ const ProfileCard = ({ jsonData, enableSponsoredProfile, columnPadding }) => {
                                         height="46px"
                                         width="100%"
                                         className="">
-                                        <img width={24} src={IMAGES.MAP_BTN_ICON} alt="" />
+                                        <MapIcon />
                                         Map
                                     </GenericButton>
 
                                     <GenericButton
-                                        borderColor="#F3F3F3"
                                         hoverBgColor="#e3e3e3"
+                                        borderColor="transparent"
                                         hoverColor="#23262F"
                                         color="#23262F"
                                         background="#F3F3F3"
                                         height="46px"
                                         width="100%"
                                         className="">
-                                        <img width={24} src={IMAGES.WEB_BTN_ICON} alt="" />
+                                        <InternetIcon />
                                         Website
                                     </GenericButton>
                                 </div>

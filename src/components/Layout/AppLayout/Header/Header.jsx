@@ -4,11 +4,13 @@ import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from "../../../../assets/images"
 import PATH from "../../../../utils/path"
-import { Box, GenericButton, GenericSelect, Typography } from '../../../../components/GenericComponents';
+import { Box, GenericButton, Typography } from '../../../../components/GenericComponents';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import SignInModal from '../../../../pages/Auth/SignIn';
 import ForgotPassword from '../../../../pages/Auth/ForgotPassword';
 import SignUpModal from '../../../../pages/Auth/SignUp';
+import LanguageSelect from '../../../Shared/LanguageSelect';
+import LoginIcon from '../../../../assets/SVGs/Login';
 
 const Header = () => {
   const location = useLocation();
@@ -23,7 +25,7 @@ const Header = () => {
   };
 
   const openSignInModal = () => {
-    setSignUpModalShow(false); // Close sign-up modal if it's open
+    setSignUpModalShow(false);
     setSignInModalShow(true);
   };
 
@@ -67,40 +69,22 @@ const Header = () => {
               <Link to={PATH.CONTACT} className={`nav-link navLink ${location.pathname === PATH.CONTACT ? 'active' : ''}`}>Contact Us</Link>
 
               <div className='d-flex align-items-center ms-xl-4 mb-xl-0 mb-sm-3 mb-1'>
-                <GenericSelect
-                  // className="w-100-md"
-                  minWidth="120px"
-                  borderColor="transparent"
-                  bgcolor="transparent"
-                  placeholder="English"
-                  placeholderColor="#333333"
-                  iconColor="#06312E"
-                  imageComponent={IMAGES.FLAG_ICON}
-                  options={[
-                    {
-                      label: "English",
-                      value: "EN",
-                    },
-                    {
-                      label: "Spanish",
-                      value: "Es",
-                    },
-                    {
-                      label: "French",
-                      value: "Fr",
-                    },
-                  ]}
-                />
+                <LanguageSelect />
               </div>
             </Nav>
             <Nav className="ms-xl-4">
               <div className='d-flex align-items-center justify-content-xl-end flex-wrap gap-2'>
-                <Button
+                <GenericButton
                   onClick={openSignInModal}
-                  className='secondaryButton'>
-                  <img className='me-1' src={IMAGES.LOGIN_ICON} alt="" />
-                  Sign In
-                </Button>
+                  background="#EFEFEF"
+                  borderColor="#EFEFEF"
+                  color="#06312E"
+                  hoverColor="#06312E"
+                  hoverBgColor="#dbdbdb"
+                  className="me-1">
+                  <LoginIcon /> Sign In
+                </GenericButton>
+
                 <GenericButton className="my-sm-0 my-2">
                   <HiOutlinePlusCircle className='' size={20} /> Add Listing
                 </GenericButton>

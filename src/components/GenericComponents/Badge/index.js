@@ -11,9 +11,10 @@ const StyledBadge = styled.div`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   border-radius: ${(props) => props.borderRadius};
-  border-color: ${(props) => props.borderColor};
-  border: ${(props) => props.border || "1px solid #2964E11A"};
-  font-weight: 600 !important;
+  border-color: ${(props) => props.borderColor} !important;
+  border: ${(props) => props.border} !important;
+  font-weight: ${(props) => props.weight};
+  // font-weight: 600 !important;
   display: inline-flex;
   text-transform: uppercase;
   align-items: center;
@@ -30,6 +31,7 @@ function GenericBadge({
   height,
   borderRadius,
   borderColor,
+  weight,
   border,
   text,
   statusText,
@@ -51,6 +53,7 @@ function GenericBadge({
       padding={padding}
       fontSize={fontSize}
       width={width}
+      weight={weight}
       height={height}
       borderRadius={borderRadius}
       borderColor={borderColor}
@@ -80,6 +83,7 @@ GenericBadge.propTypes = {
   color: PropTypes.string,
   padding: PropTypes.string,
   width: PropTypes.string,
+  weight: PropTypes.string,
   height: PropTypes.string,
   borderRadius: PropTypes.string,
   border: PropTypes.bool,
@@ -96,10 +100,11 @@ GenericBadge.defaultProps = {
   padding: "4px 12px",
   fontSize: "14px",
   width: "",
+  weight: "600",
   height: "",
   borderRadius: "40px",
   border: false,
-  borderColor: "#2964E11A",
+  borderColor: "transparent",
   textUppercase: false,
   statusText: "",
 };

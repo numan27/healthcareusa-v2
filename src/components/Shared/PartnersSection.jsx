@@ -16,7 +16,7 @@ const PartnersSection = () => {
 
     return (
         <div>
-            <Box background="#50D1C9" className="w-100" padding="35px 0px" >
+            <Box background="#00C1B6" className="w-100" padding="35px 0px" >
                 <Container>
                     <Typography align="center" as="h3" color="#fff" size="20px" weight="700" lineHeight="28px">
                         Partners & Sponsors

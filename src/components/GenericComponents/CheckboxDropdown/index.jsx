@@ -54,7 +54,7 @@ const StyledDropdown = styled.div`
     }
     .dropdown-menu .dropdown-item:hover {
       border-radius: 0px !important;
-      background-color: #a1e0db;
+      background-color: #EAFFFF;
       // color: #fff;
     }
     // .dropdown-menu .dropdown-item:hover .form-check-input{
@@ -90,16 +90,14 @@ const StyledCheckbox = styled(Form)`
 
   .form-check-input {
     background-color: transparent;
-    border-color: #717171;
+    border-color: #D0D5DD;
     margin-top: 0px !important;
     cursor: pointer !important;
   }
-  .form-check-input: {
 
-  }
   .form-check-input:checked[type="checkbox"] {
     filter: invert(48%) sepia(54%) saturate(1214%) hue-rotate(138deg) brightness(101%) contrast(101%);
-    border-color: #00C1B6 !important;
+    border-color: #14A077 !important;
   }
   .form-check-input:focus {
     box-shadow: none !important;
@@ -134,7 +132,7 @@ const CheckDropdownItem = React.forwardRef(({ children, id, checked, onChange },
     <StyledCheckbox>
       <Form.Group ref={ref} className="dropdown-item mb-0" controlId={id}>
         <Form.Check
-          className="d-flex align-items-center gap-2"
+          className="d-flex align-items-center gap-2 cursor-pointer"
           type="checkbox"
           label={children}
           checked={checked}
@@ -160,7 +158,6 @@ const CheckboxDropdown = observer(({ items, height, title }) => {
       <Dropdown>
         <Dropdown.Toggle variant="primary" id="dropdown-basic">
           {title}
-          {/* <MdKeyboardArrowDown size="20" /> */}
         </Dropdown.Toggle>
 
         <Dropdown.Menu as={CheckboxMenu}>
@@ -171,7 +168,7 @@ const CheckboxDropdown = observer(({ items, height, title }) => {
               id={item.id}
               checked={item.checked}
               onChange={handleChecked}
-              className="d-flex align-items-center"
+              className="d-flex align-items-center cursor-pointer"
             >
               {item.label}
             </Dropdown.Item>

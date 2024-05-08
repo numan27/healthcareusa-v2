@@ -1,5 +1,5 @@
 import Typography from "./Typography";
-import GenericButton from "./Button"
+import GenericButton from "./Button/index"
 import Box from "./Box"
 import GenericBadge from "./Badge"
 import GenericSelect from "./SelectDropdown"

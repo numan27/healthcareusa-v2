@@ -1,29 +1,47 @@
 import React, { useState } from 'react';
 import Slider from '@mui/material/Slider';
 import { Box } from '../../../components/GenericComponents';
-import styled from 'styled-components';
+import { makeStyles } from '@mui/styles';
 
-const SliderContainer = styled(Box)`
-    width: 100%;
-    // height: 50px !important;
+const useStyles = makeStyles({
+    rail: {
+        color: '#E4E4E4',
+    },
+    track: {
+        color: '#00C1B6',
+        height: '4px'
+    },
+    thumb: {
+        color: '#fff',
+        width: '16px',
+        height: '16px',
+        border: '3.5px solid #00C1B6',
+        boxShadow: 'none',
+        outline: 'none',
+        '&:hover, &.Mui-focusVisible': {
+            boxShadow: '0px 0px 0px 8px rgba(0, 193, 182, 0.16)',
+        },
+    },
+    tooltip: {
+        backgroundColor: '#00C1B6',
+        color: '#fff',
+    },
+    valueLabel: {
+        backgroundColor: 'transparent',
+        border: '1px solid #E4E4E4',
+        borderRadius: '32px',
+        color: '#000000',
+        fontSize: '12px',
+        fontWeight: '400',
+        position: 'absolute',
+        top: '-30px !important'
+    },
 
-    .MuiSlider-rail{
-        color: #E4E4E4 !important;
-    }
-    .MuiSlider-track{
-        color: #00C1B6 !important;
-    }
-    .MuiSlider-thumb{
-        color: #00C1B6 !important;
-    }
-`;
-
-function valuetext(value) {
-    return `${value}`;
-}
+});
 
 export default function RangeSlider({ defaultValue = [20, 37], min = 0, max = 100, step = 1, onChange }) {
     const [value, setValue] = useState(defaultValue);
+    const classes = useStyles();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -33,7 +51,7 @@ export default function RangeSlider({ defaultValue = [20, 37], min = 0, max = 10
     };
 
     return (
-        <SliderContainer className="pt-1">
+        <Box width="100%" className="d-flex align-items-end pt-3 position-relative">
             <Slider
                 getAriaLabel={() => 'Range'}
                 value={value}
@@ -42,9 +60,16 @@ export default function RangeSlider({ defaultValue = [20, 37], min = 0, max = 10
                 min={min}
                 max={max}
                 step={step}
-                getAriaValueText={valuetext}
-                className='mt-2'
+                classes={{
+                    rail: classes.rail,
+                    track: classes.track,
+                    thumb: classes.thumb,
+                    tooltip: classes.tooltip,
+                    valueLabel: classes.valueLabel,
+                }}
             />
-        </SliderContainer>
+            {/* <span className='MuiSlider-valueLabelLabel'><TbLocationDiscount /></span> */}
+
+        </Box>
     );
 }

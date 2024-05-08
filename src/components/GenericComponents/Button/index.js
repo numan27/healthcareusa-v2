@@ -25,7 +25,7 @@ const getAnimationStyle = (props) => {
 
 const StyledButton = styled(Button)`
   background: ${(props) =>
-    props.background ? props.background : "transparent"} !important;
+    props.background ? props.background : "#00C1B6"} !important;
   padding: ${(props) => props.padding};
   border-radius: ${(props) => props.radius}!important;
   border: ${(props) => props.border} !important;
@@ -82,14 +82,14 @@ GenericButton.propTypes = {
 };
 
 GenericButton.defaultProps = {
-  hoverBgColor: "#4bc5bd",
+  hoverBgColor: "#00ADA2",
   color: "#fff",
   hoverColor: "",
   background: "#00C1B6",
   radius: "4px",
   width: "",
   padding: "8px 16px",
-  borderColor: "#50D1C9",
+  borderColor: "#00C1B6",
   weight: "600",
   size: "14px",
   border: "",

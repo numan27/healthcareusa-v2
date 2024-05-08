@@ -2,7 +2,6 @@
 import PropTypes from "prop-types";
 import Select from "react-select";
 import styled from "styled-components";
-import IMAGES from "../../../assets/images";
 
 const StyledSelecte = styled(Select)`
   .react-select__control {
@@ -86,15 +85,27 @@ const customStyles = {
 const customComponents = ({ imageComponent }) => ({
   SingleValue: ({ children, ...props }) => (
     <div className="d-flex align-items-center gap-1">
-      {imageComponent && <img width={20} src={imageComponent} alt="icon" />} {children}
+      {imageComponent && <span>{imageComponent}</span>} {children}
     </div>
   ),
   Placeholder: ({ children, ...props }) => (
     <div className="d-flex align-items-center gap-1">
-      {imageComponent && <img className="" width={20} src={imageComponent} alt="icon" />} {children}
+      {imageComponent && <span>{imageComponent}</span>} {children}
     </div>
   ),
 });
+// const customComponents = ({ imageComponent }) => ({
+//   SingleValue: ({ children, ...props }) => (
+//     <div className="d-flex align-items-center gap-1">
+//       {imageComponent && <img width={20} src={imageComponent} alt="icon" />} {children}
+//     </div>
+//   ),
+//   Placeholder: ({ children, ...props }) => (
+//     <div className="d-flex align-items-center gap-1">
+//       {imageComponent && <img className="" width={20} src={imageComponent} alt="icon" />} {children}
+//     </div>
+//   ),
+// });
 
 const GenericSelect = ({
   imageComponent,
