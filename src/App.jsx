@@ -10,13 +10,19 @@ import { LoaderPageWithoutBG } from "./assets"
 
 function App() {
   return (
-    <Router>
-      {/* <Suspense fallback={<CircularProgress className="mui-loader" color="success" />}> */}
-      <Suspense fallback={<LoaderPageWithoutBG />}>
+    <Suspense fallback={<LoaderPageWithoutBG />}>
+      <Router>
         <ToastContainer />
         <RouterConfig />
-      </Suspense>
-    </Router>
+      </Router>
+    </Suspense>
+    // <Router>
+    //   {/* <Suspense fallback={<CircularProgress className="mui-loader" color="success" />}> */}
+    //   <Suspense fallback={<LoaderPageWithoutBG />}>
+    //     <ToastContainer />
+    //     <RouterConfig />
+    //   </Suspense>
+    // </Router>
   );
 }
 

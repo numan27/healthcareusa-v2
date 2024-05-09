@@ -4,7 +4,6 @@ const PATH = {
   ABOUT: "/about",
   LISTINGS: "/listings",
   LISTING_DETAILS: "/listing-details",
-
 };
 
 export default PATH;
