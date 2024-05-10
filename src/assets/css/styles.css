@@ -448,6 +448,28 @@ body {
     border-bottom-right-radius: 7px;
 }
 
+.listing-detail-social:hover svg {
+    color: #fff !important;
+}
+
+.listing-detail-social:hover {
+    border-color: transparent !important;
+    background-color: #00ADA2 !important;
+}
+
+.listing-detail-link a {
+    color: #14A077;
+    text-decoration: none;
+}
+.listing-detail-link a:hover {
+    color: #14A077 !important;
+    text-decoration: underline;
+}
+
+.listing-detail-social {
+    transition: background-color 0.3s ease-in-out !important;
+}
+
 /* Auth */
 
 .auth-modal input {

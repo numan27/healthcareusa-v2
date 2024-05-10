@@ -5,6 +5,8 @@ import { useLocation } from 'react-router-dom';
 import { FaFacebookF, FaTwitter, FaYoutube } from 'react-icons/fa';
 import { RiInstagramFill } from 'react-icons/ri';
 import { MdShield } from 'react-icons/md';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import AppLayout from '../../../components/Layout/AppLayout/AppLayout';
 import { Box, GenericBadge, GenericButton, Typography } from '../../../components/GenericComponents';
 import IMAGES from '../../../assets/images';
@@ -13,6 +15,8 @@ import RelatedArticles from './components/RelatedArticles';
 import CopyIcon from '../../../assets/SVGs/Copy';
 import BookmarkIcon from "../../../assets/SVGs/Bookmark"
 import ShareIcon from "../../../assets/SVGs/Share"
+import ContactForm from './components/ContactForm';
+import Schedule from './components/Schedule';
 
 const ListingDetailsPage = () => {
   const location = useLocation();
@@ -98,29 +102,21 @@ const ListingDetailsPage = () => {
     { icon: <FaYoutube size={18} color='#23262F' />, link: "#" },
   ]
 
-  const scheduleData = [
-    { day: "Mo" },
-    { day: "Tu" },
-    { day: "We" },
-    { day: "Th" },
-    { day: "Fr" },
-    { day: "Sa" },
-    { day: "Su" },
-  ]
-
   const addressText = "156 William St f16 100 wall street\nnew York, NY 10036";
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(addressText)
       .then(() => {
-        console.log('Address copied to clipboard');
-        // Will add further logic here, like showing a toast message
+        toast.success('Address copied to clipboard!', {
+          autoClose: 1000,
+        });
       })
       .catch(err => {
         console.error('Failed to copy address to clipboard:', err);
-        // Handle error, show error message, etc.
+        toast.error('Failed to copy address to clipboard. Please try again later.');
       });
   };
+
 
   return (
     <AppLayout>
@@ -278,7 +274,7 @@ const ListingDetailsPage = () => {
             <RelatedArticles />
 
           </Col>
-          {/* Sidebar */}
+          {/* Right */}
           <Col
             style={{
               position: 'sticky',
@@ -293,7 +289,6 @@ const ListingDetailsPage = () => {
               <img src={IMAGES.MAP_IMG_2} className='img-fluid' alt='map' />
 
               <Box className="border py-3 rounded-bottom-3">
-
                 <div
                   className='px-3 border-bottom pb-3'
                   onMouseEnter={() => setCopyIconVisible(true)}
@@ -364,7 +359,10 @@ const ListingDetailsPage = () => {
                     </Col>
                     <Col sm={6}>
                       <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
-                        Website, LinkedIn
+                        <span className='gap-2 listing-detail-link'>
+                          <a href="">Website</a>,
+                          <a className='ms-1' href="">LinkedIn</a>
+                        </span>
                       </Typography>
                       <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
                         English, Spanish
@@ -373,68 +371,29 @@ const ListingDetailsPage = () => {
                   </Row>
                 </div>
 
-                <div className='pt-3 px-3 d-flex gap-2 flex-wrap'>
+                <Box
+                  className='pt-3 px-3 d-flex gap-2 flex-wrap'>
                   {listingDetailSocial.map((items) => (
-                    <a href={items.link}>
-                      <Box
-                        width="44px"
-                        height="44px"
-                        className="border rounded-5 d-flex align-items-center justify-content-center">
+                    <Box
+                      width="44px"
+                      height="44px"
+                      className="border rounded-5 listing-detail-social">
+                      <a className='w-100 h-100 rounded-5 d-flex align-items-center justify-content-center' href={items.link}>
                         {items.icon}
-                      </Box>
-                    </a>
+                      </a>
+                    </Box>
                   ))}
-                </div>
+                </Box>
               </Box>
             </Box>
 
             <Box className='w-100 mb-4 rounded-3 border pt-4'>
-              <div className='d-flex justify-content-between px-3 mb-3'>
-                <Typography as='h3' className='mb-0' color='#23262F' size='17px' lineHeight='27px' weight='600'>
-                  Opening Times
-                </Typography>
-                <GenericBadge
-                  background="#D0FFF1"
-                  color="#14A077"
-                  borderColor="transparent"
-                  text="Open"
-                  padding="6px 10px"
-                  className="text-capitalize"
-                />
-              </div>
-
-              {scheduleData.map((items) => (
-                <Box
-                  background={(items.day === 'Mo' && '#E4E4E4') || '#fff'}
-                  width="100%"
-                  className="py-3 border-bottom"
-                >
-                  {items.day === 'Mo' ? (
-                    <div className="d-flex align-items-center justify-content-between ps-3 pe-4">
-                      <Typography as='h5' className='mb-0' color='#23262F' size='16px' lineHeight='24px' weight='600'>
-                        {items.day}
-                      </Typography>
-                      <Typography as='h5' className='mb-0' color='#23262F' size='16px' lineHeight='24px' weight='600'>
-                        09:00 am - 05:30 pm
-                      </Typography>
-                    </div>
-                  ) : (
-                    <div className="d-flex align-items-center justify-content-between ps-3 pe-4">
-                      <Typography as='h5' className='mb-0' color='#64666C' size='16px' lineHeight='24px' weight='400'>
-                        {items.day}
-                      </Typography>
-                      <Typography as='h5' className='mb-0' color='#64666C' size='16px' lineHeight='24px' weight='400'>
-                        09:00 am - 05:30 pm
-                      </Typography>
-                    </div>
-                  )}
-                </Box>
-              ))}
-
+              <Schedule />
             </Box>
-            <div>
-              <img src={IMAGES.ADS_VERTICAL_IMG} className='img-fluid' alt='ads' />
-            </div>
+
+            <Box className='w-100 mb-4 rounded-3 border py-4 px-3'>
+              <ContactForm />
+            </Box>
           </Col>
         </Row>
       </Container>

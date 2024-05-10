@@ -7,7 +7,7 @@ import { Box, GenericButton, GenericSelect, Typography } from '../../../componen
 import IMAGES from '../../../assets/images';
 import ExploreMoreModal from './ExploreMoreModal';
 import { Link } from 'react-router-dom';
-import PATH from '../../../utils/path';
+import { PATH } from '../../../config';
 import { GrLocation } from 'react-icons/gr';
 import SquareMenu from '../../../assets/SVGs/SquareMenu';
 

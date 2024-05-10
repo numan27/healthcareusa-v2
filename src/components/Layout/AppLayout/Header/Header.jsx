@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from "../../../../assets/images"
-import PATH from "../../../../utils/path"
 import { Box, GenericButton, Typography } from '../../../../components/GenericComponents';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import SignInModal from '../../../../pages/Auth/SignIn';
@@ -11,6 +10,7 @@ import ForgotPassword from '../../../../pages/Auth/ForgotPassword';
 import SignUpModal from '../../../../pages/Auth/SignUp';
 import LanguageSelect from '../../../Shared/LanguageSelect';
 import LoginIcon from '../../../../assets/SVGs/Login';
+import { PATH } from '../../../../config';
 
 const Header = () => {
   const location = useLocation();

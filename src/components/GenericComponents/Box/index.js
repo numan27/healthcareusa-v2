@@ -14,16 +14,16 @@ const BoxContainer = styled.div`
   border-color: ${(props) => props.borderColor};
   color: ${(props) => props.color};
   border-style: ${(props) => props.borderStyle};
-  // border-radius: ${(props) => props.borderradius};
   min-height: ${(props) => props.minHeight};
   max-height: ${(props) => props.maxHeight};
-  /* && {
+  && {
     :hover {
       background: ${(props) => props.hoverBgColor};
+      border-color: ${(props) => props.hoverBorderColor};
       color: ${(props) =>
     props?.hoverTextColor ? props.hoverTextColor : "inherit"};
     }
-  } */
+  } 
 `;
 
 export default function Box({ children, ...props }) {
@@ -33,6 +33,8 @@ export default function Box({ children, ...props }) {
 Box.propTypes = {
   width: PropTypes.string,
   background: PropTypes.string,
+  hoverBgColor: PropTypes.string,
+  hoverBorderColor: PropTypes.string,
   radius: PropTypes.string,
   shadow: PropTypes.string,
   children: PropTypes.node,
@@ -40,11 +42,13 @@ Box.propTypes = {
   height: PropTypes.string,
   border: PropTypes.string,
   color: PropTypes.string,
+  hoverTextColor: PropTypes.string,
 };
 
 Box.defaultProps = {
   width: "fit-content",
   background: "transparent",
+  hoverBgColor: "",
   radius: "0px",
   shadow: "none",
   padding: "0px",
@@ -52,4 +56,6 @@ Box.defaultProps = {
   height: "",
   border: "",
   color: "",
+  hoverTextColor: "",
+  hoverBorderColor: "transparent",
 };

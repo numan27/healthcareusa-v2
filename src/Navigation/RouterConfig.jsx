@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 // import ProtectedRoute from "./Routes/ProtectedRoute.jsx";
 import PublicRoute from "./Routes/PublicRoute";
 import WEB_PAGES from "../pages";
-import PATH from "../utils/path";
+import { PATH } from "../config";
 
 function RouterConfig() {
   return (

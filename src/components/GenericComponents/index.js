@@ -8,6 +8,7 @@ import GenericMultiSelect from "./MultiselectDropdown"
 import CheckboxDropdown from "./CheckboxDropdown"
 import PrimaryDropdown from "./PrimaryDropdown"
 import GenericIconButton from "./IconButton"
+import GenericInput from "./TextField"
 
 export {
     Typography,
@@ -20,4 +21,5 @@ export {
     CheckboxDropdown,
     PrimaryDropdown,
     GenericIconButton,
+    GenericInput,
 };

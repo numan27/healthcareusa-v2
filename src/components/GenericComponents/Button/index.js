@@ -84,7 +84,7 @@ GenericButton.propTypes = {
 GenericButton.defaultProps = {
   hoverBgColor: "#00ADA2",
   color: "#fff",
-  hoverColor: "",
+  hoverColor: "#fff",
   background: "#00C1B6",
   radius: "4px",
   width: "",
