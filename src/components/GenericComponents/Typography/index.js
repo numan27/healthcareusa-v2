@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 const TypographyText = styled.h2`
-  color: ${({ color }) => color};
+  color: ${({ color }) => color} !important;
   word-break: ${(props) => props.breakword};
   font-family: ${(props) => props.fontFamily};
   text-transform: ${({ textTransform }) => textTransform};
@@ -20,6 +20,9 @@ const TypographyText = styled.h2`
   && {
     font-size: ${({ size }) => size};
     line-height: ${({ lineHeight }) => lineHeight};
+  &:hover{
+    // color: ${({ color }) => color};
+  }
   }
 
   ${({ as, responsive }) => {
@@ -110,7 +113,7 @@ Typography.defaultProps = {
   whiteSpace: 'break-spaces',
   children: null,
   className: "",
-  border:"",
-  padding:"",
-  borderRadius:"",
+  border: "",
+  padding: "",
+  borderRadius: "",
 };

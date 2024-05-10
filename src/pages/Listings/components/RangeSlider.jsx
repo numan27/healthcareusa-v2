@@ -20,6 +20,7 @@ const useStyles = makeStyles({
         outline: 'none',
         '&:hover, &.Mui-focusVisible': {
             boxShadow: '0px 0px 0px 8px rgba(0, 193, 182, 0.16)',
+            color: '#fff'
         },
     },
     tooltip: {
