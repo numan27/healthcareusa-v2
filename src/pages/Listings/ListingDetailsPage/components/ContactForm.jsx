@@ -14,30 +14,34 @@ const ContactForm = () => {
                     className=""
                     type="text"
                     label="Full Name"
+                    height="44px"
                     placeholder="Jone Doe"
                 />
                 <GenericInput
                     className=""
                     type="text"
                     label="In what city"
+                    height="44px"
                     placeholder="City or region"
                 />
                 <GenericInput
                     className=""
                     type="email"
                     label="Email"
+                    height="44px"
                     placeholder="Jone@email.com"
                 />
                 <GenericInput
                     className=""
                     type="number"
                     label="Contact number"
+                    height="44px"
                     placeholder="+44"
                 />
                 <GenericInput
                     className=""
                     as="textarea"
-                    rows="6"
+                    rows="4"
                     label="Message (optional)"
                     placeholder="Type message here"
                 />

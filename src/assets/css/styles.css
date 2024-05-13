@@ -72,6 +72,17 @@ body {
     box-shadow: none !important;
 }
 
+.valueLabel {
+    background-color: transparent !important;
+    border: 1px solid #E4E4E4;
+    border-radius: 32px;
+    color: #000000;
+    font-size: 12px;
+    font-weight: 400;
+    position: absolute;
+    top: -30px !important;
+}
+
 
 /* Generic */
 
@@ -461,6 +472,7 @@ body {
     color: #14A077;
     text-decoration: none;
 }
+
 .listing-detail-link a:hover {
     color: #14A077 !important;
     text-decoration: underline;

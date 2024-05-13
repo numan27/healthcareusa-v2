@@ -43,6 +43,7 @@ import shareIcon from "./share-icon.png"
 import bookmarkIcon from "./bookmark-icon.png"
 import copyIcon from "./copy-icon.png"
 import locationIcon2 from "./location-2.png"
+import claimListing from "./claim-listing.png"
 
 const IMAGES = {
     LOGO: logo,
@@ -90,6 +91,7 @@ const IMAGES = {
     BOOKMARK_ICON: bookmarkIcon,
     COPY_ICON: copyIcon,
     LOCATION_ICON_2: locationIcon2,
+    CLAIM_LISTING_IMG: claimListing,
 }
 
 export default IMAGES;

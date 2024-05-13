@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, } from 'react-bootstrap';
 import { LuChevronDown, LuChevronUp } from 'react-icons/lu';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FaFacebookF, FaTwitter, FaYoutube } from 'react-icons/fa';
 import { RiInstagramFill } from 'react-icons/ri';
 import { MdShield } from 'react-icons/md';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 import AppLayout from '../../../components/Layout/AppLayout/AppLayout';
 import { Box, GenericBadge, GenericButton, Typography } from '../../../components/GenericComponents';
 import IMAGES from '../../../assets/images';
@@ -17,6 +17,7 @@ import BookmarkIcon from "../../../assets/SVGs/Bookmark"
 import ShareIcon from "../../../assets/SVGs/Share"
 import ContactForm from './components/ContactForm';
 import Schedule from './components/Schedule';
+import ClaimListing from './components/ClaimListing';
 
 const ListingDetailsPage = () => {
   const location = useLocation();
@@ -360,8 +361,8 @@ const ListingDetailsPage = () => {
                     <Col sm={6}>
                       <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
                         <span className='gap-2 listing-detail-link'>
-                          <a href="">Website</a>,
-                          <a className='ms-1' href="">LinkedIn</a>
+                          <Link to="">Website</Link>,
+                          <Link className='ms-1' to="">LinkedIn</Link>
                         </span>
                       </Typography>
                       <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
@@ -393,6 +394,16 @@ const ListingDetailsPage = () => {
 
             <Box className='w-100 mb-4 rounded-3 border py-4 px-3'>
               <ContactForm />
+            </Box>
+
+            <Box className='w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative'>
+              <ClaimListing />
+              <img
+                width={120}
+                src={IMAGES.CLAIM_LISTING_IMG} alt=""
+                className='position-absolute end-0'
+                style={{ top: '60px' }}
+              />
             </Box>
           </Col>
         </Row>

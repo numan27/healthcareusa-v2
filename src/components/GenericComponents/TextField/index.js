@@ -95,7 +95,7 @@ GenericInput.defaultProps = {
   placeHolderColor: "#64666C",
   borderRadius: "4px",
   padding: "10px",
-  height: "44px",
+  height: "",
   background: "",
   type: "text",
   className: "",

@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.23df8b2e.css",
-    "main.js": "/static/js/main.8896f61a.js",
+    "main.css": "/static/css/main.7cc67ec5.css",
+    "main.js": "/static/js/main.8390c375.js",
     "static/js/344.a15ff10c.chunk.js": "/static/js/344.a15ff10c.chunk.js",
     "static/js/751.d2d528fd.chunk.js": "/static/js/751.d2d528fd.chunk.js",
-    "static/js/595.4a79569c.chunk.js": "/static/js/595.4a79569c.chunk.js",
+    "static/js/595.94877743.chunk.js": "/static/js/595.94877743.chunk.js",
     "static/js/859.eeb8c3db.chunk.js": "/static/js/859.eeb8c3db.chunk.js",
     "static/js/473.1ceefb73.chunk.js": "/static/js/473.1ceefb73.chunk.js",
     "static/js/316.19438195.chunk.js": "/static/js/316.19438195.chunk.js",
@@ -26,11 +26,11 @@
     "static/media/profile-company-logo.png": "/static/media/profile-company-logo.0fc3144895911232fba7.png",
     "static/media/related-blog-profile.png": "/static/media/related-blog-profile.c458b79ae64377065824.png",
     "index.html": "/index.html",
-    "main.23df8b2e.css.map": "/static/css/main.23df8b2e.css.map",
-    "main.8896f61a.js.map": "/static/js/main.8896f61a.js.map",
+    "main.7cc67ec5.css.map": "/static/css/main.7cc67ec5.css.map",
+    "main.8390c375.js.map": "/static/js/main.8390c375.js.map",
     "344.a15ff10c.chunk.js.map": "/static/js/344.a15ff10c.chunk.js.map",
     "751.d2d528fd.chunk.js.map": "/static/js/751.d2d528fd.chunk.js.map",
-    "595.4a79569c.chunk.js.map": "/static/js/595.4a79569c.chunk.js.map",
+    "595.94877743.chunk.js.map": "/static/js/595.94877743.chunk.js.map",
     "859.eeb8c3db.chunk.js.map": "/static/js/859.eeb8c3db.chunk.js.map",
     "473.1ceefb73.chunk.js.map": "/static/js/473.1ceefb73.chunk.js.map",
     "316.19438195.chunk.js.map": "/static/js/316.19438195.chunk.js.map",
@@ -40,7 +40,7 @@
     "138.e6edef28.chunk.js.map": "/static/js/138.e6edef28.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.23df8b2e.css",
-    "static/js/main.8896f61a.js"
+    "static/css/main.7cc67ec5.css",
+    "static/js/main.8390c375.js"
   ]
 }
