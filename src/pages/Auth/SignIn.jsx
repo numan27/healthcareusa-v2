@@ -7,18 +7,19 @@ import { Link } from 'react-router-dom';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import SignUpModal from './SignUp';
 
-const SignInModal = ({ show, onHide, title, moveToForgetPassword }) => {
+const SignInModal = ({ show, onHide, title, moveToForgetPassword, moveToFSignUp }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [signUpModalShow, setSignUpModalShow] = useState(false);
 
-    const openSignUpModal = () => {
-        setSignUpModalShow(true);
-        closeModal();
-    };
+    // const closeModal = () => {
+    //     onHide = { onHide }
+    // }
 
-    const closeModal = () => {
-        setSignUpModalShow(false);
-    }
+    // const openSignUpModal = () => {
+    //     setSignUpModalShow(true);
+    //     closeModal();
+    // };
+
 
     return (
         <>
@@ -59,7 +60,7 @@ const SignInModal = ({ show, onHide, title, moveToForgetPassword }) => {
                             <Typography className="mb-0" as="label" size="16px" color="#98A2B3" lineHeight="16px">
                                 Don't have an account ?
                             </Typography>
-                            <Link onClick={openSignUpModal} className='primary-color text-decoration-none'>
+                            <Link onClick={moveToFSignUp} className='primary-color text-decoration-none'>
                                 Sign Up
                             </Link>
                         </div>
@@ -83,5 +84,6 @@ SignInModal.propTypes = {
     onHide: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     moveToForgetPassword: PropTypes.func.isRequired,
+    moveToFSignUp: PropTypes.func.isRequired,
 };
 export default SignInModal;

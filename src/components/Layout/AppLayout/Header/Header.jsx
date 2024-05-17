@@ -101,6 +101,10 @@ const Header = () => {
               setSignInModalShow(false);
               setForgetPassModalShow(true);
             }}
+            moveToFSignUp={() => {
+              setSignInModalShow(false);
+              setSignUpModalShow(true);
+            }}
           />
         )}
 
@@ -109,6 +113,10 @@ const Header = () => {
             show={forgetPassModalShow}
             onHide={CloseModal}
             title=""
+            moveToFSignUp={() => {
+              setForgetPassModalShow(false);
+              setSignUpModalShow(true);
+            }}
           />
         )}
         {signUpModalShow && (
@@ -116,6 +124,10 @@ const Header = () => {
             show={signUpModalShow}
             onHide={CloseModal}
             title=""
+            moveToSignIn={() => {
+              setSignUpModalShow(false);
+              setSignInModalShow(true);
+            }}
           />
         )}
       </Navbar>
