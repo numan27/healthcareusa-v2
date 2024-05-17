@@ -113,9 +113,9 @@ const Header = () => {
             show={forgetPassModalShow}
             onHide={CloseModal}
             title=""
-            moveToFSignUp={() => {
+            moveToSignIn={() => {
               setForgetPassModalShow(false);
-              setSignUpModalShow(true);
+              setSignInModalShow(true);
             }}
           />
         )}

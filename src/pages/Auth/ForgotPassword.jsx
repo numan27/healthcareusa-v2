@@ -4,7 +4,7 @@ import GenericModal from '../../components/GenericComponents/Modal';
 import { Box, GenericButton, Typography } from '../../components/GenericComponents';
 import { Link } from 'react-router-dom';
 
-const ForgotPassword = ({ show, onHide, title, moveToFSignUp }) => {
+const ForgotPassword = ({ show, onHide, title, moveToSignIn }) => {
 
     return (
         <GenericModal show={show} onHide={onHide} size="md" title={title}>
@@ -23,16 +23,16 @@ const ForgotPassword = ({ show, onHide, title, moveToFSignUp }) => {
 
                     <div className='pt-2'>
                         <GenericButton height="52px" width="100%" background="#50D1C9" weight="700" size="16px" type="submit">
-                            Login now
+                            Confirm
                         </GenericButton>
                     </div>
 
                     <div className='d-flex align-items-center justify-content-center gap-2 mt-3'>
                         <Typography className="mb-0" as="label" size="16px" color="#98A2B3" lineHeight="16px">
-                            Don't have an account ?
+                            Go Back to
                         </Typography>
-                        <Link onClick={moveToFSignUp} className='primary-color text-decoration-none'>
-                            Sign Up
+                        <Link onClick={moveToSignIn} className='primary-color text-decoration-none'>
+                            Sign In
                         </Link>
                     </div>
                 </Form>
@@ -45,6 +45,6 @@ ForgotPassword.propTypes = {
     show: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
-    moveToFSignUp: PropTypes.func.isRequired,
+    moveToSignIn: PropTypes.func.isRequired,
 };
 export default ForgotPassword;

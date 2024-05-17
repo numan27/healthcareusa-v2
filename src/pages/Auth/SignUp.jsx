@@ -19,6 +19,13 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
                 <Form>
                     <Form.Group className="mb-4" controlId="formBasicEmail">
                         <Typography className="mb-2" as="label" size="16px" color="#344054" lineHeight="16px">
+                            User Name
+                        </Typography>
+                        <Form.Control type="email" placeholder="Enter Email" />
+                    </Form.Group>
+
+                    <Form.Group className="mb-4" controlId="formBasicEmail">
+                        <Typography className="mb-2" as="label" size="16px" color="#344054" lineHeight="16px">
                             Email
                         </Typography>
                         <Form.Control type="email" placeholder="Enter Email" />
@@ -36,13 +43,13 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
                     </Form.Group>
                     <div className='pt-2'>
                         <GenericButton height="52px" width="100%" background="#50D1C9" weight="700" size="16px" type="submit">
-                            Login now
+                            Register
                         </GenericButton>
                     </div>
 
                     <div className='d-flex align-items-center justify-content-center gap-2 mt-3'>
                         <Typography className="mb-0" as="label" size="16px" color="#98A2B3" lineHeight="16px">
-                            Already have an account ?
+                            Already have an account?
                         </Typography>
                         <Link onClick={moveToSignIn} className='primary-color text-decoration-none'>
                             Sign In

@@ -283,108 +283,113 @@ const ListingDetailsPage = () => {
               height: 'fit-content',
             }}
             lg={3}
-            md={6}
             className='pb-4'>
 
-            <Box className='w-100 mb-4 rounded-3'>
+            <Box className='w-100 rounded-3'>
               <img src={IMAGES.MAP_IMG_2} className='img-fluid' alt='map' />
-
-              <Box className="border py-3 rounded-bottom-3">
-                <div
-                  className='px-3 border-bottom pb-3'
-                  onMouseEnter={() => setCopyIconVisible(true)}
-                  onMouseLeave={() => setCopyIconVisible(false)}
-                >
-                  <div className="d-flex justify-content-between align-items-start">
-                    <div className='d-flex align-items-start gap-3'>
-                      <img width={18} src={IMAGES.LOCATION_ICON_2} alt="" />
+            </Box>
+            <Box className="border py-3 rounded-bottom-3 w-100 mb-4">
+              <div
+                className='px-3 border-bottom pb-3'
+                onMouseEnter={() => setCopyIconVisible(true)}
+                onMouseLeave={() => setCopyIconVisible(false)}
+              >
+                <div className="d-flex justify-content-between align-items-start">
+                  <div className='d-flex align-items-start gap-3'>
+                    <img width={18} src={IMAGES.LOCATION_ICON_2} alt="" />
+                    <div>
                       <div>
-                        <div>
-                          <Typography as='p' className='mb-0' color='#23262F' size='12px' lineHeight='18px' weight='400'>
-                            {addressText}
-                          </Typography>
-                        </div>
-                        <GenericButton
-                          background="transparent"
-                          color="#00C1B6"
-                          size="11px"
-                          weight="500"
-                          radius="51px"
-                          height="25px"
-                          width="90px"
-                          padding="0px"
-                          className="mt-2"
-                        >
-                          Get Directions
-                        </GenericButton>
+                        <Typography as='p' className='mb-0' color='#23262F' size='12px' lineHeight='18px' weight='400'>
+                          {addressText}
+                        </Typography>
                       </div>
+                      <GenericButton
+                        background="transparent"
+                        color="#00C1B6"
+                        size="11px"
+                        weight="500"
+                        radius="51px"
+                        height="25px"
+                        width="90px"
+                        padding="0px"
+                        className="mt-2"
+                      >
+                        Get Directions
+                      </GenericButton>
                     </div>
-                    {copyIconVisible && (
-                      <span onClick={copyToClipboard} className='cursor-pointer'>
-                        <CopyIcon />
-                      </span>
-                    )}
                   </div>
+                  {copyIconVisible && (
+                    <span onClick={copyToClipboard} className='cursor-pointer'>
+                      <CopyIcon />
+                    </span>
+                  )}
                 </div>
+              </div>
 
-                <div className="px-3 border-bottom py-3">
-                  <Row>
-                    <Col sm={6} className='d-flex flex-column'>
-                      <Typography as='label' className='mb-0' color='#64666C' size='14px' lineHeight='24px' weight='400'>
-                        Cell #:
-                      </Typography>
-                      <Typography as='label' className='mb-0' color='#64666C' size='14px' lineHeight='24px' weight='400'>
-                        Fax #:
-                      </Typography>
-                    </Col>
-                    <Col sm={6}>
-                      <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
-                        (402) 847-2789
-                      </Typography>
-                      <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
-                        (402) 847-2789
-                      </Typography>
+              <div className="px-3 border-bottom py-3">
+                <Row>
+                  <Col sm={6} xs={6}>
+                    <Typography as='label' className='mb-0' color='#64666C' size='14px' lineHeight='24px' weight='400'>
+                      Cell #:
+                    </Typography>
+                  </Col>
+                  <Col sm={6} xs={6}>
+                    <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
+                      (402) 847-2789
+                    </Typography>
+                  </Col>
+                  <Col sm={6} xs={6}>
+                    <Typography as='label' className='mb-0' color='#64666C' size='14px' lineHeight='24px' weight='400'>
+                      Fax #:
+                    </Typography>
+                  </Col>
+                  <Col sm={6} xs={6}>
+                    <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
+                      (402) 847-2789
+                    </Typography>
+                  </Col>
+                </Row>
+              </div>
+              <div className="px-3 border-bottom py-3">
+                <Row>
+                  <Col sm={6} xs={6}>
+                    <Typography as='label' className='mb-0' color='#64666C' size='14px' lineHeight='24px' weight='400'>
+                      Websites:
+                    </Typography>
+                  </Col>
+                  <Col sm={6} xs={6}>
+                    <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
+                      <span className='gap-2 listing-detail-link'>
+                        <Link to="">Website</Link>,
+                        <Link className='ms-1' to="">LinkedIn</Link>
+                      </span>
+                    </Typography>
+                  </Col>
+                  <Col sm={6} xs={6}>
+                    <Typography as='label' className='mb-0' color='#64666C' size='14px' lineHeight='24px' weight='400'>
+                      Languages:
+                    </Typography>
+                  </Col>
+                  <Col sm={6} xs={6}>
+                    <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
+                      English, Spanish
+                    </Typography>
+                  </Col>
+                </Row>
+              </div>
 
-                    </Col>
-                  </Row>
-                </div>
-                <div className="px-3 border-bottom py-3">
-                  <Row>
-                    <Col sm={6} className='d-flex flex-column'>
-                      <Typography as='label' className='mb-0' color='#64666C' size='14px' lineHeight='24px' weight='400'>
-                        Websites:
-                      </Typography>
-                      <Typography as='label' className='mb-0' color='#64666C' size='14px' lineHeight='24px' weight='400'>
-                        Languages:
-                      </Typography>
-                    </Col>
-                    <Col sm={6}>
-                      <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
-                        <span className='gap-2 listing-detail-link'>
-                          <Link to="">Website</Link>,
-                          <Link className='ms-1' to="">LinkedIn</Link>
-                        </span>
-                      </Typography>
-                      <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
-                        English, Spanish
-                      </Typography>
-                    </Col>
-                  </Row>
-                </div>
-
-                <Box
-                  className='pt-3 px-3 d-flex gap-2 flex-wrap'>
-                  {listingDetailSocial.map((items) => (
-                    <Box
-                      width="44px"
-                      height="44px"
-                      className="border rounded-5 listing-detail-social">
-                      <a className='w-100 h-100 rounded-5 d-flex align-items-center justify-content-center' href={items.link}>
-                        {items.icon}
-                      </a>
-                    </Box>
-                  ))}
-                </Box>
+              <Box
+                className='pt-3 px-3 d-flex justify-content-sm-start justify-content-center gap-2 w-100'>
+                {listingDetailSocial.map((items) => (
+                  <Box
+                    width="44px"
+                    height="44px"
+                    className="border rounded-5 listing-detail-social">
+                    <a className='w-100 h-100 rounded-5 d-flex align-items-center justify-content-center' href={items.link}>
+                      {items.icon}
+                    </a>
+                  </Box>
+                ))}
               </Box>
             </Box>
 
