@@ -11,16 +11,6 @@ const SignInModal = ({ show, onHide, title, moveToForgetPassword, moveToFSignUp 
     const [showPassword, setShowPassword] = useState(false);
     const [signUpModalShow, setSignUpModalShow] = useState(false);
 
-    // const closeModal = () => {
-    //     onHide = { onHide }
-    // }
-
-    // const openSignUpModal = () => {
-    //     setSignUpModalShow(true);
-    //     closeModal();
-    // };
-
-
     return (
         <>
             <GenericModal show={show} onHide={onHide} size="md" title={title}>
@@ -65,8 +55,6 @@ const SignInModal = ({ show, onHide, title, moveToForgetPassword, moveToFSignUp 
                             </Link>
                         </div>
                     </Form>
-
-
                 </Box>
             </GenericModal>
 
