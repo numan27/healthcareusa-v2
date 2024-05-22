@@ -1,20 +1,19 @@
-import { useEffect, useState } from 'react';
-import { Form, InputGroup } from 'react-bootstrap';
+import { useEffect, useState } from 'react'
+import { Col, Form, InputGroup, Row } from 'react-bootstrap'
 import { FiChevronRight } from 'react-icons/fi';
 import { IoSearch } from 'react-icons/io5';
-import { Box, GenericButton, GenericSelect, Typography } from '../../../components/GenericComponents';
+// import { Link, useNavigate } from 'react-router-dom';
+import { Box, GenericButton, GenericSelect, Typography } from '../../../components/GenericComponents'
+import IMAGES from '../../../assets/images';
 import ExploreMoreModal from './ExploreMoreModal';
 import { Link } from 'react-router-dom';
 import { PATH } from '../../../config';
 import { GrLocation } from 'react-icons/gr';
 import SquareMenu from '../../../assets/SVGs/SquareMenu';
 import axios from 'axios';
-import IMAGES from '../../../assets/images';
 
 const Hero = () => {
   const [exploreModalState, setExploreModalState] = useState(false);
-  const [listings, setListings] = useState([]);
-  const [groupedListings, setGroupedListings] = useState([]);
 
   const OpenModal = () => {
     setExploreModalState(true);
@@ -24,16 +23,14 @@ const Hero = () => {
     setExploreModalState(false);
   };
 
+  const [listings, setListings] = useState([]);
+
   useEffect(() => {
     const fetchPosts = async () => {
-      let url = 'https://jsappone.demowp.io/wp-json/wp/v2/service?per_page=40';
+      let url = 'https://jsappone.demowp.io/wp-json/wp/v2/service';
       try {
         const response = await axios.get(url);
-        const data = response.data.map(item => ({
-          ...item,
-          name: item.name.replace(/&amp;/g, '&')
-        }));
-        setListings(data);
+        setListings(response.data);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -42,34 +39,97 @@ const Hero = () => {
     fetchPosts();
   }, []);
 
-  useEffect(() => {
-    if (listings.length > 0) {
-      const headings = listings.filter(item => item.parent === 0);
-      const grouped = headings.map(heading => ({
-        heading,
-        items: listings.filter(item => item.parent === heading.id)
-      }));
-      setGroupedListings(grouped);
-    }
-  }, [listings]);
-
-  const renderItemsInColumns = (items) => {
-    const columns = [[], [], [], []];
-    items.forEach((item, index) => {
-      columns[index % 4].push(item);
-    });
-    return columns;
-  };
-
   console.warn("listings data", listings);
-  console.warn("grouped listings data", groupedListings);
+
+  const boxData = [
+    {
+      title: "Products & Services",
+      imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
+      serviceList: [
+        { service: "Pharmacies", singleServiceLink: "" },
+        { service: "Supplements & Herbs", singleServiceLink: "" },
+        { service: "Equipment & Supplies", singleServiceLink: "" },
+        { service: "Medical Transportation", singleServiceLink: "" }
+      ]
+    },
+    {
+      title: "Products & Services",
+      imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
+      serviceList: [
+        { service: "Pharmacies" },
+        { service: "Supplements & Herbs" },
+        { service: "Equipment & Supplies" },
+        { service: "Medical Transportation" }
+      ]
+    },
+    {
+      title: "Products & Services",
+      imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
+      serviceList: [
+        { service: "Pharmacies" },
+        { service: "Supplements & Herbs" },
+        { service: "Equipment & Supplies" },
+        { service: "Medical Transportation" }
+      ]
+    },
+    {
+      title: "Products & Services",
+      imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
+      serviceList: [
+        { service: "Pharmacies" },
+        { service: "Supplements & Herbs" },
+        { service: "Equipment & Supplies" },
+        { service: "Medical Transportation" }
+      ]
+    },
+    {
+      title: "Products & Services",
+      imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
+      serviceList: [
+        { service: "Pharmacies" },
+        { service: "Supplements & Herbs" },
+        { service: "Equipment & Supplies" },
+        { service: "Medical Transportation" }
+      ]
+    },
+    {
+      title: "Products & Services",
+      imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
+      serviceList: [
+        { service: "Pharmacies" },
+        { service: "Supplements & Herbs" },
+        { service: "Equipment & Supplies" },
+        { service: "Medical Transportation" }
+      ]
+    },
+    {
+      title: "Products & Services",
+      imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
+      serviceList: [
+        { service: "Pharmacies" },
+        { service: "Supplements & Herbs" },
+        { service: "Equipment & Supplies" },
+        { service: "Medical Transportation" }
+      ]
+    },
+    {
+      title: "Products & Services",
+      imgSrc: IMAGES.PRODUCTS_SERVICES_ICON,
+      serviceList: [
+        { service: "Pharmacies" },
+        { service: "Supplements & Herbs" },
+        { service: "Equipment & Supplies" },
+        { service: "Medical Transportation" }
+      ]
+    },
+  ];
 
   return (
     <div className='position-relative'>
       <div className='hero'>
         <Box className="hero-content d-flex flex-column align-items-center h-100 w-100 py-5 px-lg-0 px-3">
-          <div className='py-sm-5 mt-md-5'>
-            <div className='mx-auto pt-sm-4'>
+          <Row className='py-sm-5 mt-md-5'>
+            <Col className='mx-auto pt-sm-4'>
               <div>
                 <Typography lineHeight="55px" align="center" className="mt-3 mb-0" as="h1" weight="800" color="#fff" size="40px">
                   Your One Stop Resource Directory of Healthcare
@@ -80,7 +140,10 @@ const Hero = () => {
               </div>
 
               {/* Search bar */}
-              <Box width="100" padding="18px" className="bg-white rounded-3 mt-3">
+              <Box
+                width="100"
+                padding="18px"
+                className="bg-white rounded-3 mt-3">
                 <Form className='h-100 d-flex flex-md-row flex-column align-items-center justify-content-between'>
                   <InputGroup className="search-bar border-search-md">
                     <InputGroup.Text className='bg-white border-0 p-2' id="basic-addon1">
@@ -95,6 +158,7 @@ const Hero = () => {
                   </InputGroup>
 
                   <div className='d-flex align-items-center ps-md-4 ps-2 w-100-md my-md-0 my-3 border-start-lg'>
+                    {/* <img width={24} src={IMAGES.LOCATION_ICON} alt="icon" /> */}
                     <GenericSelect
                       className="w-100-md"
                       minwidth="320px"
@@ -128,51 +192,50 @@ const Hero = () => {
                 </Form>
               </Box>
 
-              <div className='mt-3'>
-                <div className='mx-auto' md={6}>
+              <Row className='mt-3'>
+                <Col className='mx-auto' md={6}>
                   <Box padding="12px" className="bg-white rounded-5 w-100">
                     <Typography lineHeight="21px" align="center" className="mb-0" as="p" color="#23262F" size="14px">
-                      <span className='fw-bold'>Over 2.5 million</span> healthcare providers and services. . & growing
+                      <span className='fw-bold'>Over 2.5 million</span> healthcare providers and services. . &  growing
                     </Typography>
                   </Box>
-                </div>
-              </div>
-            </div>
-          </div>
+                </Col>
+              </Row>
+
+            </Col>
+          </Row>
         </Box>
       </div>
 
       <div id="service-section" className='service-section container-xl mt-xl-0 mt-lg-5 mt-0 container-fluid pt-5'>
         <Box width="100" className="custom-shadow-services mobile-padding bg-white position-relative mt-5" padding="30px 25px" radius="24px">
           <div className='service-grid w-100'>
-            {groupedListings.map((group, groupIndex) => (
-              <Box key={groupIndex} width="100" className="service-box transition-2 rounded-3" border="1px solid #99B8B6" padding="25px 20px 25px 25px">
-                <div className='d-flex align-items-center gap-2'>
-                  <img width={30} src={IMAGES.PRODUCTS_SERVICES_ICON} alt="icon" />
-                  <Typography className="mb-0" align="center" as="h3" weight="700" size="18px" color="#333333">
-                    {group.heading.name}
-                  </Typography>
-                </div>
+            {/* {boxData.map((data) => ( */}
+            <Box width="100" className="service-box transition-2 rounded-3" border="1px solid #99B8B6" padding="25px 20px 25px 25px">
+              <div className='d-flex align-items-center gap-2'>
+                {/* <img width={30} src={data.imgSrc} alt="icon" /> */}
+                <Typography className="mb-0" align="center" as="h3" weight="700" size="18px" color="#333333">
+                  {/* {data.title} */}
+                  Title
+                </Typography>
+              </div>
 
-                <div className="columns-container">
-                  {renderItemsInColumns(group.items).map((column, columnIndex) => (
-                    <ul className='list-unstyled' key={columnIndex}>
-                      {column.map((item, itemIndex) => (
-                        <li className='mb-2' key={itemIndex}>
-                          <Link className='text-decoration-none service-item transition-2' to={PATH.LISTINGS}>
-                            {item.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ))}
-                </div>
+              <ul className='list-unstyled'>
+                {listings.map((item, index) => (
+                  <li className='mb-2' key={index}>
+                    <Link className='text-decoration-none service-item transition-2' to={PATH.LISTINGS}>
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+        
+              <Link background="transparent" border="0" color="#50D1C9" onClick={OpenModal} className='service-link'>
+                Explore More <FiChevronRight className='transition-2' size={18} color='#6BE2C4' />
+              </Link>
 
-                <Link background="transparent" border="0" color="#50D1C9" onClick={OpenModal} className='service-link'>
-                  Explore More <FiChevronRight className='transition-2' size={18} color='#6BE2C4' />
-                </Link>
-              </Box>
-            ))}
+            </Box>
+            {/* ))} */}
           </div>
 
           <Box
@@ -199,8 +262,9 @@ const Hero = () => {
           title="All Doctors"
         />
       )}
+
     </div>
-  );
+  )
 }
 
-export default Hero;
+export default Hero

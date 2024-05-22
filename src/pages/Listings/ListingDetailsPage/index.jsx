@@ -18,12 +18,30 @@ import ShareIcon from "../../../assets/SVGs/Share"
 import ContactForm from './components/ContactForm';
 import Schedule from './components/Schedule';
 import ClaimListing from './components/ClaimListing';
+import axios from 'axios';
 
 const ListingDetailsPage = () => {
   const location = useLocation();
   const [jsonData, setJsonData] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
+  const [specialties, setSpecialties] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      let url = 'https://jsappone.demowp.io/wp-json/wp/v2/specialties?per_page=19';
+      try {
+        const response = await axios.get(url);
+        setSpecialties(response.data);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  console.warn("specialties", specialties)
 
   const toggleShowMore = () => {
     setShowMore(!showMore);
@@ -231,9 +249,9 @@ const ListingDetailsPage = () => {
                   </Typography>
 
                   <div className='mt-4 d-flex gap-2 flex-wrap'>
-                    {specialitiesData.map((item) => (
+                    {specialties.map((item) => (
                       <GenericBadge
-                        text={item.label}
+                        text={item.name}
                         borderRadius="51px"
                         background="#EBEBEB"
                         borderColor="transparent"
