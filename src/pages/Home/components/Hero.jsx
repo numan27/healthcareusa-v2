@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Col, Form, InputGroup, Row } from 'react-bootstrap'
 import { FiChevronRight } from 'react-icons/fi';
 import { IoSearch } from 'react-icons/io5';
@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { PATH } from '../../../config';
 import { GrLocation } from 'react-icons/gr';
 import SquareMenu from '../../../assets/SVGs/SquareMenu';
+import axios from 'axios';
 
 const Hero = () => {
   const [exploreModalState, setExploreModalState] = useState(false);
@@ -21,6 +22,24 @@ const Hero = () => {
   const CloseModal = () => {
     setExploreModalState(false);
   };
+
+  const [listings, setListings] = useState([]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            let url = 'https://jsappone.demowp.io/wp-json/wp/v2/taxonomies/service  ';
+            try {
+                const response = await axios.get(url);
+                setListings(response.data);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
+    console.warn("listings data", listings.service);
 
   const boxData = [
     {
@@ -209,6 +228,15 @@ const Hero = () => {
                     </li>
                   ))}
                 </ul>
+                {/* <ul className='list-unstyled'>
+                  {data.serviceList.map((item, index) => (
+                    <li className='mb-2' key={index}>
+                      <Link className='text-decoration-none service-item transition-2' to={PATH.LISTINGS}>
+                        {item.service}
+                      </Link>
+                    </li>
+                  ))}
+                </ul> */}
 
                 <Link background="transparent" border="0" color="#50D1C9" onClick={OpenModal} className='service-link'>
                   Explore More <FiChevronRight className='transition-2' size={18} color='#6BE2C4' />

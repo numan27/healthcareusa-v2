@@ -1,31 +1,31 @@
+import { useState, useEffect } from "react";
+// import axios from "axios";
 import { FaArrowRight } from "react-icons/fa6";
 import { Card, Container } from "react-bootstrap";
 import { CiCalendar } from "react-icons/ci"
 import { Box, GenericBadge, GenericButton, Typography } from "../../../components/GenericComponents"
 import IMAGES from "../../../assets/images"
+import axios from "axios";
 
 const Blogs = () => {
 
-    const blogsData = [
-        {
-            blogImg: IMAGES.BLOG_IMG,
-            title: "Cards on the table: 3 ways to spot a transparent company",
-            author: "Avitex",
-            days: "2 days ago"
-        },
-        {
-            blogImg: IMAGES.BLOG_IMG,
-            title: "Cards on the table: 3 ways to spot a transparent company",
-            author: "Avitex",
-            days: "2 days ago"
-        },
-        {
-            blogImg: IMAGES.BLOG_IMG,
-            title: "Cards on the table: 3 ways to spot a transparent company",
-            author: "Avitex",
-            days: "2 days ago"
-        },
-    ]
+    const [wpPosts, setWpPosts] = useState([]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            let url = 'https://jsappone.demowp.io/wp-json/wp/v2/posts';
+            try {
+                const response = await axios.get(url);
+                setWpPosts(response.data);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
+    console.warn("wpPosts", wpPosts);
 
     return (
         <Box background="#00C1B6" className="w-100 py-5">
@@ -41,26 +41,26 @@ const Blogs = () => {
                 </div>
 
                 <div className="blogs-grid pb-4 mt-2 pt-2">
-                    {blogsData.map((items, index) => (
-                        <Card className="custom-shadow border-0">
-                            <Card.Img variant="top" src={items.blogImg} />
+                    {wpPosts.map((post) => (
+                        <Card className="custom-shadow border-0" key={post.id}>
+                            <Card.Img variant="top" src={IMAGES.BLOG_IMG} />
                             <Box className="" padding="30px 35px">
                                 <GenericBadge text="Business" />
                                 <div className="my-2 py-1">
                                     <Typography className="mb-0" as="h4" color="#121212" weight="700" size="26x" lineHeight="30px">
-                                       {items.title}
+                                        {post.title.rendered}
                                     </Typography>
                                 </div>
 
                                 <div className="d-flex align-items-center gap-4">
                                     <Typography className="mb-0" as="p" color="#122A41" weight="400" size="16px" lineHeight="26px">
-                                        <span style={{ color: '#BBB6B6' }}>by</span> {items.author}
+                                        <span style={{ color: '#BBB6B6' }}>by</span> {post.author}
                                     </Typography>
 
                                     <div className="d-flex align-items-center gap-2">
                                         <CiCalendar color="#122A41" size={23} />
                                         <Typography className="mb-0" as="p" color="#122A41" weight="400" size="16px" lineHeight="26px">
-                                            {items.days}
+                                            {new Date(post.date).toDateString()}
                                         </Typography>
                                     </div>
                                 </div>
@@ -73,4 +73,4 @@ const Blogs = () => {
     )
 }
 
-export default Blogs
+export default Blogs;
