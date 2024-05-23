@@ -91,29 +91,7 @@ const ListingDetailsPage = () => {
     { degree: "D-Derm" },
     { degree: "F.C.P.S" },
   ]
-
-  const specialitiesData = [
-    { label: "Dysphagia" },
-    { label: "Endoscopy" },
-    { label: "Liver Cancer" },
-    { label: "Hepatitis A?B/C " },
-    { label: "Chronic Diarrhea" },
-    { label: "Diabetes" },
-    { label: "Gallbladder disease" },
-    { label: "Irritable bowel syndrome (IBS)" },
-    { label: "Colonoscopy (Lower GI Endoscopy)" },
-    { label: "Gastroesophageal Reflux Disease (GERD)" },
-    { label: "Diagnostic Colonoscopy" },
-    { label: "Stroke" },
-    { label: "Anemia" },
-    { label: "Blood Pressure" },
-    { label: "Diverticulosis" },
-    { label: "Cholecystitis" },
-    { label: "Atrial Fibrillation" },
-    { label: "Bile Duct Cancer" },
-    { label: "Liner" },
-  ]
-
+  
   const listingDetailSocial = [
     { icon: <FaFacebookF size={18} color='#23262F' />, link: "#" },
     { icon: <FaTwitter size={18} color='#23262F' />, link: "#" },
