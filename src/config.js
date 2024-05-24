@@ -10,7 +10,7 @@ const PATH = {
   HOME: "/",
   ABOUT: "/about",
   LISTINGS: "/listings",
-  LISTING_DETAILS: "/listing-details",
+  LISTING_DETAILS: "/listing-details/:id",
 };
 
 const TOASTER_STYLING_VALUES = {

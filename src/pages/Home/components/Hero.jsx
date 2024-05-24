@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Form, InputGroup } from 'react-bootstrap';
+import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { FiChevronRight } from 'react-icons/fi';
 import { IoSearch } from 'react-icons/io5';
 import { Box, GenericButton, GenericSelect, Typography } from '../../../components/GenericComponents';
@@ -128,15 +128,15 @@ const Hero = () => {
                 </Form>
               </Box>
 
-              <div className='mt-3'>
-                <div className='mx-auto' md={6}>
+              <Row className='mt-3'>
+                <Col className='mx-auto' md={6}>
                   <Box padding="12px" className="bg-white rounded-5 w-100">
                     <Typography lineHeight="21px" align="center" className="mb-0" as="p" color="#23262F" size="14px">
                       <span className='fw-bold'>Over 2.5 million</span> healthcare providers and services. . & growing
                     </Typography>
                   </Box>
-                </div>
-              </div>
+                </Col>
+              </Row>
             </div>
           </div>
         </Box>

@@ -1,7 +1,7 @@
-import React from 'react'
-import { Box, GenericBadge, Typography } from '../../../../components/GenericComponents'
+import React from 'react';
+import { Box, GenericBadge, Typography } from '../../../../components/GenericComponents';
 
-const Schedule = () => {
+const Schedule = ({ jsonData }) => {
     const scheduleData = [
         { day: "Mo" },
         { day: "Tu" },
@@ -10,7 +10,9 @@ const Schedule = () => {
         { day: "Fr" },
         { day: "Sa" },
         { day: "Su" },
-    ]
+    ];
+
+    const openStatus = jsonData.comment_status === 'open' ? 'Open' : 'Closed';
 
     return (
         <>
@@ -19,10 +21,10 @@ const Schedule = () => {
                     Opening Times
                 </Typography>
                 <GenericBadge
-                    background="#D0FFF1"
-                    color="#14A077"
+                    background={openStatus === 'Open' ? "#D0FFF1" : "#FFD0D0"}
+                    color={openStatus === 'Open' ? "#14A077" : "#A01414"}
                     borderColor="transparent"
-                    text="Open"
+                    text={openStatus}
                     padding="6px 10px"
                     className="text-capitalize"
                 />
@@ -57,7 +59,7 @@ const Schedule = () => {
                 </Box>
             ))}
         </>
-    )
-}
+    );
+};
 
-export default Schedule
+export default Schedule;

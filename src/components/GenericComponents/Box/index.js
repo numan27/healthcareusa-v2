@@ -19,7 +19,7 @@ const BoxContainer = styled.div`
   && {
     :hover {
       background: ${(props) => props.hoverBgColor};
-      border-color: ${(props) => props.hoverBorderColor};
+      // border-color: ${(props) => props.hoverBorderColor};
       color: ${(props) =>
     props?.hoverTextColor ? props.hoverTextColor : "inherit"};
     }

@@ -1,7 +1,6 @@
 /** @format */
 
 import { Routes, Route } from "react-router-dom";
-// import ProtectedRoute from "./Routes/ProtectedRoute.jsx";
 import PublicRoute from "./Routes/PublicRoute";
 import WEB_PAGES from "../pages";
 import { PATH } from "../config";
@@ -9,7 +8,6 @@ import { PATH } from "../config";
 function RouterConfig() {
   return (
     <Routes>
-     
       <Route
         path={PATH.LOGIN}
         element={<PublicRoute element={<WEB_PAGES.LOGIN />} />}
@@ -27,7 +25,7 @@ function RouterConfig() {
         element={<PublicRoute element={<WEB_PAGES.LISTINGS />} />}
       />
       <Route
-        path={PATH.LISTING_DETAILS}
+        path={PATH.LISTING_DETAILS} // This should handle dynamic IDs
         element={<PublicRoute element={<WEB_PAGES.LISTING_DETAILS />} />}
       />
       <Route
@@ -42,12 +40,11 @@ function RouterConfig() {
         path={PATH.CONTACT}
         element={<PublicRoute element={<WEB_PAGES.CONTACT />} />}
       />
-    
-      {/* <Route
+
+       {/* <Route
         path={PATH.APPLICANT_DETAILS}
         element={<ProtectedRoute element={<WEB_PAGES.APPLICANT_DETAILS />} />}
       /> */}
-
 
       {/* NO PAGE FOUND */}
       {/* <Route path={PATH.NOPAGE} element={<WEB_PAGES.NO_PAGE_FOUND />} /> */}

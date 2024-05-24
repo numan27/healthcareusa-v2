@@ -13,15 +13,25 @@ const Blogs = () => {
 
     useEffect(() => {
         const fetchPosts = async () => {
-            let url = 'https://jsappone.demowp.io/wp-json/wp/v2/posts';
+            const url = 'https://jsappone.demowp.io/wp-json/wp/v2/posts?_embed';
             try {
                 const response = await axios.get(url);
-                setWpPosts(response.data);
+                const posts = response.data.map(post => ({
+                    id: post.id,
+                    blogImg: post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url ||
+                        IMAGES.RELATED_BLOG_IMG,
+                    tagText: "Design",
+                    blogTitle: post.title.rendered,
+                    authorImg: IMAGES.RELATED_BLOG_PROFILE,
+                    authorName: post.author,
+                    date: new Date(post.date).toDateString(),
+                    lastSeen: "6 min read",
+                }));
+                setWpPosts(posts);
             } catch (error) {
                 console.error('Error fetching posts:', error);
             }
         };
-
         fetchPosts();
     }, []);
 
@@ -43,12 +53,14 @@ const Blogs = () => {
                 <div className="blogs-grid pb-4 mt-2 pt-2">
                     {wpPosts.map((post) => (
                         <Card className="custom-shadow border-0" key={post.id}>
-                            <Card.Img variant="top" src={IMAGES.BLOG_IMG} />
-                            <Box className="" padding="30px 35px">
-                                <GenericBadge text="Business" />
+                            <Card.Img className="" variant="top" src={post.blogImg} />
+                            <Box className="d-flex flex-column justify-content-between w-100 h-100" padding="30px 35px">
+                                <div>
+                                    <GenericBadge text="Business" />
+                                </div>
                                 <div className="my-2 py-1">
                                     <Typography className="mb-0" as="h4" color="#121212" weight="700" size="26x" lineHeight="30px">
-                                        {post.title.rendered}
+                                        {post.blogTitle}
                                     </Typography>
                                 </div>
 

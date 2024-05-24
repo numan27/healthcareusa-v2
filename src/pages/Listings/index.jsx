@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Form, InputGroup, Container, Row, Col } from 'react-bootstrap'
 import { Box, CheckboxDropdown, GenericIconButton, Typography } from '../../components/GenericComponents'
-import { v4 as uuidv4 } from 'uuid';
 import AppLayout from '../../components/Layout/AppLayout/AppLayout'
 import AdsSection from "../../components/Shared/AdsSection"
 import RangeSlider from './components/RangeSlider'
@@ -48,117 +47,6 @@ const Listings = () => {
     { id: "2", label: "Option 2" },
     { id: "3", label: "Option 3" },
   ];
-
-  const sponsoredProfileData = [
-    {
-      id: uuidv4(),
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      profileCompanyLogoImg: IMAGES.PROFILE_COMPANY_LOGO,
-      phone: "(702) 852-1390",
-      status: "Open"
-    },
-    {
-      id: uuidv4(),
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Azhar Abbas",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      profileCompanyLogoImg: IMAGES.PROFILE_COMPANY_LOGO,
-      phone: "(702) 852-1390",
-      status: "Close"
-    },
-  ]
-
-  const allResultsData = [
-    {
-      doctorName: "Dr. Javed Iqbal",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      phone: "(702) 852-1390",
-    },
-    {
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      phone: "(702) 852-1390",
-    },
-    {
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      phone: "(702) 852-1390",
-    },
-    {
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      phone: "(702) 852-1390",
-    },
-    {
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      phone: "(702) 852-1390",
-    },
-    {
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      phone: "(702) 852-1390",
-    },
-    {
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      phone: "(702) 852-1390",
-    },
-    {
-      img: IMAGES.DOCTOR_LIST_PROFILE,
-      doctorName: "Dr. Kimberly Douglas, MD",
-      designation: "CHIROPRACTORS",
-      languages: "French . Spanish",
-      doctorLogoImg: IMAGES.DOCTOR_LOGO,
-      distance: "0.3",
-      address: "156 William St Fl 6 New York, NY 10038",
-      phone: "(702) 852-1390",
-    },
-  ]
 
   return (
     <AppLayout>
@@ -254,7 +142,6 @@ const Listings = () => {
               <ProfileCard
                 enableSponsoredProfile
                 columnPadding
-                jsonData={sponsoredProfileData}
               />
             </div>
 
@@ -267,11 +154,10 @@ const Listings = () => {
               </Typography>
 
               <div className='mt-3'>
-                <ProfileCard jsonData={allResultsData} />
+                <ProfileCard
+                />
               </div>
             </div>
-
-
 
           </Col>
 

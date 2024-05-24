@@ -1,28 +1,46 @@
 import { useEffect, useState } from 'react';
-import { Container, Row, Col, } from 'react-bootstrap';
+import { Container, Row, Col, OverlayTrigger, Popover } from 'react-bootstrap';
 import { LuChevronDown, LuChevronUp } from 'react-icons/lu';
-import { Link, useLocation } from 'react-router-dom';
-import { FaFacebookF, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { FaFacebookF, FaLinkedin, FaPinterest, FaReddit, FaTwitter, FaYoutube } from 'react-icons/fa';
 import { RiInstagramFill } from 'react-icons/ri';
 import { MdShield } from 'react-icons/md';
 import { toast } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
 import AppLayout from '../../../components/Layout/AppLayout/AppLayout';
 import { Box, GenericBadge, GenericButton, Typography } from '../../../components/GenericComponents';
 import IMAGES from '../../../assets/images';
 import AdsSection from '../../../components/Shared/AdsSection';
 import RelatedArticles from './components/RelatedArticles';
 import CopyIcon from '../../../assets/SVGs/Copy';
-import BookmarkIcon from "../../../assets/SVGs/Bookmark"
-import ShareIcon from "../../../assets/SVGs/Share"
+import BookmarkIcon from "../../../assets/SVGs/Bookmark";
+import ShareIcon from "../../../assets/SVGs/Share";
 import ContactForm from './components/ContactForm';
 import Schedule from './components/Schedule';
 import ClaimListing from './components/ClaimListing';
 import axios from 'axios';
+import styled from 'styled-components';
+
+const StyledPopover = styled(Popover)`
+  max-width: 200px;
+  width: 100%;
+  box-shadow: 0px 0px 14px 0px #00000040;
+  border-radius: 11px;
+  z-index: 99999 !important;
+  .popover-body {
+    padding: 10px !important;
+  }
+  .popover-arrow {
+    display: none !important;
+  }
+  .fade.show {
+    z-index: 999 !important;
+  }
+`;
 
 const ListingDetailsPage = () => {
+  const { id } = useParams();
   const location = useLocation();
-  const [jsonData, setJsonData] = useState(null);
+  const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
   const [specialties, setSpecialties] = useState([]);
@@ -41,68 +59,91 @@ const ListingDetailsPage = () => {
     fetchPosts();
   }, []);
 
-  console.warn("specialties", specialties)
+  useEffect(() => {
+    const fetchListingData = async () => {
+      const url = `https://jsappone.demowp.io/wp-json/wp/v2/listing/${id}`;
+      try {
+        const response = await axios.get(url);
+        const listingData = response.data;
 
-  const toggleShowMore = () => {
-    setShowMore(!showMore);
-  };
+        if (listingData.featured_media) {
+          const mediaResponse = await axios.get(`https://jsappone.demowp.io/wp-json/wp/v2/media/${listingData.featured_media}`);
+          listingData.mediaUrl = mediaResponse.data.source_url;
+        }
 
-  const commonText = (
-    <div>
-      <p>
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'sstandard dummy text ever since the 1500sLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500sLorem Ipsum is simply dummy text of the printing and Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-      </p>
-      <p className='mb-0'>
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'sstandard dummy text ever since the 1500sLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500sLorem Ipsum is simply dummy text of the printing and Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-      </p>
-    </div>
-  );
+        setJsonData(listingData);
+      } catch (error) {
+        console.error('Error fetching listing data:', error);
+      }
+    };
 
-  const extractTextContent = (jsxElement) => {
-    if (typeof jsxElement === 'string') {
-      return jsxElement;
+    if (!jsonData.id) {
+      fetchListingData();
     }
-
-    if (Array.isArray(jsxElement)) {
-      return jsxElement.map(extractTextContent).join('');
-    }
-
-    if (typeof jsxElement === 'object' && jsxElement.props && jsxElement.props.children) {
-      return extractTextContent(jsxElement.props.children);
-    }
-
-    return '';
-  };
-
-  const truncatedText = `${extractTextContent(commonText).substring(0, 500)}...`;
+  }, [id, jsonData.id]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const jsonDataString = params.get('jsonData');
+    const jsonDataString = params.get('profile');
     if (jsonDataString) {
       const parsedData = JSON.parse(decodeURIComponent(jsonDataString));
       setJsonData(parsedData);
     }
   }, [location.search]);
 
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
+
+  const truncateText = (text, length) => {
+    return text.length > length ? text.substring(0, length) + '...' : text;
+  };
+
+  const description = jsonData.cubewp_post_meta?.['cwp_field_288766456392']?.meta_value || 'Description not available';
+  const truncatedText = truncateText(description, 500);
+
   const qualificationsData = [
     { degree: "M.B.B.S" },
     { degree: "M.C.P.S" },
     { degree: "D-Derm" },
     { degree: "F.C.P.S" },
-  ]
-  
-  const listingDetailSocial = [
-    { icon: <FaFacebookF size={18} color='#23262F' />, link: "#" },
-    { icon: <FaTwitter size={18} color='#23262F' />, link: "#" },
-    { icon: <RiInstagramFill size={18} color='#23262F' />, link: "#" },
-    { icon: <FaYoutube size={18} color='#23262F' />, link: "#" },
-  ]
+  ];
 
-  const addressText = "156 William St f16 100 wall street\nnew York, NY 10036";
+  const listingDetailSocial = [
+    { icon: <FaFacebookF size={18} color='#23262F' />, link: jsonData.cubewp_post_meta?.['fc-facebook']?.meta_value || "#" },
+    { icon: <FaTwitter size={18} color='#23262F' />, link: jsonData.cubewp_post_meta?.['fc-x']?.meta_value || "#" },
+    { icon: <RiInstagramFill size={18} color='#23262F' />, link: jsonData.cubewp_post_meta?.['fc-instagram']?.meta_value || "#" },
+    { icon: <FaYoutube size={18} color='#23262F' />, link: jsonData.cubewp_post_meta?.['fc-youtube']?.meta_value || "#" },
+  ];
+
+  const listingDetailSocialShare = [
+    {
+      icon: <FaFacebookF size={14} color='#23262F' />,
+      link: "https://www.facebook.com/shareProfile?mini=true&url=https://jsappone.demowp.io/"
+    },
+    {
+      icon: <FaLinkedin size={14} color='#23262F' />,
+      link: "https://www.linkedin.com/shareProfile?mini=true&url=https://jsappone.demowp.io/"
+    },
+    {
+      icon: <FaTwitter size={14} color='#23262F' />,
+      link: "https://www.twitter.com/shareProfile?mini=true&url=https://jsappone.demowp.io/"
+    },
+    {
+      icon: <RiInstagramFill size={14} color='#23262F' />,
+      link: "https://www.instagarm.com/shareProfile?mini=true&url=https://jsappone.demowp.io/"
+    },
+    {
+      icon: <FaPinterest size={14} color='#23262F' />,
+      link: "https://www.pinterest.com/shareProfile?mini=true&url=https://jsappone.demowp.io/"
+    },
+  ];
+
+  const cubewpPostMeta = jsonData.cubewp_post_meta || [];
+  const googleAddress = cubewpPostMeta["fc-google-address"]?.meta_value || [];
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(addressText)
+    navigator.clipboard.writeText(googleAddress.address)
       .then(() => {
         toast.success('Address copied to clipboard!', {
           autoClose: 1000,
@@ -114,6 +155,24 @@ const ListingDetailsPage = () => {
       });
   };
 
+  const popover = (
+    <StyledPopover className="border-0 me-2" id="popover-basic">
+      <Popover.Body>
+        <Box className="w-100 d-flex justify-content-evenly gap-1">
+          {listingDetailSocialShare.map((items) => (
+            <Box
+              width="30px"
+              height="30px"
+              className="border rounded-2 listing-detail-social">
+              <a className='w-100 h-100 d-flex align-items-center justify-content-center' href={items.link}>
+                {items.icon}
+              </a>
+            </Box>
+          ))}
+        </Box>
+      </Popover.Body>
+    </StyledPopover>
+  );
 
   return (
     <AppLayout>
@@ -121,7 +180,6 @@ const ListingDetailsPage = () => {
         <Row>
           {/* Left Content */}
           <Col lg={9}>
-
             {/* Profile Media */}
             <Row className='profile-gallery px-2'>
               <Col className='px-md-1' md={4} sm={6}>
@@ -144,7 +202,7 @@ const ListingDetailsPage = () => {
                   className="rounded-2 custom-border mt-4 d-flex align-items-center flex-md-row flex-column gap-4 position-relative ">
 
                   <Box className="rounded-5 position-relative">
-                    <img width={132} height={132} className='rounded-5 ' src={IMAGES.DETAILED_PROFILE_IMG} alt="" />
+                    <img width={132} height={132} className='rounded-circle' src={jsonData.mediaUrl} alt="" />
 
                     <span style={{ top: '12px', right: '-2px', height: '30px', width: '30px' }} className='rounded-5 p-1 position-absolute border bg-white d-flex align-items-center justify-content-center'>
                       <MdShield size={18} color='#ef9b00' />
@@ -163,20 +221,19 @@ const ListingDetailsPage = () => {
                   </Box>
 
                   <div className='w-100'>
-
                     <div className='d-flex flex-column align-items-md-start align-items-center'>
                       <Typography as="h3" size="20px" fontFamily="Inter" weight="600" color="#23262F" lineHeight="30px">
-                        {jsonData.doctorName}
+                        {jsonData.title?.rendered}
                       </Typography>
 
-                      <div className='d-flex align-items-center  gap-2'>
-                        <Typography className="mb-0" as="h4" size="14px" weight="700" color="#23262F" lineHeight="21px">
-                          {jsonData.designation}
+                      <div className='d-flex align-items-center gap-2'>
+                        <Typography className="mb-0 text-uppercase" as="h4" size="14px" weight="700" color="#23262F" lineHeight="21px">
+                          {jsonData.cubewp_post_meta?.['cwp_field_40228862441']?.meta_value}
                         </Typography>
 
                         <span className='border-start border-2 ps-2'>
                           <Typography className="text-uppercase mb-0" as="h4" size="14px" weight="700" color="#64666C" lineHeight="21px">
-                            {jsonData.languages}
+                            {jsonData.cubewp_post_meta?.['fc-languages']?.meta_value}
                           </Typography>
                         </span>
                       </div>
@@ -206,11 +263,24 @@ const ListingDetailsPage = () => {
 
                       <div className='d-flex gap-2'>
                         <BookmarkIcon />
-                        <ShareIcon />
+
+                        <OverlayTrigger
+                          bsClass="custom-overlay"
+                          trigger="click"
+                          placement="bottom"
+                          rootClose
+                          overlay={popover}
+                        >
+                          <span className='d-flex align-items-center cursor-pointer'>
+                            <ShareIcon />
+                          </span>
+                        </OverlayTrigger>
+
+
                       </div>
                       <GenericBadge
-                        statusText='Open'
-                        text="Open"
+                        statusText={jsonData.comment_status}
+                        text={jsonData.comment_status}
                         background="#F4F4F4"
                         color="#23262Fs"
                         border="0px"
@@ -249,7 +319,7 @@ const ListingDetailsPage = () => {
 
                   <div className='mt-4 d-flex gap-2 flex-wrap'>
                     <p className="small-text-black pt-2">
-                      {showMore ? commonText : truncatedText}
+                      {showMore ? description : truncatedText}
                       <GenericButton size="14px" border="0" hoverBgColor="transparent" hoverColor="#14A077" padding="0" weight="500" color="#14A077" background="transparent" onClick={toggleShowMore} className="">
                         {showMore ?
                           <span>
@@ -264,14 +334,31 @@ const ListingDetailsPage = () => {
                   </div>
                 </Box>
 
+                {/* Contact Information */}
+                {/* <div className='d-flex gap-4 mt-4'>
+                  <div className='d-flex flex-column'>
+                    <Typography className="mb-2" as="h5" size="16px" weight="600" color="#23262F">
+                      Contact
+                    </Typography>
+                    <Typography className="mb-1" as="p" size="14px" weight="500" color="#777E90">
+                      Phone: {jsonData.cubewp_post_meta?.['fc-phone']?.meta_value}
+                    </Typography>
+                    <Typography className="mb-1" as="p" size="14px" weight="500" color="#777E90">
+                      Email: {jsonData.cubewp_post_meta?.['fc-email']?.meta_value}
+                    </Typography>
+                    <Typography className="mb-1" as="p" size="14px" weight="500" color="#777E90">
+                      Address: {jsonData.cubewp_post_meta?.['fc-address']?.meta_value}
+                    </Typography>
+                  </div>
+                </div> */}
                 <AdsSection margin={1} padding={0} />
               </>
             )}
 
             <RelatedArticles />
-
           </Col>
-          {/* Right */}
+
+          {/* Right Content */}
           <Col
             style={{
               position: 'sticky',
@@ -296,7 +383,7 @@ const ListingDetailsPage = () => {
                     <div>
                       <div>
                         <Typography as='p' className='mb-0' color='#23262F' size='12px' lineHeight='18px' weight='400'>
-                          {addressText}
+                          {googleAddress.address}
                         </Typography>
                       </div>
                       <GenericButton
@@ -331,7 +418,7 @@ const ListingDetailsPage = () => {
                   </Col>
                   <Col sm={6} xs={6}>
                     <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
-                      (402) 847-2789
+                      {jsonData.cubewp_post_meta?.['fc-phone']?.meta_value}
                     </Typography>
                   </Col>
                   <Col sm={6} xs={6}>
@@ -341,7 +428,7 @@ const ListingDetailsPage = () => {
                   </Col>
                   <Col sm={6} xs={6}>
                     <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
-                      (402) 847-2789
+                      {jsonData.cubewp_post_meta?.['fc-phone']?.meta_value}
                     </Typography>
                   </Col>
                 </Row>
@@ -368,7 +455,7 @@ const ListingDetailsPage = () => {
                   </Col>
                   <Col sm={6} xs={6}>
                     <Typography as='label' className='mb-0' color='#23262F' size='14px' lineHeight='24px' weight='700'>
-                      English, Spanish
+                      {jsonData.cubewp_post_meta?.['fc-languages']?.meta_value}
                     </Typography>
                   </Col>
                 </Row>
@@ -390,8 +477,9 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className='w-100 mb-4 rounded-3 border pt-4'>
-              <Schedule />
+              <Schedule jsonData={jsonData} />
             </Box>
+
 
             <Box className='w-100 mb-4 rounded-3 border py-4 px-3'>
               <ContactForm />
@@ -409,7 +497,7 @@ const ListingDetailsPage = () => {
           </Col>
         </Row>
       </Container>
-    </AppLayout>
+    </AppLayout >
   );
 };
 

@@ -1,76 +1,36 @@
-import React from 'react'
-import { Col, Row } from 'react-bootstrap'
-import { GoDotFill } from 'react-icons/go'
-import { Box, GenericBadge, Typography } from '../../../../components/GenericComponents'
-import IMAGES from '../../../../assets/images'
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Col, Row } from 'react-bootstrap';
+import { GoDotFill } from 'react-icons/go';
+import { Box, GenericBadge, Typography } from '../../../../components/GenericComponents';
+import IMAGES from '../../../../assets/images';
 
 const RelatedArticles = () => {
+    const [relatedBlogsData, setRelatedBlogsData] = useState([]);
 
-    const relatedBlogsData = [
-        {
-            blogImg: IMAGES.RELATED_BLOG_IMG,
-            tagText: "Design",
-            blogTitle: "Netus vestibulum a vulputate sollicitudin id vitae convallis Netus vestibulum a vulputate sollicitudin id",
-            authorImg: IMAGES.RELATED_BLOG_PROFILE,
-            authorName: " Ibrahim Farah",
-            date: "March 16,2024",
-            lastSeen: "6 min read",
-        },
-        {
-            blogImg: IMAGES.RELATED_BLOG_IMG,
-            tagText: "Design",
-            blogTitle: "Netus vestibulum a vulputate sollicitudin id vitae convallis Netus vestibulum a vulputate sollicitudin id",
-            authorImg: IMAGES.RELATED_BLOG_PROFILE,
-            authorName: " Ibrahim Farah",
-            date: "March 16,2024",
-            lastSeen: "6 min read",
-        },
-        {
-            blogImg: IMAGES.RELATED_BLOG_IMG,
-            tagText: "Design",
-            blogTitle: "Netus vestibulum a vulputate sollicitudin id vitae convallis Netus vestibulum a vulputate sollicitudin id",
-            authorImg: IMAGES.RELATED_BLOG_PROFILE,
-            authorName: " Ibrahim Farah",
-            date: "March 16,2024",
-            lastSeen: "6 min read",
-        },
-        {
-            blogImg: IMAGES.RELATED_BLOG_IMG,
-            tagText: "Design",
-            blogTitle: "Netus vestibulum a vulputate sollicitudin id vitae convallis Netus vestibulum a vulputate sollicitudin id",
-            authorImg: IMAGES.RELATED_BLOG_PROFILE,
-            authorName: " Ibrahim Farah",
-            date: "March 16,2024",
-            lastSeen: "6 min read",
-        },
-        {
-            blogImg: IMAGES.RELATED_BLOG_IMG,
-            tagText: "Design",
-            blogTitle: "Netus vestibulum a vulputate sollicitudin id vitae convallis Netus vestibulum a vulputate sollicitudin id",
-            authorImg: IMAGES.RELATED_BLOG_PROFILE,
-            authorName: " Ibrahim Farah",
-            date: "March 16,2024",
-            lastSeen: "6 min read",
-        },
-        {
-            blogImg: IMAGES.RELATED_BLOG_IMG,
-            tagText: "Design",
-            blogTitle: "Netus vestibulum a vulputate sollicitudin id vitae convallis Netus vestibulum a vulputate sollicitudin id",
-            authorImg: IMAGES.RELATED_BLOG_PROFILE,
-            authorName: " Ibrahim Farah",
-            date: "March 16,2024",
-            lastSeen: "6 min read",
-        },
-        {
-            blogImg: IMAGES.RELATED_BLOG_IMG,
-            tagText: "Design",
-            blogTitle: "Netus vestibulum a vulputate sollicitudin id vitae convallis Netus vestibulum a vulputate sollicitudin id",
-            authorImg: IMAGES.RELATED_BLOG_PROFILE,
-            authorName: " Ibrahim Farah",
-            date: "March 16,2024",
-            lastSeen: "6 min read",
-        },
-    ]
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const url = 'https://jsappone.demowp.io/wp-json/wp/v2/posts?_embed';
+            try {
+                const response = await axios.get(url);
+                const posts = response.data.map(post => ({
+                    blogImg: post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url || IMAGES.RELATED_BLOG_IMG,
+                    tagText: "Design",
+                    blogTitle: post.title.rendered,
+                    authorImg: IMAGES.RELATED_BLOG_PROFILE,
+                    authorName: post.author,
+                    date: new Date(post.date).toDateString(),
+                    lastSeen: "6 min read",
+                }));
+                setRelatedBlogsData(posts);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
     return (
         <div>
             <div className='my-5'>
@@ -78,8 +38,8 @@ const RelatedArticles = () => {
                     Related articles
                 </Typography>
 
-                {relatedBlogsData.map((items) => (
-                    <Box className="blog-shadow mt-4" radius="8px">
+                {relatedBlogsData.map((items, index) => (
+                    <Box key={index} className="blog-shadow mt-4" radius="8px">
                         <Row>
                             <Col md={5} className='position-relative'>
                                 <img className='img-fluid related-blog-img h-100' src={items.blogImg} alt="" />
@@ -88,8 +48,8 @@ const RelatedArticles = () => {
                                 >
                                     <GenericBadge
                                         className="text-capitalize"
-                                        text="Design"
-                                        background="#EDE8FE33"
+                                        text={items.tagText}
+                                        background="#b6b6b6"
                                         color="#fff"
                                         weight="500"
                                         size="16px"
@@ -120,7 +80,7 @@ const RelatedArticles = () => {
                 ))}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default RelatedArticles
+export default RelatedArticles;
