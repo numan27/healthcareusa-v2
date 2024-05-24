@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Form, InputGroup, Container, Row, Col } from 'react-bootstrap'
 import { Box, CheckboxDropdown, GenericIconButton, Typography } from '../../components/GenericComponents'
-import AppLayout from '../../components/Layout/AppLayout/AppLayout'
+import AppLayout from '../../components/Layout/AppLayout'
 import AdsSection from "../../components/Shared/AdsSection"
 import RangeSlider from './components/RangeSlider'
 import IMAGES from '../../assets/images'

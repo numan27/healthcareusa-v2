@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-// import axios from "axios";
+import axios from "axios";
 import { FaArrowRight } from "react-icons/fa6";
 import { Card, Container } from "react-bootstrap";
 import { CiCalendar } from "react-icons/ci"
+import PropTypes from "prop-types"
 import { Box, GenericBadge, GenericButton, Typography } from "../../../components/GenericComponents"
 import IMAGES from "../../../assets/images"
-import axios from "axios";
+import { PATH } from "../../../config";
+import { useNavigate } from "react-router-dom";
 
-const Blogs = () => {
-
+const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
+    const navigate = useNavigate();
     const [wpPosts, setWpPosts] = useState([]);
 
     useEffect(() => {
@@ -37,21 +39,27 @@ const Blogs = () => {
 
     console.warn("wpPosts", wpPosts);
 
+    const handleNavigateBlogs = () => {
+        navigate(PATH.BLOGS)
+    }
+
     return (
         <Box background="#00C1B6" className="w-100 py-5">
             <Container className="pt-2">
-                <div className="d-flex flex-md-row flex-column align-items-center justify-content-between mb-md-0 mb-4">
+                <div className={`d-flex flex-md-row flex-column align-items-center justify-content-${centeredTitle ? 'center' : 'between'} mb-md-0 mb-4`}>
                     <Typography className="mobile-text-center" as="h3" size="32px" color="#fff" lineHeight="48px" weight="700">
                         Trending Topics in Healthcare
                     </Typography>
 
-                    <GenericButton className="blogs-cta transition-2" color="#fff" size="16px" weight="700" hoverBgColor="transparent" hoverColor="#122A41">
-                        See All Articles <FaArrowRight className="blogs-arrow transition-2" color="#fff" />
-                    </GenericButton>
+                    {onHomePage && (
+                        <GenericButton onClick={handleNavigateBlogs} className="blogs-cta transition-2" color="#fff" size="16px" weight="700" hoverBgColor="transparent" hoverColor="#122A41">
+                            See All Articles <FaArrowRight className="blogs-arrow transition-2" color="#fff" />
+                        </GenericButton>
+                    )}
                 </div>
 
                 <div className="blogs-grid pb-4 mt-2 pt-2">
-                    {wpPosts.map((post) => (
+                    {wpPosts.slice(0, postNumber).map((post) => (
                         <Card className="custom-shadow border-0" key={post.id}>
                             <Card.Img className="" variant="top" src={post.blogImg} />
                             <Box className="d-flex flex-column justify-content-between w-100 h-100" padding="30px 35px">
@@ -84,5 +92,17 @@ const Blogs = () => {
         </Box>
     )
 }
+
+Blogs.propTypes = {
+    postNumber: PropTypes.number,
+    onHomePage: PropTypes.bool,
+    centeredTitle: PropTypes.bool,
+};
+
+Blogs.defaultProps = {
+    postNumber: 3,
+    onHomePage: true,
+    centeredTitle: false,
+};
 
 export default Blogs;

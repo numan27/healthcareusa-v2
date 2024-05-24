@@ -267,6 +267,7 @@ body {
     background-size: cover;
     /* background-position: center center !important; */
     overflow: hidden;
+    background-color: #000000   ;
     height: 93vh;
 }
 

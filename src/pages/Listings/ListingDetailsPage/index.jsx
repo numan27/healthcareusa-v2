@@ -6,7 +6,7 @@ import { FaFacebookF, FaLinkedin, FaPinterest, FaReddit, FaTwitter, FaYoutube } 
 import { RiInstagramFill } from 'react-icons/ri';
 import { MdShield } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import AppLayout from '../../../components/Layout/AppLayout/AppLayout';
+import AppLayout from '../../../components/Layout/AppLayout';
 import { Box, GenericBadge, GenericButton, Typography } from '../../../components/GenericComponents';
 import IMAGES from '../../../assets/images';
 import AdsSection from '../../../components/Shared/AdsSection';

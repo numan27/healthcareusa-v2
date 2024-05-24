@@ -1,4 +1,4 @@
-import AppLayout from '../../components/Layout/AppLayout/AppLayout'
+import AppLayout from '../../components/Layout/AppLayout'
 import AdsSection from '../../components/Shared/AdsSection'
 import PartnersSection from '../../components/Shared/PartnersSection'
 import Blogs from './components/Blogs'

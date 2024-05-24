@@ -6,9 +6,11 @@ const ERROR = {
 
 const PATH = {
   NOPAGE: "*",
-
   HOME: "/",
   ABOUT: "/about",
+  BLOGS: "/blogs",
+  CONTACT: "/contact",
+  RESOURCES: "/resources",
   LISTINGS: "/listings",
   LISTING_DETAILS: "/listing-details/:id",
 };

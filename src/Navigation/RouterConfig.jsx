@@ -21,16 +21,8 @@ function RouterConfig() {
         element={<PublicRoute element={<WEB_PAGES.ABOUT />} />}
       />
       <Route
-        path={PATH.LISTINGS}
-        element={<PublicRoute element={<WEB_PAGES.LISTINGS />} />}
-      />
-      <Route
-        path={PATH.LISTING_DETAILS} // This should handle dynamic IDs
-        element={<PublicRoute element={<WEB_PAGES.LISTING_DETAILS />} />}
-      />
-      <Route
-        path={PATH.BLOG}
-        element={<PublicRoute element={<WEB_PAGES.BLOG />} />}
+        path={PATH.BLOGS}
+        element={<PublicRoute element={<WEB_PAGES.BLOGS />} />}
       />
       <Route
         path={PATH.RESOURCES}
@@ -40,14 +32,22 @@ function RouterConfig() {
         path={PATH.CONTACT}
         element={<PublicRoute element={<WEB_PAGES.CONTACT />} />}
       />
+      <Route
+        path={PATH.LISTINGS}
+        element={<PublicRoute element={<WEB_PAGES.LISTINGS />} />}
+      />
+      <Route
+        path={PATH.LISTING_DETAILS}
+        element={<PublicRoute element={<WEB_PAGES.LISTING_DETAILS />} />}
+      />
 
-       {/* <Route
+      {/* <Route
         path={PATH.APPLICANT_DETAILS}
         element={<ProtectedRoute element={<WEB_PAGES.APPLICANT_DETAILS />} />}
       /> */}
 
       {/* NO PAGE FOUND */}
-      {/* <Route path={PATH.NOPAGE} element={<WEB_PAGES.NO_PAGE_FOUND />} /> */}
+      <Route path={PATH.NOPAGE} element={<WEB_PAGES.NO_PAGE_FOUND />} />
     </Routes>
   );
 }
