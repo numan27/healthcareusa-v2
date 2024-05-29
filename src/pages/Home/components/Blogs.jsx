@@ -11,33 +11,48 @@ import { useNavigate } from "react-router-dom";
 
 const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
     const navigate = useNavigate();
-    const [wpPosts, setWpPosts] = useState([]);
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchPosts = async () => {
-            const url = 'https://jsappone.demowp.io/wp-json/wp/v2/posts?_embed';
+            const postUrl = 'https://jsappone.demowp.io/wp-json/wp/v2/posts?_embed';
+            const tagsUrl = 'https://jsappone.demowp.io/wp-json/wp/v2/tags';
+
             try {
-                const response = await axios.get(url);
-                const posts = response.data.map(post => ({
-                    id: post.id,
-                    blogImg: post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url ||
-                        IMAGES.RELATED_BLOG_IMG,
-                    tagText: "Design",
-                    blogTitle: post.title.rendered,
-                    authorImg: IMAGES.RELATED_BLOG_PROFILE,
-                    authorName: post.author,
-                    date: new Date(post.date).toDateString(),
-                    lastSeen: "6 min read",
-                }));
-                setWpPosts(posts);
+                const [postsResponse, tagsResponse] = await Promise.all([
+                    axios.get(postUrl),
+                    axios.get(tagsUrl)
+                ]);
+
+                const posts = postsResponse.data.map(post => {
+                    const tags = post.tags.map(tagId => {
+                        const tag = tagsResponse.data.find(tag => tag.id === tagId);
+                        return tag ? tag.name : ''; 
+                    });
+
+                    return {
+                        id: post.id,
+                        blogImg: post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url ||
+                            IMAGES.RELATED_BLOG_IMG,
+                        tagText: tags.join(', '),
+                        blogTitle: post.title.rendered,
+                        authorImg: IMAGES.RELATED_BLOG_PROFILE,
+                        authorName: post.author,
+                        date: new Date(post.date).toDateString(),
+                        lastSeen: "6 min read",
+                    };
+                });
+
+                setPosts(posts);
             } catch (error) {
                 console.error('Error fetching posts:', error);
             }
         };
+
         fetchPosts();
     }, []);
 
-    console.warn("wpPosts", wpPosts);
+    console.warn("posts", posts);
 
     const handleNavigateBlogs = () => {
         navigate(PATH.BLOGS)
@@ -59,12 +74,12 @@ const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
                 </div>
 
                 <div className="blogs-grid pb-4 mt-2 pt-2">
-                    {wpPosts.slice(0, postNumber).map((post) => (
+                    {posts.slice(0, postNumber).map((post) => (
                         <Card className="custom-shadow border-0" key={post.id}>
                             <Card.Img className="" variant="top" src={post.blogImg} />
                             <Box className="d-flex flex-column justify-content-between w-100 h-100" padding="30px 35px">
                                 <div>
-                                    <GenericBadge text="Business" />
+                                    <GenericBadge text={post.tagText} />
                                 </div>
                                 <div className="my-2 py-1">
                                     <Typography className="mb-0" as="h4" color="#121212" weight="700" size="26x" lineHeight="30px">

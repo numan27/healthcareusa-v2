@@ -25,8 +25,8 @@ const Hero = () => {
   };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      let url = 'https://jsappone.demowp.io/wp-json/wp/v2/service?per_page=40';
+    const fetchPosts = async (perPage) => {
+      let url = `https://jsappone.demowp.io/wp-json/wp/v2/service?per_page=${perPage}`;
       try {
         const response = await axios.get(url);
         const data = response.data.map(item => ({
@@ -39,7 +39,7 @@ const Hero = () => {
       }
     };
 
-    fetchPosts();
+    fetchPosts(100);
   }, []);
 
   useEffect(() => {

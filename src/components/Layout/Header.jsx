@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from "../../assets/images"
@@ -11,12 +11,37 @@ import SignUpModal from '../../pages/Auth/SignUp';
 import LanguageSelect from '../Shared/LanguageSelect';
 import LoginIcon from '../../assets/SVGs/Login';
 import { PATH } from '../../config';
+import axios from 'axios';
+// import axios from 'axios';
 
 const Header = () => {
   const location = useLocation();
   const [forgetPassModalShow, setForgetPassModalShow] = useState(false);
   const [signInModalShow, setSignInModalShow] = useState(false);
   const [signUpModalShow, setSignUpModalShow] = useState(false);
+  const [menus, setMenus] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async (perPage) => {
+      let url = `https://jsappone.demowp.io/wp-json/wp/v2/nav-menu?per_page=${perPage}`;
+      try {
+        const response = await axios.get(url);
+        const data = response.data.map(item => ({
+          ...item,
+          name: item.name.replace(/&amp;/g, '&')
+        }));
+        setMenus(data);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+
+    fetchPosts(10);
+  }, []);
+
+  const staticMenuNames = ["Home", "About Us", "Blog", "Resources", "Contact Us"];
+
+  console.log("menus", menus)
 
   const CloseModal = () => {
     setSignInModalShow(false);
@@ -62,12 +87,15 @@ const Header = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Link to={PATH.HOME} className={`nav-link navLink ${location.pathname === '/' ? 'active' : ''}`}>Home</Link>
-              <Link to={PATH.ABOUT} className={`nav-link navLink ${location.pathname === PATH.ABOUT ? 'active' : ''}`}>About Us</Link>
-              <Link to={PATH.BLOGS} className={`nav-link navLink ${location.pathname === PATH.BLOGS ? 'active' : ''}`}>Blog</Link>
-              <Link to={PATH.RESOURCES} className={`nav-link navLink ${location.pathname === PATH.RESOURCES ? 'active' : ''}`}>Resources</Link>
-              <Link to={PATH.CONTACT} className={`nav-link navLink ${location.pathname === PATH.CONTACT ? 'active' : ''}`}>Contact Us</Link>
-
+              {staticMenuNames.map((menuName, index) => {
+                const menuItem = menus.find(menu => menu.name === menuName);
+                const isActive = location.pathname === '/' && menuName === 'Home' || (menuItem && menuItem.slug && location.pathname === `/${menuItem.slug}`);
+                return menuItem && (
+                  <Link key={index} to={menuItem.name === "Home" ? '/' : `/${menuItem.slug}`} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
+                    {menuItem.name}
+                  </Link>
+                );
+              })}
               <div className='d-flex align-items-center ms-xl-4 mb-xl-0 mb-sm-3 mb-1'>
                 <LanguageSelect />
               </div>

@@ -8,8 +8,43 @@ import { Typography } from '../GenericComponents';
 import LanguageSelect from '../Shared/LanguageSelect';
 import SendIcon from '../../assets/SVGs/Send';
 import PhoneIcon from '../../assets/SVGs/Phone';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Footer = () => {
+
+  const [links, setLink] = useState([])
+  const [groupedListings, setGroupedListings] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async (perPage) => {
+      let url = `https://jsappone.demowp.io/wp-json/wp/v2/footer-links?per_page=${perPage}`;
+      try {
+        const response = await axios.get(url);
+        const data = response.data.map(item => ({
+          ...item,
+          name: item.name.replace(/&amp;/g, '&')
+        }));
+        setLink(data);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+
+    fetchPosts(100);
+  }, []);
+
+  useEffect(() => {
+    if (links.length > 0) {
+      const headings = links.filter(item => item.parent === 0);
+      const grouped = headings.map(heading => ({
+        heading,
+        items: links.filter(item => item.parent === heading.id)
+      }));
+      setGroupedListings(grouped);
+    }
+  }, [links]);
+
   const socialIcons = [
     { icon: FaFacebookF, link: "" },
     { icon: FaLinkedin, link: "" },
@@ -18,53 +53,6 @@ const Footer = () => {
     { icon: RiInstagramFill, link: "" },
     { icon: FaYoutube, link: "" },
   ];
-
-  const ListData = [
-    {
-      heading: "About Us",
-      list: [
-        { title: "Mission", link: "#" },
-        { title: "Our Team", link: "#" },
-        { title: "Awards", link: "#" },
-        { title: "Testimonials", link: "#" },
-        { title: "Privacy Policy", link: "#" },
-        { title: "Medical Grid", link: "#" },
-      ]
-    },
-    {
-      heading: "Services",
-      list: [
-        { title: "Web Design", link: "#" },
-        { title: "Web Development", link: "#" },
-        { title: "App Development ", link: "#" },
-        { title: "UI/UX Development", link: "#" },
-        { title: "Career with Us", link: "#" },
-        { title: "We are Hiring", link: "#" },
-      ]
-    },
-    {
-      heading: "Services",
-      list: [
-        { title: "Web Design", link: "#" },
-        { title: "Web Development", link: "#" },
-        { title: "App Development ", link: "#" },
-        { title: "UI/UX Development", link: "#" },
-        { title: "Career with Us", link: "#" },
-        { title: "We are Hiring", link: "#" },
-      ]
-    },
-    {
-      heading: "Services",
-      list: [
-        { title: "Web Design", link: "#" },
-        { title: "Web Development", link: "#" },
-        { title: "App Development ", link: "#" },
-        { title: "UI/UX Development", link: "#" },
-        { title: "Career with Us", link: "#" },
-        { title: "We are Hiring", link: "#" },
-      ]
-    },
-  ]
 
   return (
     <div className='footer pt-2'>
@@ -129,15 +117,15 @@ const Footer = () => {
               {/* Links */}
               <Col className='ms-auto' lg={8}>
                 <div className='d-flex flex-sm-row flex-column justify-content-lg-between justify-content-between flex-wrap'>
-                  {ListData.map((item, index) => (
+                  {groupedListings.map((group, index) => (
                     <div key={index} className='mb-sm-0 mb-3'>
                       <Typography className="mb-3" as="h3" color="#23262F" size="14px" weight="800" lineHeight="24px">
-                        {item.heading}
+                        {group.heading.name}
                       </Typography>
                       <ul className='list-unstyled footer-list'>
-                        {item.list.map((listItem, listIndex) => (
-                          <li key={listIndex}>
-                            <Link className='transition-2' to={listItem.link}>{listItem.title}</Link>
+                        {group.items.map((item, itemIndex) => (
+                          <li key={itemIndex}>
+                            <Link className='transition-2' to={item.link}>{item.name}</Link>
                           </li>
                         ))}
                       </ul>

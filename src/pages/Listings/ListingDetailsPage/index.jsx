@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Row, Col, OverlayTrigger, Popover } from 'react-bootstrap';
 import { LuChevronDown, LuChevronUp } from 'react-icons/lu';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { FaFacebookF, FaLinkedin, FaPinterest, FaReddit, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { FaFacebookF, FaLinkedin, FaPinterest, FaTwitter, FaYoutube } from 'react-icons/fa';
 import { RiInstagramFill } from 'react-icons/ri';
 import { MdShield } from 'react-icons/md';
 import { toast } from 'react-toastify';
@@ -44,6 +44,7 @@ const ListingDetailsPage = () => {
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
   const [specialties, setSpecialties] = useState([]);
+  const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -72,6 +73,13 @@ const ListingDetailsPage = () => {
         }
 
         setJsonData(listingData);
+
+        // Fetch gallery images
+        const galleryMeta = listingData.cubewp_post_meta?.['cwp_field_310681993623']?.meta_value;
+        if (galleryMeta && Array.isArray(galleryMeta)) {
+          const galleryResponse = await axios.get(`https://jsappone.demowp.io/wp-json/wp/v2/media?include=${galleryMeta.join(',')}`);
+          setGalleryImages(galleryResponse.data.map(media => media.source_url));
+        }
       } catch (error) {
         console.error('Error fetching listing data:', error);
       }
@@ -101,13 +109,10 @@ const ListingDetailsPage = () => {
 
   const description = jsonData.cubewp_post_meta?.['cwp_field_288766456392']?.meta_value || 'Description not available';
   const truncatedText = truncateText(description, 500);
+  const qualificationsDataString = jsonData.cubewp_post_meta?.['cwp_field_930729608352']?.meta_value;
+  const qualificationsData = qualificationsDataString ? qualificationsDataString.split(',').map(item => item.trim()) : [];
+  const doctorPackageName = jsonData.cubewp_post_meta?.['cwp_field_631649982329']?.meta_value + " " + "Doctor";
 
-  const qualificationsData = [
-    { degree: "M.B.B.S" },
-    { degree: "M.C.P.S" },
-    { degree: "D-Derm" },
-    { degree: "F.C.P.S" },
-  ];
 
   const listingDetailSocial = [
     { icon: <FaFacebookF size={18} color='#23262F' />, link: jsonData.cubewp_post_meta?.['fc-facebook']?.meta_value || "#" },
@@ -174,6 +179,8 @@ const ListingDetailsPage = () => {
     </StyledPopover>
   );
 
+  console.log("galleryImages", galleryImages)
+
   return (
     <AppLayout>
       <Container className='min-vh-100 pt-4 pb-5'>
@@ -182,15 +189,15 @@ const ListingDetailsPage = () => {
           <Col lg={9}>
             {/* Profile Media */}
             <Row className='profile-gallery px-2'>
-              <Col className='px-md-1' md={4} sm={6}>
-                <img className='img-fluid first-img blog-shadow profile-media-img-1' src={IMAGES.DETAILS_IMAGE_2} alt="" />
-              </Col>
-              <Col className='px-md-1 mt-sm-0 mt-4' md={4} sm={6}>
-                <img className='img-fluid last-img blog-shadow profile-media-img-2' src={IMAGES.DETAILS_IMAGE_2} alt="" />
-              </Col>
-              <Col className='px-md-1 mt-md-0 mt-4' md={4} sm={6}>
-                <img className='img-fluid profile-media-img-3 blog-shadow' src={IMAGES.DETAILS_IMAGE_1} alt="" />
-              </Col>
+              {galleryImages.map((imgSrc, index) => (
+                <Col key={index} className='px-md-1 mt-md-0 mt-4 mb-4' md={4} sm={6}>
+                  <img
+                    className={`img-fluid blog-shadow h-100 profile-media-img profile-media-img-${(index % 3) + 1}`}
+                    src={imgSrc}
+                    alt='Gallery'
+                  />
+                </Col>
+              ))}
             </Row>
 
             {jsonData && (
@@ -199,7 +206,7 @@ const ListingDetailsPage = () => {
                 <Box
                   width="100%"
                   padding="16px 23px"
-                  className="rounded-2 custom-border mt-4 d-flex align-items-center flex-md-row flex-column gap-4 position-relative ">
+                  className="rounded-2 custom-border d-flex align-items-center flex-md-row flex-column gap-4 position-relative ">
 
                   <Box className="rounded-5 position-relative">
                     <img width={132} height={132} className='rounded-circle' src={jsonData.mediaUrl} alt="" />
@@ -211,9 +218,9 @@ const ListingDetailsPage = () => {
                     <div style={{ bottom: '6px', right: '2px' }} className='position-absolute'>
                       <div className='position-relative'>
                         <img width={130} height={22} src={IMAGES.PROFILE_BADGE} alt="" />
-                        <span style={{ left: '20px', top: '-1px' }} className='position-absolute'>
-                          <Typography as="span" size="12px" weight="700" color="#fff">
-                            Platinum Doctor
+                        <span style={{ top: '-1px', left: '50%', transform: 'translateX(-50%)' }} className='position-absolute'>
+                          <Typography className="text-nowrap" as="span" size="12px" weight="700" color="#fff">
+                            {doctorPackageName}
                           </Typography>
                         </span>
                       </div>
@@ -239,14 +246,15 @@ const ListingDetailsPage = () => {
                       </div>
                       <div className='mt-2'>
                         <Typography className="mb-0" as="h4" size="14px" weight="600" color="#14A077" lineHeight="21px">
-                          Dermatologist, Cosmetologist
+                          {jsonData.cubewp_post_meta?.['cwp_field_136461069401']?.meta_value}
                         </Typography>
                       </div>
 
                       <div className='mt-2 d-flex gap-2 flex-wrap justify-content-center'>
-                        {qualificationsData.map((item) => (
+                        {qualificationsData.map((item, index) => (
                           <GenericBadge
-                            text={item.degree}
+                            key={index}
+                            text={item}
                             borderRadius="6px"
                             background="#EBEBEB"
                             borderColor="#EBEBEB"
