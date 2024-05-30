@@ -85,7 +85,7 @@ const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
 
                         <div className="blogs-grid pb-4 mt-2 pt-2">
                             {posts.slice(0, postNumber).map((post) => (
-                                <Card onClick={() => handleNavigate(post.id)} className="custom-shadow border-0 cursor-pointer" key={post.id}>
+                                <Card onClick={() => handleNavigate(post.id)} className="custom-shadow border-0 cursor-pointer blog-card" key={post.id}>
                                     <Card.Img className="" variant="top" src={post.blogImg} />
                                     <Box className="d-flex flex-column justify-content-between w-100 h-100" padding="30px 35px">
                                         <div>
