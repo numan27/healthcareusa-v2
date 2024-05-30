@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from "../../assets/images"
@@ -11,8 +11,9 @@ import SignUpModal from '../../pages/Auth/SignUp';
 import LanguageSelect from '../Shared/LanguageSelect';
 import LoginIcon from '../../assets/SVGs/Login';
 import { PATH } from '../../config';
+// import axios from "../../assets/axios"
+import { LoaderCenter } from "../../assets/Loader";
 import axios from 'axios';
-// import axios from 'axios';
 
 const Header = () => {
   const location = useLocation();
@@ -20,6 +21,7 @@ const Header = () => {
   const [signInModalShow, setSignInModalShow] = useState(false);
   const [signUpModalShow, setSignUpModalShow] = useState(false);
   const [menus, setMenus] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async (perPage) => {
@@ -33,6 +35,8 @@ const Header = () => {
         setMenus(data);
       } catch (error) {
         console.error('Error fetching posts:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -80,85 +84,90 @@ const Header = () => {
           </Box>
         </Container>
       </Box>
+      <Suspense fallback={<LoaderCenter />}>
+        {loading ? (
+          <LoaderCenter />
+        ) : (
+          <Navbar className='bg-white nav-bar px-xl-3 py-lg-3 py-1 custom-shadow' expand="xl">
+            <Container className="py-md-4 py-sm-3 py-2" fluid>
+              <Link to={PATH.HOME}><img className='logo' width="250" src={IMAGES.LOGO} alt="logo" /></Link>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="ms-auto">
+                  {staticMenuNames.map((menuName, index) => {
+                    const menuItem = menus.find(menu => menu.name === menuName);
+                    const isActive = location.pathname === '/' && menuName === 'Home' || (menuItem && menuItem.slug && location.pathname === `/${menuItem.slug}`);
+                    return menuItem && (
+                      <Link key={index} to={menuItem.name === "Home" ? '/' : `/${menuItem.slug}`} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
+                        {menuItem.name}
+                      </Link>
+                    );
+                  })}
+                  <div className='d-flex align-items-center ms-xl-4 mb-xl-0 mb-sm-3 mb-1'>
+                    <LanguageSelect />
+                  </div>
+                </Nav>
+                <Nav className="ms-xl-4">
+                  <div className='d-flex align-items-center justify-content-xl-end flex-wrap gap-2'>
+                    <GenericButton
+                      onClick={openSignInModal}
+                      background="#EFEFEF"
+                      borderColor="#EFEFEF"
+                      color="#06312E"
+                      hoverColor="#06312E"
+                      hoverBgColor="#dbdbdb"
+                      className="me-1">
+                      <LoginIcon /> Sign In
+                    </GenericButton>
 
-      <Navbar className='bg-white nav-bar px-xl-3 py-lg-3 py-1 custom-shadow' expand="xl">
-        <Container className="py-md-4 py-sm-3 py-2" fluid>
-          <Link to={PATH.HOME}><img className='logo' width="250" src={IMAGES.LOGO} alt="logo" /></Link>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              {staticMenuNames.map((menuName, index) => {
-                const menuItem = menus.find(menu => menu.name === menuName);
-                const isActive = location.pathname === '/' && menuName === 'Home' || (menuItem && menuItem.slug && location.pathname === `/${menuItem.slug}`);
-                return menuItem && (
-                  <Link key={index} to={menuItem.name === "Home" ? '/' : `/${menuItem.slug}`} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
-                    {menuItem.name}
-                  </Link>
-                );
-              })}
-              <div className='d-flex align-items-center ms-xl-4 mb-xl-0 mb-sm-3 mb-1'>
-                <LanguageSelect />
-              </div>
-            </Nav>
-            <Nav className="ms-xl-4">
-              <div className='d-flex align-items-center justify-content-xl-end flex-wrap gap-2'>
-                <GenericButton
-                  onClick={openSignInModal}
-                  background="#EFEFEF"
-                  borderColor="#EFEFEF"
-                  color="#06312E"
-                  hoverColor="#06312E"
-                  hoverBgColor="#dbdbdb"
-                  className="me-1">
-                  <LoginIcon /> Sign In
-                </GenericButton>
+                    <GenericButton className="my-sm-0 my-2">
+                      <HiOutlinePlusCircle className='' size={20} /> Add Listing
+                    </GenericButton>
+                  </div>
+                </Nav>
+              </Navbar.Collapse>
+            </Container>
 
-                <GenericButton className="my-sm-0 my-2">
-                  <HiOutlinePlusCircle className='' size={20} /> Add Listing
-                </GenericButton>
-              </div>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
+            {signInModalShow && (
+              <SignInModal
+                show={signInModalShow}
+                onHide={CloseModal}
+                moveToForgetPassword={() => {
+                  setSignInModalShow(false);
+                  setForgetPassModalShow(true);
+                }}
+                moveToFSignUp={() => {
+                  setSignInModalShow(false);
+                  setSignUpModalShow(true);
+                }}
+              />
+            )}
 
-        {signInModalShow && (
-          <SignInModal
-            show={signInModalShow}
-            onHide={CloseModal}
-            moveToForgetPassword={() => {
-              setSignInModalShow(false);
-              setForgetPassModalShow(true);
-            }}
-            moveToFSignUp={() => {
-              setSignInModalShow(false);
-              setSignUpModalShow(true);
-            }}
-          />
+            {forgetPassModalShow && (
+              <ForgotPassword
+                show={forgetPassModalShow}
+                onHide={CloseModal}
+                title=""
+                moveToSignIn={() => {
+                  setForgetPassModalShow(false);
+                  setSignInModalShow(true);
+                }}
+              />
+            )}
+            {signUpModalShow && (
+              <SignUpModal
+                show={signUpModalShow}
+                onHide={CloseModal}
+                title=""
+                moveToSignIn={() => {
+                  setSignUpModalShow(false);
+                  setSignInModalShow(true);
+                }}
+              />
+            )}
+          </Navbar>
         )}
-
-        {forgetPassModalShow && (
-          <ForgotPassword
-            show={forgetPassModalShow}
-            onHide={CloseModal}
-            title=""
-            moveToSignIn={() => {
-              setForgetPassModalShow(false);
-              setSignInModalShow(true);
-            }}
-          />
-        )}
-        {signUpModalShow && (
-          <SignUpModal
-            show={signUpModalShow}
-            onHide={CloseModal}
-            title=""
-            moveToSignIn={() => {
-              setSignUpModalShow(false);
-              setSignInModalShow(true);
-            }}
-          />
-        )}
-      </Navbar>
+      </Suspense>
     </>
   );
 }

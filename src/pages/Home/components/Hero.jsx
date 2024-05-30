@@ -1,20 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { FiChevronRight } from 'react-icons/fi';
 import { IoSearch } from 'react-icons/io5';
 import { Box, GenericButton, GenericSelect, Typography } from '../../../components/GenericComponents';
 import ExploreMoreModal from './ExploreMoreModal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PATH } from '../../../config';
 import { GrLocation } from 'react-icons/gr';
 import SquareMenu from '../../../assets/SVGs/SquareMenu';
 import axios from 'axios';
+// import axios from "../../../assets/axios"
 import IMAGES from '../../../assets/images';
+import { LoaderCenter } from "../../../assets/Loader";
 
 const Hero = () => {
   const [exploreModalState, setExploreModalState] = useState(false);
   const [listings, setListings] = useState([]);
   const [groupedListings, setGroupedListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const OpenModal = () => {
     setExploreModalState(true);
@@ -36,6 +41,8 @@ const Hero = () => {
         setListings(data);
       } catch (error) {
         console.error('Error fetching posts:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -64,12 +71,16 @@ const Hero = () => {
   console.warn("listings data", listings);
   console.warn("grouped listings data", groupedListings);
 
+  const handleNavigateListingDetail = () => {
+    navigate("/listings")
+  }
+
   return (
     <div className='position-relative'>
       <div className='hero'>
         <Box className="hero-content d-flex flex-column align-items-center h-100 w-100 py-5 px-lg-0 px-3">
           <div className='py-sm-5 mt-md-5'>
-            <div className='mx-auto pt-sm-4'>
+            <div className='mx-auto'>
               <div>
                 <Typography lineHeight="55px" align="center" className="mt-3 mb-0" as="h1" weight="800" color="#fff" size="40px">
                   Your One Stop Resource Directory of Healthcare
@@ -80,7 +91,7 @@ const Hero = () => {
               </div>
 
               {/* Search bar */}
-              <Box width="100" padding="18px" className="bg-white rounded-3 mt-3">
+              <Box width="100" padding="18px" className="bg-white rounded-3 mt-3 pb-3">
                 <Form className='h-100 d-flex flex-md-row flex-column align-items-center justify-content-between'>
                   <InputGroup className="search-bar border-search-md">
                     <InputGroup.Text className='bg-white border-0 p-2' id="basic-addon1">
@@ -121,7 +132,7 @@ const Hero = () => {
                     />
                   </div>
                   <div className='ms-1'>
-                    <GenericButton width="138px" height="48px" className="d-flex align-items-center justify-content-center gap-2">
+                    <GenericButton onClick={handleNavigateListingDetail} width="138px" height="48px" className="d-flex align-items-center justify-content-center gap-2">
                       <IoSearch className='' size={20} /> Search
                     </GenericButton>
                   </div>
@@ -142,39 +153,45 @@ const Hero = () => {
         </Box>
       </div>
 
-      <div id="service-section" className='service-section container-xl mt-xl-0 mt-lg-5 mt-0 container-fluid pt-5'>
+
+      <div id="service-section" className='service-section container-xl mt-xxl-0 mt-xl-5 mt-0 container-fluid pt-5'>
         <Box width="100" className="custom-shadow-services mobile-padding bg-white position-relative mt-5" padding="30px 25px" radius="24px">
-          <div className='service-grid w-100'>
-            {groupedListings.map((group, groupIndex) => (
-              <Box key={groupIndex} width="100" className="service-box transition-2 rounded-3" border="1px solid #99B8B6" padding="25px 20px 25px 25px">
-                <div className='d-flex align-items-center gap-2'>
-                  <img width={30} src={IMAGES.PRODUCTS_SERVICES_ICON} alt="icon" />
-                  <Typography className="mb-0" align="center" as="h3" weight="700" size="18px" color="#333333">
-                    {group.heading.name}
-                  </Typography>
-                </div>
+          <Suspense fallback={<LoaderCenter />}>
+            {loading ? (
+              <LoaderCenter />
+            ) : (
+              <div className='service-grid w-100'>
+                {groupedListings.map((group, groupIndex) => (
+                  <Box key={groupIndex} width="100" className="service-box transition-2 rounded-3" border="1px solid #99B8B6" padding="25px 20px 25px 25px">
+                    <div className='d-flex align-items-center gap-2'>
+                      <img width={30} src={IMAGES.PRODUCTS_SERVICES_ICON} alt="icon" />
+                      <Typography className="mb-0" align="center" as="h3" weight="700" size="18px" color="#333333">
+                        {group.heading.name}
+                      </Typography>
+                    </div>
 
-                <div className="columns-container">
-                  {renderItemsInColumns(group.items).map((column, columnIndex) => (
-                    <ul className='list-unstyled' key={columnIndex}>
-                      {column.map((item, itemIndex) => (
-                        <li className='mb-2' key={itemIndex}>
-                          <Link className='text-decoration-none service-item transition-2' to={PATH.LISTINGS}>
-                            {item.name}
-                          </Link>
-                        </li>
+                    <div className="columns-container">
+                      {renderItemsInColumns(group.items).map((column, columnIndex) => (
+                        <ul className='list-unstyled' key={columnIndex}>
+                          {column.map((item, itemIndex) => (
+                            <li className='mb-2' key={itemIndex}>
+                              <Link className='text-decoration-none service-item transition-2' to={PATH.LISTINGS}>
+                                {item.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
                       ))}
-                    </ul>
-                  ))}
-                </div>
+                    </div>
 
-                <Link background="transparent" border="0" color="#50D1C9" onClick={OpenModal} className='service-link'>
-                  Explore More <FiChevronRight className='transition-2' size={18} color='#6BE2C4' />
-                </Link>
-              </Box>
-            ))}
-          </div>
-
+                    <Link background="transparent" border="0" color="#50D1C9" onClick={OpenModal} className='service-link'>
+                      Explore More <FiChevronRight className='transition-2' size={18} color='#6BE2C4' />
+                    </Link>
+                  </Box>
+                ))}
+              </div>
+            )}
+          </Suspense>
           <Box
             style={{ top: '-35px' }}
             className='bg-white mx-auto px-3 position-absolute start-0 end-0' radius='16px 16px 0px 0px' height="40px">
@@ -191,6 +208,7 @@ const Hero = () => {
           </Box>
         </Box>
       </div>
+
 
       {exploreModalState && (
         <ExploreMoreModal

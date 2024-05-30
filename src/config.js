@@ -9,6 +9,7 @@ const PATH = {
   HOME: "/",
   ABOUT: "/about",
   BLOGS: "/blogs",
+  DETAIL_BLOG: "/blogs/:id",
   CONTACT: "/contact",
   RESOURCES: "/resources",
   LISTINGS: "/listings",

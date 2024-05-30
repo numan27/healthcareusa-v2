@@ -4,6 +4,7 @@ const NOPAGE = React.lazy(() => import("./NoPageFound"));
 const HOME = React.lazy(() => import("./Home"));
 const ABOUT = React.lazy(() => import("./About"));
 const BLOGS = React.lazy(() => import("./Blogs"));
+const DETAIL_BLOG = React.lazy(() => import("./Blogs/DetailedBlog"));
 const RESOURCES = React.lazy(() => import("./Resources"));
 const CONTACT = React.lazy(() => import("./Contact"));
 const LISTINGS = React.lazy(() => import("./Listings"));
@@ -16,6 +17,7 @@ const WEB_PAGES = {
   HOME,
   ABOUT,
   BLOGS,
+  DETAIL_BLOG,
   RESOURCES,
   CONTACT,
   LISTINGS,

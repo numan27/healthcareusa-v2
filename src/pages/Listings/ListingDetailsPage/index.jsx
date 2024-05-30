@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Container, Row, Col, OverlayTrigger, Popover } from 'react-bootstrap';
 import { LuChevronDown, LuChevronUp } from 'react-icons/lu';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -18,7 +18,9 @@ import ContactForm from './components/ContactForm';
 import Schedule from './components/Schedule';
 import ClaimListing from './components/ClaimListing';
 import axios from 'axios';
+// import axios from "../../../assets/axios"
 import styled from 'styled-components';
+import { LoaderCenter } from '../../../assets/Loader';
 
 const StyledPopover = styled(Popover)`
   max-width: 200px;
@@ -45,6 +47,7 @@ const ListingDetailsPage = () => {
   const [copyIconVisible, setCopyIconVisible] = useState(false);
   const [specialties, setSpecialties] = useState([]);
   const [galleryImages, setGalleryImages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -54,6 +57,8 @@ const ListingDetailsPage = () => {
         setSpecialties(response.data);
       } catch (error) {
         console.error('Error fetching posts:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -82,6 +87,8 @@ const ListingDetailsPage = () => {
         }
       } catch (error) {
         console.error('Error fetching listing data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -190,13 +197,19 @@ const ListingDetailsPage = () => {
             {/* Profile Media */}
             <Row className='profile-gallery px-2'>
               {galleryImages.map((imgSrc, index) => (
-                <Col key={index} className='px-md-1 mt-md-0 mt-4 mb-4' md={4} sm={6}>
-                  <img
-                    className={`img-fluid blog-shadow h-100 profile-media-img profile-media-img-${(index % 3) + 1}`}
-                    src={imgSrc}
-                    alt='Gallery'
-                  />
-                </Col>
+                <Suspense fallback={<LoaderCenter />}>
+                  {loading ? (
+                    <LoaderCenter />
+                  ) : (
+                    <Col key={index} className='px-md-1 mt-md-0 mt-4 mb-4' md={4} sm={6}>
+                      <img
+                        className={`img-fluid blog-shadow h-100 profile-media-img profile-media-img-${(index % 3) + 1}`}
+                        src={imgSrc}
+                        alt='Gallery'
+                      />
+                    </Col>
+                  )}
+                </Suspense>
               ))}
             </Row>
 
@@ -207,26 +220,31 @@ const ListingDetailsPage = () => {
                   width="100%"
                   padding="16px 23px"
                   className="rounded-2 custom-border d-flex align-items-center flex-md-row flex-column gap-4 position-relative ">
+                  <Suspense fallback={<LoaderCenter />}>
+                    {loading ? (
+                      <LoaderCenter />
+                    ) : (
+                      <Box className="rounded-5 position-relative">
 
-                  <Box className="rounded-5 position-relative">
-                    <img width={132} height={132} className='rounded-circle' src={jsonData.mediaUrl} alt="" />
+                        <img width={132} height={132} className='rounded-circle' src={jsonData.mediaUrl} alt="" />
 
-                    <span style={{ top: '12px', right: '-2px', height: '30px', width: '30px' }} className='rounded-5 p-1 position-absolute border bg-white d-flex align-items-center justify-content-center'>
-                      <MdShield size={18} color='#ef9b00' />
-                    </span>
-
-                    <div style={{ bottom: '6px', right: '2px' }} className='position-absolute'>
-                      <div className='position-relative'>
-                        <img width={130} height={22} src={IMAGES.PROFILE_BADGE} alt="" />
-                        <span style={{ top: '-1px', left: '50%', transform: 'translateX(-50%)' }} className='position-absolute'>
-                          <Typography className="text-nowrap" as="span" size="12px" weight="700" color="#fff">
-                            {doctorPackageName}
-                          </Typography>
+                        <span style={{ top: '12px', right: '-2px', height: '30px', width: '30px' }} className='rounded-5 p-1 position-absolute border bg-white d-flex align-items-center justify-content-center'>
+                          <MdShield size={18} color='#ef9b00' />
                         </span>
-                      </div>
-                    </div>
-                  </Box>
 
+                        <div style={{ bottom: '6px', right: '2px' }} className='position-absolute'>
+                          <div className='position-relative'>
+                            <img width={130} height={22} src={IMAGES.PROFILE_BADGE} alt="" />
+                            <span style={{ top: '-1px', left: '50%', transform: 'translateX(-50%)' }} className='position-absolute'>
+                              <Typography className="text-nowrap" as="span" size="12px" weight="700" color="#fff">
+                                {doctorPackageName}
+                              </Typography>
+                            </span>
+                          </div>
+                        </div>
+                      </Box>
+                    )}
+                  </Suspense>
                   <div className='w-100'>
                     <div className='d-flex flex-column align-items-md-start align-items-center'>
                       <Typography as="h3" size="20px" fontFamily="Inter" weight="600" color="#23262F" lineHeight="30px">

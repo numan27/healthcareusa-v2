@@ -8,13 +8,16 @@ import { Typography } from '../GenericComponents';
 import LanguageSelect from '../Shared/LanguageSelect';
 import SendIcon from '../../assets/SVGs/Send';
 import PhoneIcon from '../../assets/SVGs/Phone';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import axios from 'axios';
+import { LoaderCenter } from '../../assets/Loader';
+// import axios from "../../assets/axios"
 
 const Footer = () => {
 
   const [links, setLink] = useState([])
   const [groupedListings, setGroupedListings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async (perPage) => {
@@ -28,6 +31,8 @@ const Footer = () => {
         setLink(data);
       } catch (error) {
         console.error('Error fetching posts:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -115,24 +120,31 @@ const Footer = () => {
               </Col>
 
               {/* Links */}
-              <Col className='ms-auto' lg={8}>
-                <div className='d-flex flex-sm-row flex-column justify-content-lg-between justify-content-between flex-wrap'>
-                  {groupedListings.map((group, index) => (
-                    <div key={index} className='mb-sm-0 mb-3'>
-                      <Typography className="mb-3" as="h3" color="#23262F" size="14px" weight="800" lineHeight="24px">
-                        {group.heading.name}
-                      </Typography>
-                      <ul className='list-unstyled footer-list'>
-                        {group.items.map((item, itemIndex) => (
-                          <li key={itemIndex}>
-                            <Link className='transition-2' to={item.link}>{item.name}</Link>
-                          </li>
-                        ))}
-                      </ul>
+
+              <Suspense fallback={<LoaderCenter />}>
+                {loading ? (
+                  <LoaderCenter />
+                ) : (
+                  <Col className='ms-auto' lg={8}>
+                    <div className='d-flex flex-sm-row flex-column justify-content-lg-between justify-content-between flex-wrap'>
+                      {groupedListings.map((group, index) => (
+                        <div key={index} className='mb-sm-0 mb-3'>
+                          <Typography className="mb-3" as="h3" color="#23262F" size="14px" weight="800" lineHeight="24px">
+                            {group.heading.name}
+                          </Typography>
+                          <ul className='list-unstyled footer-list'>
+                            {group.items.map((item, itemIndex) => (
+                              <li key={itemIndex}>
+                                <Link className='transition-2' to={item.link}>{item.name}</Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </Col>
+                  </Col>
+                )}
+              </Suspense>
             </Row>
 
             <Row className='my-3 d-flex flex-lg-row flex-column-reverse justify-content-between'>

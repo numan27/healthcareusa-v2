@@ -25,6 +25,10 @@ function RouterConfig() {
         element={<PublicRoute element={<WEB_PAGES.BLOGS />} />}
       />
       <Route
+        path={PATH.DETAIL_BLOG}
+        element={<PublicRoute element={<WEB_PAGES.DETAIL_BLOG />} />}
+      />
+      <Route
         path={PATH.RESOURCES}
         element={<PublicRoute element={<WEB_PAGES.RESOURCES />} />}
       />
