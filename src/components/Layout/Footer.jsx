@@ -11,44 +11,49 @@ import PhoneIcon from '../../assets/SVGs/Phone';
 import { Suspense, useEffect, useState } from 'react';
 import axios from 'axios';
 import { LoaderCenter } from '../../assets/Loader';
-// import axios from "../../assets/axios"
 
 const Footer = () => {
-
-  const [links, setLink] = useState([])
+  const [links, setLinks] = useState([]);
   const [groupedListings, setGroupedListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPosts = async (perPage) => {
-      let url = `https://jsappone.demowp.io/wp-json/wp/v2/footer-links?per_page=${perPage}`;
+    const fetchMenu = async () => {
       try {
-        const response = await axios.get(url);
-        const data = response.data.map(item => ({
-          ...item,
-          name: item.name.replace(/&amp;/g, '&')
-        }));
-        setLink(data);
+        const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/widgets/', {
+          auth: {
+            username: 'numan27',
+            password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
+          }
+        });
+
+        const widgets = response.data;
+        const extractedLinks = widgets.map(widget => {
+          if (widget.rendered) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(widget.rendered, 'text/html');
+            const heading = doc.querySelector('.widget-title')?.textContent || widget.id;
+            const links = Array.from(doc.querySelectorAll('a')).map(link => ({
+              name: link.textContent,
+              link: link.href
+            }));
+            return { heading, items: links };
+          }
+          return null;
+        }).filter(Boolean);
+        setGroupedListings(extractedLinks);
+
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        console.error('Error fetching menu:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts(100);
+    fetchMenu();
   }, []);
 
-  useEffect(() => {
-    if (links.length > 0) {
-      const headings = links.filter(item => item.parent === 0);
-      const grouped = headings.map(heading => ({
-        heading,
-        items: links.filter(item => item.parent === heading.id)
-      }));
-      setGroupedListings(grouped);
-    }
-  }, [links]);
+  console.log("groupedListings", groupedListings);
 
   const socialIcons = [
     { icon: FaFacebookF, link: "" },
@@ -84,7 +89,6 @@ const Footer = () => {
             </Row>
 
             <Row className='mt-4 py-3 border-bottom'>
-              {/* Form */}
               <Col className='ps-0' lg={3}>
                 <div className='d-flex align-items-center gap-3 mb-3'>
                   <PhoneIcon />
@@ -119,8 +123,6 @@ const Footer = () => {
                 </Form>
               </Col>
 
-              {/* Links */}
-
               <Suspense fallback={<LoaderCenter />}>
                 {loading ? (
                   <LoaderCenter />
@@ -130,7 +132,7 @@ const Footer = () => {
                       {groupedListings.map((group, index) => (
                         <div key={index} className='mb-sm-0 mb-3'>
                           <Typography className="mb-3" as="h3" color="#23262F" size="14px" weight="800" lineHeight="24px">
-                            {group.heading.name}
+                            {group.heading}
                           </Typography>
                           <ul className='list-unstyled footer-list'>
                             {group.items.map((item, itemIndex) => (

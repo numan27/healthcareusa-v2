@@ -14,8 +14,6 @@ const DetailedBlog = () => {
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [posts, setPosts] = useState([]);
-    const [prevPostId, setPrevPostId] = useState(null);
-    const [nextPostId, setNextPostId] = useState(null);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -52,12 +50,6 @@ const DetailedBlog = () => {
                 const currentPostIndex = allPosts.findIndex(post => post.id === parseInt(id));
                 if (currentPostIndex !== -1) {
                     setPost(allPosts[currentPostIndex]);
-                    if (currentPostIndex > 0) {
-                        setPrevPostId(allPosts[currentPostIndex - 1].id);
-                    }
-                    if (currentPostIndex < allPosts.length - 1) {
-                        setNextPostId(allPosts[currentPostIndex + 1].id);
-                    }
                 }
             } catch (error) {
                 console.error('Error fetching posts:', error);
@@ -68,6 +60,10 @@ const DetailedBlog = () => {
 
         fetchPosts();
     }, [id]);
+
+    const currentPostIndex = posts.findIndex(post => post.id === parseInt(id));
+    const prevPostId = currentPostIndex === 0 ? posts[posts.length - 1]?.id : posts[currentPostIndex - 1]?.id;
+    const nextPostId = currentPostIndex === posts.length - 1 ? posts[0]?.id : posts[currentPostIndex + 1]?.id;
 
     return (
         <AppLayout>
@@ -99,8 +95,10 @@ const DetailedBlog = () => {
                                     </Card>
                                     <div className="d-flex justify-content-between mt-4">
                                         {prevPostId && <Link to={`/blogs/${prevPostId}`} className="btn primaryButton d-flex align-items-center gap-2">
-                                            <FaArrowLeft size="18" />Previous Post</Link>}
-                                        {nextPostId && <Link to={`/blogs/${nextPostId}`} className="btn primaryButton d-flex align-items-center gap-2">Next Post <FaArrowRight size="18" />
+                                            <FaArrowLeft size="18" /> Previous Post
+                                        </Link>}
+                                        {nextPostId && <Link to={`/blogs/${nextPostId}`} className="btn primaryButton d-flex align-items-center gap-2">
+                                            Next Post <FaArrowRight size="18" />
                                         </Link>}
                                     </div>
                                 </div>

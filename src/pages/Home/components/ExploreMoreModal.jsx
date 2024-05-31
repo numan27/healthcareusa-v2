@@ -1,64 +1,34 @@
-import React from 'react'
-import PropTypes from "prop-types"
+import React from 'react';
+import PropTypes from "prop-types";
 import { Col, Row } from 'react-bootstrap';
 import GenericModal from '../../../components/GenericComponents/Modal';
 import { Box } from '../../../components/GenericComponents';
-import AdsSection from "../../../components/Shared/AdsSection"
+import AdsSection from "../../../components/Shared/AdsSection";
+import { Link } from 'react-router-dom';
 
-const ExploreMoreModal = ({ show, onHide, title }) => {
+const ExploreMoreModal = ({ show, onHide, exploreModalItems }) => {
 
-    const boxLinkData = [
-        { title: "Doctors", link: "#/" },
-        { title: "Urgent Care", link: "#/" },
-        { title: "Audiologists", link: "#/" },
-        { title: "Cardiology", link: "#/" },
-        { title: "Cardiology", link: "#/" },
-        { title: "Orthopedic Surgeons", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Doctors", link: "#/" },
-        { title: "Urgent Care", link: "#/" },
-        { title: "Audiologists", link: "#/" },
-        { title: "Cardiology", link: "#/" },
-        { title: "Cardiology", link: "#/" },
-        { title: "Orthopedic Surgeons", link: "#/" },
-        { title: "Doctors", link: "#/" },
-        { title: "Urgent Care", link: "#/" },
-        { title: "Audiologists", link: "#/" },
-        { title: "Cardiology", link: "#/" },
-        { title: "Cardiology", link: "#/" },
-        { title: "Orthopedic Surgeons", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Neurology", link: "#/" },
-        { title: "Doctors", link: "#/" },
-        { title: "Urgent Care", link: "#/" },
-    ]
+    const { heading, items } = exploreModalItems;
+
+    console.log("exploreModalItems", exploreModalItems)
 
     return (
-        <GenericModal show={show} onHide={onHide} size="lg" title={title}>
-            <Box padding="25px 50px" className="w-100 box-link-grid">
-                {boxLinkData.map((items) => (
-                    <a className='modal-link transition-2 w-100 ' href={items.link}>
+        <GenericModal show={show} onHide={onHide} size="lg" title={heading.name}>
+            <Box padding="25px 40px" className="w-100 box-link-grid">
+                {items.map((item, index) => (
+                    <Link key={index} className='modal-link transition-2 w-100 text-center' to="/listings">
                         <Box
                             background="#F3F3F3"
-                            // width="203px"
-                            height="40px"
-                            padding="8px 16px"
+                            height="48px"
+                            padding="8px 10px"
                             radius="4px"
                             className="d-flex align-items-center justify-content-center link-box w-100"
                         >
-                            {items.title}
+                            {item.name}
                         </Box>
-                    </a>
+                    </Link>
                 ))}
+
             </Box>
 
             <Row className='mb-4'>
@@ -66,14 +36,16 @@ const ExploreMoreModal = ({ show, onHide, title }) => {
                     <AdsSection margin={0} padding={3} />
                 </Col>
             </Row>
-
         </GenericModal>
-    )
-}
+    );
+};
 
 ExploreMoreModal.propTypes = {
     show: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
+    exploreModalItems: PropTypes.array.isRequired,
 };
+
 export default ExploreMoreModal;
+

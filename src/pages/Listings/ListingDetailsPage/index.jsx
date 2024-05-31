@@ -45,25 +45,8 @@ const ListingDetailsPage = () => {
   const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
-  const [specialties, setSpecialties] = useState([]);
   const [galleryImages, setGalleryImages] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      let url = 'https://jsappone.demowp.io/wp-json/wp/v2/specialties?per_page=19';
-      try {
-        const response = await axios.get(url);
-        setSpecialties(response.data);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
 
   useEffect(() => {
     const fetchListingData = async () => {
@@ -119,7 +102,9 @@ const ListingDetailsPage = () => {
   const qualificationsDataString = jsonData.cubewp_post_meta?.['cwp_field_930729608352']?.meta_value;
   const qualificationsData = qualificationsDataString ? qualificationsDataString.split(',').map(item => item.trim()) : [];
   const doctorPackageName = jsonData.cubewp_post_meta?.['cwp_field_631649982329']?.meta_value + " " + "Doctor";
+  const doctorSpecialties = jsonData.taxonomies;
 
+  console.log('doctorSpecialties', doctorSpecialties);
 
   const listingDetailSocial = [
     { icon: <FaFacebookF size={18} color='#23262F' />, link: jsonData.cubewp_post_meta?.['fc-facebook']?.meta_value || "#" },
@@ -186,7 +171,7 @@ const ListingDetailsPage = () => {
     </StyledPopover>
   );
 
-  console.log("galleryImages", galleryImages)
+  console.log("jsonData", jsonData)
 
   return (
     <AppLayout>
@@ -323,9 +308,10 @@ const ListingDetailsPage = () => {
                   </Typography>
 
                   <div className='mt-4 d-flex gap-2 flex-wrap'>
-                    {specialties.map((item) => (
+                    {jsonData.taxonomies?.map((name, index) => (
                       <GenericBadge
-                        text={item.name}
+                        key={index}
+                        text={name}
                         borderRadius="51px"
                         background="#EBEBEB"
                         borderColor="transparent"

@@ -1,8 +1,7 @@
-
 import { Suspense, useEffect, useState } from 'react';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
-import IMAGES from "../../assets/images"
+import IMAGES from "../../assets/images";
 import { Box, GenericButton, Typography } from '../GenericComponents';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import SignInModal from '../../pages/Auth/SignIn';
@@ -11,7 +10,6 @@ import SignUpModal from '../../pages/Auth/SignUp';
 import LanguageSelect from '../Shared/LanguageSelect';
 import LoginIcon from '../../assets/SVGs/Login';
 import { PATH } from '../../config';
-// import axios from "../../assets/axios"
 import { LoaderCenter } from "../../assets/Loader";
 import axios from 'axios';
 
@@ -24,28 +22,24 @@ const Header = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPosts = async (perPage) => {
-      let url = `https://jsappone.demowp.io/wp-json/wp/v2/nav-menu?per_page=${perPage}`;
+    const fetchMenuItems = async () => {
       try {
-        const response = await axios.get(url);
-        const data = response.data.map(item => ({
-          ...item,
-          name: item.name.replace(/&amp;/g, '&')
-        }));
-        setMenus(data);
+        const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144', {
+          auth: {
+            username: 'numankhalil27@gmail.com',
+            password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
+          }
+        });
+        setMenus(response.data);
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        console.error('Error fetching menu items:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts(10);
+    fetchMenuItems();
   }, []);
-
-  const staticMenuNames = ["Home", "About Us", "Blog", "Resources", "Contact Us"];
-
-  console.log("menus", menus)
 
   const CloseModal = () => {
     setSignInModalShow(false);
@@ -58,6 +52,8 @@ const Header = () => {
     setSignInModalShow(true);
   };
 
+  const SITE_DOMAIN = 'https://jsappone.demowp.io';
+
   return (
     <>
       <Box
@@ -66,9 +62,7 @@ const Header = () => {
         width="100"
         padding="7px 0px"
       >
-        <Container fluid
-          className='d-flex justify-content-end'
-        >
+        <Container fluid className='d-flex justify-content-end'>
           <Box
             background="#EAFFFF"
             border="1px solid #50D1C9"
@@ -94,12 +88,21 @@ const Header = () => {
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ms-auto">
-                  {staticMenuNames.map((menuName, index) => {
-                    const menuItem = menus.find(menu => menu.name === menuName);
-                    const isActive = location.pathname === '/' && menuName === 'Home' || (menuItem && menuItem.slug && location.pathname === `/${menuItem.slug}`);
-                    return menuItem && (
-                      <Link key={index} to={menuItem.name === "Home" ? '/' : `/${menuItem.slug}`} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
-                        {menuItem.name}
+                  {/* {menus.map((menu, index) => {
+                    const isActive = location.pathname === '/' && menu.title.rendered === 'Home' || (menu.url && location.pathname === `/${menu.slug}`);
+                    return (
+                      <Link key={index} to={menu.title.rendered === "Home" ? '/' : `/${menu.url}`} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
+                        {menu.title.rendered}
+                      </Link>
+                    );
+                  })} */}
+
+                  {menus.map((menu, index) => {
+                    const linkTo = menu.title.rendered === "Home" ? `${PATH.HOME}` : `${SITE_DOMAIN}${menu.url}`;
+                    const isActive = location.pathname === '/' && menu.title.rendered === 'Home' || (menu.url && location.pathname === `/${menu.slug}`);
+                    return (
+                      <Link key={index} to={linkTo} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
+                        {menu.title.rendered}
                       </Link>
                     );
                   })}

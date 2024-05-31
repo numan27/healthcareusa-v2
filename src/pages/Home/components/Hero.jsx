@@ -18,11 +18,13 @@ const Hero = () => {
   const [listings, setListings] = useState([]);
   const [groupedListings, setGroupedListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [exploreModalItems, setExploreModalItems] = useState([]);
 
   const navigate = useNavigate();
 
-  const OpenModal = () => {
+  const OpenModal = (heading, items) => {
     setExploreModalState(true);
+    setExploreModalItems({ heading, items });
   };
 
   const CloseModal = () => {
@@ -68,8 +70,8 @@ const Hero = () => {
     return columns;
   };
 
-  console.warn("listings data", listings);
-  console.warn("grouped listings data", groupedListings);
+  // console.warn("listings data", listings);
+  // console.warn("grouped listings data", groupedListings);
 
   const handleNavigateListingDetail = () => {
     navigate("/listings")
@@ -171,7 +173,7 @@ const Hero = () => {
                     </div>
 
                     <div className="columns-container">
-                      {renderItemsInColumns(group.items).map((column, columnIndex) => (
+                      {renderItemsInColumns(group.items.slice(0, 4)).map((column, columnIndex) => (
                         <ul className='list-unstyled' key={columnIndex}>
                           {column.map((item, itemIndex) => (
                             <li className='mb-2' key={itemIndex}>
@@ -184,9 +186,14 @@ const Hero = () => {
                       ))}
                     </div>
 
-                    <Link background="transparent" border="0" color="#50D1C9" onClick={OpenModal} className='service-link'>
-                      Explore More <FiChevronRight className='transition-2' size={18} color='#6BE2C4' />
-                    </Link>
+                    {group.items.length > 4 && (
+                      <Link
+                        onClick={() => OpenModal(group.heading, group.items)}
+                        className='service-link'
+                      >
+                        Explore More <FiChevronRight className='transition-2' size={18} color='#6BE2C4' />
+                      </Link>
+                    )}
                   </Box>
                 ))}
               </div>
@@ -209,12 +216,12 @@ const Hero = () => {
         </Box>
       </div>
 
-
       {exploreModalState && (
         <ExploreMoreModal
           show={exploreModalState}
           onHide={CloseModal}
           title="All Doctors"
+          exploreModalItems={exploreModalItems}
         />
       )}
     </div>
