@@ -13,7 +13,6 @@ import axios from 'axios';
 import { LoaderCenter } from '../../assets/Loader';
 
 const Footer = () => {
-  const [links, setLinks] = useState([]);
   const [groupedListings, setGroupedListings] = useState([]);
   const [loading, setLoading] = useState(true);
 

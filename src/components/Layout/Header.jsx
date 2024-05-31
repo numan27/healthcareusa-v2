@@ -24,6 +24,12 @@ const Header = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
+        // const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144', {
+        //   headers: {
+        //     'Authorization': 'Basic ' + btoa('username:password')
+        //   }
+        // });
+
         const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144', {
           auth: {
             username: 'numankhalil27@gmail.com',
