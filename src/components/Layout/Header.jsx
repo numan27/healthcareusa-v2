@@ -104,14 +104,15 @@ const Header = () => {
                   })} */}
 
                   {menus.map((menu, index) => {
-                    const linkTo = menu.title.rendered === "Home" ? `${PATH.HOME}` : `${SITE_DOMAIN}${menu.url}`;
-                    const isActive = location.pathname === '/' && menu.title.rendered === 'Home' || (menu.url && location.pathname === `/${menu.slug}`);
+                    const linkTo = menu.title.rendered === "Home" ? PATH.HOME : `${SITE_DOMAIN}${menu.url}`;
+                    const isActive = (location.pathname === '/' && menu.title.rendered === 'Home') || (menu.url && location.pathname === `/${menu.slug}`);
                     return (
                       <Link key={index} to={linkTo} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
                         {menu.title.rendered}
                       </Link>
                     );
                   })}
+
                   <div className='d-flex align-items-center ms-xl-4 mb-xl-0 mb-sm-3 mb-1'>
                     <LanguageSelect />
                   </div>

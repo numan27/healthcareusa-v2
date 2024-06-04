@@ -12,6 +12,7 @@ import SearchIcon from '../../assets/SVGs/Search';
 const Listings = () => {
 
   const [temperatureRange, setTemperatureRange] = useState([20, 67]);
+  const [profileLength, setProfileLength] = useState(0);
 
   const handleTemperatureChange = (newValue) => {
     setTemperatureRange(newValue);
@@ -127,7 +128,7 @@ const Listings = () => {
 
             <div className='pt-3 mb-3'>
               <Typography as="p" color="#7B7B7B" weight="400" size="16px" lineHeight="26px">
-                <span className='text-dark'>1249</span> search result for Chiropractors in Los Angeles
+                <span className='text-dark'>{profileLength}</span> search result for Chiropractors in Los Angeles
               </Typography>
 
               <div className='d-flex align-items-center gap-2'>
@@ -142,6 +143,7 @@ const Listings = () => {
               <ProfileCard
                 enableSponsoredProfile
                 columnPadding
+                setProfileLength={setProfileLength}
               />
             </div>
 
@@ -154,8 +156,7 @@ const Listings = () => {
               </Typography>
 
               <div className='mt-3'>
-                <ProfileCard
-                />
+                <ProfileCard setProfileLength={setProfileLength}  />
               </div>
             </div>
 

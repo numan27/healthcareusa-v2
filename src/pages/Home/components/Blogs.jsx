@@ -10,7 +10,7 @@ import IMAGES from "../../../assets/images";
 import { PATH } from "../../../config";
 import { LoaderCenter } from "../../../assets/Loader";
 
-const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
+const Blogs = ({ postNumber, onHomePage, centeredTitle, onDetailPage, isTitleBlack }) => {
     const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -34,8 +34,7 @@ const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
 
                     return {
                         id: post.id,
-                        blogImg: post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url ||
-                            IMAGES.RELATED_BLOG_IMG,
+                        blogImg: (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url) || IMAGES.RELATED_BLOG_IMG,
                         tagText: tags.join(', '),
                         blogTitle: post.title.rendered,
                         authorImg: IMAGES.RELATED_BLOG_PROFILE,
@@ -43,6 +42,7 @@ const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
                         date: new Date(post.date).toDateString(),
                         lastSeen: "6 min read",
                     };
+
                 });
 
                 setPosts(posts);
@@ -69,10 +69,10 @@ const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
             {loading ? (
                 <LoaderCenter />
             ) : (
-                <Box background="#00C1B6" className="w-100 py-5 blogs-box">
+                <Box background={onDetailPage ? "" : "#00C1B6"} className="w-100 py-5 blogs-box">
                     <Container className="pt-2">
                         <div className={`d-flex flex-md-row flex-column align-items-center justify-content-${centeredTitle ? 'center' : 'between'} mb-md-0 mb-4`}>
-                            <Typography className="mobile-text-center" as="h3" size="32px" color="#fff" lineHeight="48px" weight="700">
+                            <Typography className="mobile-text-center" as="h3" size="32px" color={isTitleBlack ? "#000" : "#fff"} lineHeight="48px" weight="700">
                                 Trending Topics in Healthcare
                             </Typography>
 
@@ -86,6 +86,11 @@ const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
                         <div className="blogs-grid pb-4 mt-2 pt-2">
                             {posts.slice(0, postNumber).map((post) => (
                                 <Card onClick={() => handleNavigate(post.id)} className="custom-shadow border-0 cursor-pointer blog-card" key={post.id}>
+                                    {/* <Card
+                                    onClick={!onDetailPage ? () => handleNavigate(post.id) : undefined}
+                                    className="custom-shadow border-0 cursor-pointer blog-card"
+                                    key={post.id}
+                                ></Card> */}
                                     <Card.Img className="" variant="top" src={post.blogImg} />
                                     <Box className="d-flex flex-column justify-content-between w-100 h-100" padding="30px 35px">
                                         <div>
@@ -123,13 +128,17 @@ const Blogs = ({ postNumber, onHomePage, centeredTitle }) => {
 Blogs.propTypes = {
     postNumber: PropTypes.number,
     onHomePage: PropTypes.bool,
+    onDetailPage: PropTypes.bool,
     centeredTitle: PropTypes.bool,
+    isTitleBlack: PropTypes.bool,
 };
 
 Blogs.defaultProps = {
     postNumber: 3,
     onHomePage: true,
     centeredTitle: false,
+    onDetailPage: false,
+    isTitleBlack: false,
 };
 
 export default Blogs;

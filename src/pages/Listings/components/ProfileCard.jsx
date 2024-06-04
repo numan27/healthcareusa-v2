@@ -13,7 +13,7 @@ import axios from 'axios';
 import IMAGES from '../../../assets/images';
 import { LoaderCenter } from "../../../assets/Loader";
 
-const ProfileCard = ({ enableSponsoredProfile, columnPadding }) => {
+const ProfileCard = ({ enableSponsoredProfile, columnPadding, setProfileLength }) => {
     const navigate = useNavigate();
     const [profile, setProfile] = useState([]);
     const [mediaUrls, setMediaUrls] = useState({});
@@ -44,9 +44,10 @@ const ProfileCard = ({ enableSponsoredProfile, columnPadding }) => {
                 setLoading(false);
             }
         };
+        setProfileLength(profile.length);
 
         fetchPosts();
-    }, []);
+    });
 
     console.warn("profile", profile);
 

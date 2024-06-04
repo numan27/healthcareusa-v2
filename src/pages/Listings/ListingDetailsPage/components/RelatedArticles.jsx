@@ -6,10 +6,14 @@ import { GoDotFill } from 'react-icons/go';
 import { Box, GenericBadge, Typography } from '../../../../components/GenericComponents';
 import IMAGES from '../../../../assets/images';
 import { LoaderCenter } from '../../../../assets/Loader';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '../../../../config';
 
-const RelatedArticles = () => {
+const RelatedArticles = ({ postNumber }) => {
     const [relatedBlogsData, setRelatedBlogsData] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -30,8 +34,7 @@ const RelatedArticles = () => {
 
                     return {
                         id: post.id,
-                        blogImg: post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url ||
-                            IMAGES.RELATED_BLOG_IMG,
+                        blogImg: (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url) || IMAGES.RELATED_BLOG_IMG,
                         tagText: tags.join(', '),
                         blogTitle: post.title.rendered,
                         authorImg: IMAGES.RELATED_BLOG_PROFILE,
@@ -51,6 +54,11 @@ const RelatedArticles = () => {
 
         fetchPosts();
     }, []);
+
+    const handleNavigate = (id) => {
+        navigate(`${PATH.BLOGS}/${id}`);
+    };
+
     return (
         <div>
             <div className='my-5'>
@@ -63,8 +71,9 @@ const RelatedArticles = () => {
                         <LoaderCenter />
                     ) : (
                         <>
-                            {relatedBlogsData.map((items, index) => (
-                                <Box key={index} className="blog-shadow mt-4" radius="8px">
+                            {relatedBlogsData.slice(0, postNumber).map((items, index) => (
+                                // {relatedBlogsData.map((items, index) => (
+                                <Box onClick={() => handleNavigate(items.id)} key={index} className="blog-shadow mt-4 cursor-pointer" radius="8px">
                                     <Row>
                                         <Col md={5} className='position-relative'>
                                             <img className='img-fluid related-blog-img h-100' src={items.blogImg} alt="" />

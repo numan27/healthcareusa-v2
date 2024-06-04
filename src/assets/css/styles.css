@@ -261,7 +261,7 @@ body {
 /* Home */
 
 .hero {
-    background-image: url(/src/assets/images/hero.png);
+    background-image: url(/src/assets/images/hero.webp);
     width: 100%;
     background-repeat: no-repeat;
     background-size: cover;
