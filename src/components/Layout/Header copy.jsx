@@ -86,22 +86,6 @@ const Header = () => {
         width="100"
         padding="7px 0px"
       >
-        {/* <div>
-          {menus.map((menu) => (
-            <div key={menu.id}>
-              <h2>{menu.name}</h2>
-              <ul>
-                {Object.entries(menu._links).map(([linkType, linkArray]) => (
-                  linkArray.map((link, index) => (
-                    <li key={index}>
-                      <strong>{linkType}:</strong> <a href={link.href}>{link.href}</a>
-                    </li>
-                  ))
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div> */}
         <Container fluid
           className='d-flex justify-content-end'
         >

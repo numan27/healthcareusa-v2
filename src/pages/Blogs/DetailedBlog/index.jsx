@@ -1,13 +1,14 @@
-import { Box, Typography } from '../../../components/GenericComponents';
-import AppLayout from '../../../components/Layout/AppLayout';
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
-import IMAGES from '../../../assets/images';
 import { Suspense, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, Link } from 'react-router-dom';
-import { LoaderCenter } from '../../../assets/Loader';
+import { Card, Col, Container, Row } from 'react-bootstrap';
 import { CiCalendar } from 'react-icons/ci';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
+import IMAGES from '../../../assets/images';
+import AppLayout from '../../../components/Layout/AppLayout';
+import { Typography } from '../../../components/GenericComponents';
+import { useParams, Link } from 'react-router-dom';
+import { LoaderCenter } from '../../../assets/Loader';
+import BlogsSection from "../../Home/components/Blogs"
 
 const DetailedBlog = () => {
     const { id } = useParams();
@@ -34,14 +35,14 @@ const DetailedBlog = () => {
 
                     return {
                         id: post.id,
-                        blogImg: post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url ||
-                            IMAGES.RELATED_BLOG_IMG,
+                        blogImg: (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0].source_url) || IMAGES.RELATED_BLOG_IMG,
                         tagText: tags.join(', '),
                         blogTitle: post.title.rendered,
                         authorImg: IMAGES.RELATED_BLOG_PROFILE,
                         authorName: post.author,
                         date: new Date(post.date).toDateString(),
-                        content: post.content.rendered,
+                        lastSeen: "6 min read",
+                        excerpt: post.excerpt.rendered,
                     };
                 });
 
@@ -64,6 +65,8 @@ const DetailedBlog = () => {
     const currentPostIndex = posts.findIndex(post => post.id === parseInt(id));
     const prevPostId = currentPostIndex === 0 ? posts[posts.length - 1]?.id : posts[currentPostIndex - 1]?.id;
     const nextPostId = currentPostIndex === posts.length - 1 ? posts[0]?.id : posts[currentPostIndex + 1]?.id;
+
+    console.log("posts", posts)
 
     return (
         <AppLayout>
@@ -91,9 +94,13 @@ const DetailedBlog = () => {
                                                     <Typography className="mb-0" as="p">{post.date}</Typography>
                                                 </div>
                                             </div>
+
+                                            <div className='mt-4'>
+                                                <div dangerouslySetInnerHTML={{ __html: post.excerpt }} />
+                                            </div>
                                         </Card.Body>
                                     </Card>
-                                    <div className="d-flex justify-content-between mt-4">
+                                    <div className="d-flex justify-content-between mt-5">
                                         {prevPostId && <Link to={`/blogs/${prevPostId}`} className="btn primaryButton d-flex align-items-center gap-2">
                                             <FaArrowLeft size="18" /> Previous Post
                                         </Link>}
@@ -121,6 +128,12 @@ const DetailedBlog = () => {
                         </div>
                     </Col>
                 </Row>
+
+                <BlogsSection
+                    onDetailPage={true}
+                    isTitleBlack={true}
+                    onHomePage={false}
+                    centeredTitle />
             </Container>
         </AppLayout>
     );

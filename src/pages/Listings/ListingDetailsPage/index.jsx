@@ -101,7 +101,8 @@ const ListingDetailsPage = () => {
   const truncatedText = truncateText(description, 500);
   const qualificationsDataString = jsonData.cubewp_post_meta?.['cwp_field_930729608352']?.meta_value;
   const qualificationsData = qualificationsDataString ? qualificationsDataString.split(',').map(item => item.trim()) : [];
-  const doctorPackageName = jsonData.cubewp_post_meta?.['cwp_field_631649982329']?.meta_value + " " + "Doctor";
+  const doctorPackageName = `${jsonData.cubewp_post_meta?.['cwp_field_631649982329']?.meta_value} Doctor`;
+
   const doctorSpecialties = jsonData.taxonomies;
 
   console.log('doctorSpecialties', doctorSpecialties);
