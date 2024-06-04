@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
 import GenericModal from '../../components/GenericComponents/Modal';
 import { Box, GenericButton, Typography } from '../../components/GenericComponents';
 import { Link } from 'react-router-dom';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import { toast } from 'react-toastify';
 
 const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
     const [showPassword, setShowPassword] = useState(false);
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        const response = await fetch('https://jsappone.demowp.io/wp-json/wp/v2/users/register', {
+
+        const credentials = btoa('numan27:findhealthcareusa');
+
+        const response = await fetch('https://jsappone.demowp.io//wp-json/custom/v1/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Basic ${credentials}`
             },
             body: JSON.stringify({
                 username,
@@ -30,11 +35,15 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
         const data = await response.json();
 
         if (response.ok) {
-            setMessage("User Registered!");
+            setMessage('');
+            toast.success('User Successfully Registered!', {
+                autoClose: 2000,
+            });
+            moveToSignIn();
         } else {
             setMessage(`Error: ${data.message}`);
         }
-    }
+    };
 
     return (
         <GenericModal show={show} onHide={onHide} size="md" title={title}>
@@ -52,7 +61,8 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter User Name" />
+                            placeholder="Enter User Name"
+                        />
                     </Form.Group>
 
                     <Form.Group className="mb-4" controlId="formBasicEmail">
@@ -63,7 +73,8 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter Email" />
+                            placeholder="Enter Email"
+                        />
                     </Form.Group>
 
                     <Form.Group className="mb-4 position-relative" controlId="formBasicPassword">
@@ -72,9 +83,10 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
                         </Typography>
                         <Form.Control
                             value={password}
-                            type={showPassword ? "text" : "password"}
+                            type={showPassword ? 'text' : 'password'}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter Password" />
+                            placeholder="Enter Password"
+                        />
 
                         <span onClick={() => setShowPassword(!showPassword)} style={{ right: '10px' }} className='position-absolute top-50 cursor-pointer'>
                             {showPassword ? (<BsEye size={20} color="#98A2B3" />) : (<BsEyeSlash size={20} color="#98A2B3" />)}
@@ -82,12 +94,12 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
                     </Form.Group>
                     <div className='pt-2'>
                         <GenericButton
-                            height="52px"
-                            width="100%"
-                            background="#50D1C9"
-                            weight="700"
-                            size="16px"
-                            type="submit"
+                            height='52px'
+                            width='100%'
+                            background='#50D1C9'
+                            weight='700'
+                            size='16px'
+                            type='submit'
                         >
                             Register
                         </GenericButton>
@@ -95,7 +107,7 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
                     {message && <p>{message}</p>}
 
                     <div className='d-flex align-items-center justify-content-center gap-2 mt-3'>
-                        <Typography className="mb-0" as="label" size="16px" color="#98A2B3" lineHeight="16px">
+                        <Typography className='mb-0' as='label' size='16px' color='#98A2B3' lineHeight='16px'>
                             Already have an account?
                         </Typography>
                         <Link onClick={moveToSignIn} className='primary-color text-decoration-none'>
@@ -106,7 +118,7 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
             </Box>
         </GenericModal>
     );
-}
+};
 
 SignUpModal.propTypes = {
     show: PropTypes.bool.isRequired,

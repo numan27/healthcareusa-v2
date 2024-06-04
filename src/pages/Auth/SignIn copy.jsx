@@ -7,7 +7,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import SignUpModal from './SignUp';
 import { PATH } from '../../config';
-import { toast } from 'react-toastify';
 
 const SignInModal = ({ show, onHide, title, moveToForgetPassword, moveToFSignUp }) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -21,52 +20,22 @@ const SignInModal = ({ show, onHide, title, moveToForgetPassword, moveToFSignUp 
     const handleSignIn = async (e) => {
         e.preventDefault();
 
-        try {
-            // First, perform login using Basic Auth
-            const loginResponse = await fetch('https://jsappone.demowp.io/wp-json/wp/v2/users/me', {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Basic ' + btoa(`${email}:${password}`)
-                }
-            });
-
-            if (!loginResponse.ok) {
-                const errorData = await loginResponse.json();
-                setMessage(`Error: ${errorData.message}`);
-                return;
+        const response = await fetch('https://jsappone.demowp.io/wp-json/wp/v2/users/me', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + btoa(`${email}:${password}`)
             }
+        });
 
-            const loginData = await loginResponse.json();
+        if (response.ok) {
+            const data = await response.json();
             setMessage('Sign in successful!');
-            console.log('User Data:', loginData);
-            toast.success('User Logged In!', {
-                autoClose: 2000,
-            });
-
-            // After successful login, fetch the JWT token
-            const tokenResponse = await fetch('https://jsappone.demowp.io/wp-json/jwt-auth/v1/token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: email,  // Assuming email is used as username in WordPress
-                    password: password
-                })
-            });
-
-            if (tokenResponse.ok) {
-                const tokenData = await tokenResponse.json();
-                localStorage.setItem('token', tokenData.token);
-                console.log('JWT Token:', tokenData.token); // Use this token as needed
-                navigate(PATH.ADD_LISTING);
-            } else {
-                const errorData = await tokenResponse.json();
-                setMessage(`Error: ${errorData.message}`);
-            }
-        } catch (error) {
-            setMessage('An unexpected error occurred.');
-            console.error('Error:', error);
+            // Optionally, handle token storage or redirection here
+            console.log('User Data:', data); // Use this data as needed
+            navigate(PATH.ADD_LISTING)
+        } else {
+            const errorData = await response.json();
+            setMessage(`Error: ${errorData.message}`);
         }
     };
 

@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useState } from 'react';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import IMAGES from "../../assets/images";
 import { Box, GenericButton, Typography } from '../GenericComponents';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
@@ -12,6 +12,7 @@ import LoginIcon from '../../assets/SVGs/Login';
 import { PATH } from '../../config';
 import { LoaderCenter } from "../../assets/Loader";
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Header = () => {
   const location = useLocation();
@@ -20,6 +21,10 @@ const Header = () => {
   const [signUpModalShow, setSignUpModalShow] = useState(false);
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  const auth = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -33,7 +38,9 @@ const Header = () => {
         const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144', {
           auth: {
             username: 'numankhalil27@gmail.com',
-            password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
+            password: 'findhealthcareusa'
+            // password: '4fNF0pEpIz6wmXPlwmbbmwvP' new
+            // password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
           }
         });
         setMenus(response.data);
@@ -59,6 +66,18 @@ const Header = () => {
   };
 
   const SITE_DOMAIN = 'https://jsappone.demowp.io';
+
+  const handleNavigateAddListing = () => {
+    navigate(PATH.ADD_LISTING)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate(PATH.HOME)
+    toast.success('User Logged Out!', {
+      autoClose: 2000,
+    });
+  }
 
   return (
     <>
@@ -119,18 +138,34 @@ const Header = () => {
                 </Nav>
                 <Nav className="ms-xl-4">
                   <div className='d-flex align-items-center justify-content-xl-end flex-wrap gap-2'>
-                    <GenericButton
-                      onClick={openSignInModal}
-                      background="#EFEFEF"
-                      borderColor="#EFEFEF"
-                      color="#06312E"
-                      hoverColor="#06312E"
-                      hoverBgColor="#dbdbdb"
-                      className="me-1">
-                      <LoginIcon /> Sign In
-                    </GenericButton>
-
-                    <GenericButton className="my-sm-0 my-2">
+                    {auth ? (
+                      <GenericButton
+                        onClick={handleLogout}
+                        background="#ca4655"
+                        borderColor="#ca4655"
+                        color="#fff"
+                        hoverColor="#fff"
+                        hoverBgColor="#B22234"
+                        className="me-1">
+                        Logout
+                        <LoginIcon
+                          color='#fff'
+                          flipHorizontal
+                        />
+                      </GenericButton>
+                    ) : (
+                      <GenericButton
+                        onClick={openSignInModal}
+                        background="#EFEFEF"
+                        borderColor="#EFEFEF"
+                        color="#06312E"
+                        hoverColor="#06312E"
+                        hoverBgColor="#dbdbdb"
+                        className="me-1">
+                        <LoginIcon /> Sign In
+                      </GenericButton>
+                    )}
+                    <GenericButton disabled={!auth} onClick={handleNavigateAddListing} className="my-sm-0 my-2">
                       <HiOutlinePlusCircle className='' size={20} /> Add Listing
                     </GenericButton>
                   </div>

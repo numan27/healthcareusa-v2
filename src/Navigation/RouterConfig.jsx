@@ -2,12 +2,21 @@
 
 import { Routes, Route } from "react-router-dom";
 import PublicRoute from "./Routes/PublicRoute";
+// import ProtectedRoute from "./Routes/ProtectedRoute";
 import WEB_PAGES from "../pages";
 import { PATH } from "../config";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 function RouterConfig() {
   return (
     <Routes>
+
+      <Route element={<ProtectedRoute />}>
+        <Route
+          path={PATH.ADD_LISTING}
+          element={<PublicRoute element={<WEB_PAGES.ADD_LISTING />} />}
+        />
+      </Route>
       <Route
         path={PATH.LOGIN}
         element={<PublicRoute element={<WEB_PAGES.LOGIN />} />}
@@ -45,9 +54,10 @@ function RouterConfig() {
         element={<PublicRoute element={<WEB_PAGES.LISTING_DETAILS />} />}
       />
 
+
       {/* <Route
-        path={PATH.APPLICANT_DETAILS}
-        element={<ProtectedRoute element={<WEB_PAGES.APPLICANT_DETAILS />} />}
+        path={PATH.ADD_LISTING}
+        element={<ProtectedRoute element={<WEB_PAGES.ADD_LISTING />} />}
       /> */}
 
       {/* NO PAGE FOUND */}

@@ -1,26 +1,20 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
-import FullScreenLoader from "../../components/Layout/Loader/FullScreenLoader";
-import PATH from "../../utils/path";
 import Private from "../../components/Layout/PageStructure/Private";
+import { PATH } from "../../config";
 
 function ProtectedRoute({ element }) {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!user) {
-      navigate(PATH.LOGIN);
+    if (!token) {
+      navigate(PATH.HOME);
     }
-  }, [user, navigate]);
+  }, [token, navigate]);
 
-  if (!user) return <FullScreenLoader />;
-
-  return (
-    <Private>{element}</Private>
-  );
+  return token ? <Private>{element}</Private> : null;
 }
 
 ProtectedRoute.propTypes = {

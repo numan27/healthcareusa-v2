@@ -22,7 +22,8 @@ const Footer = () => {
         const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/widgets/', {
           auth: {
             username: 'numan27',
-            password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
+            password: 'findhealthcareusa'
+            // password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
           }
         });
 

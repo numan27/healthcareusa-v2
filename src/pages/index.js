@@ -9,6 +9,7 @@ const RESOURCES = React.lazy(() => import("./Resources"));
 const CONTACT = React.lazy(() => import("./Contact"));
 const LISTINGS = React.lazy(() => import("./Listings"));
 const LISTING_DETAILS = React.lazy(() => import("./Listings/ListingDetailsPage"));
+const ADD_LISTING = React.lazy(() => import("./AddListing"));
 
 
 const WEB_PAGES = {
@@ -21,6 +22,7 @@ const WEB_PAGES = {
   RESOURCES,
   CONTACT,
   LISTINGS,
-  LISTING_DETAILS
+  LISTING_DETAILS,
+  ADD_LISTING
 };
 export default WEB_PAGES;

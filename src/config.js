@@ -14,6 +14,7 @@ const PATH = {
   RESOURCES: "/resources",
   LISTINGS: "/listings",
   LISTING_DETAILS: "/listing-details/:id",
+  ADD_LISTING: "/add-listing",
 };
 
 const TOASTER_STYLING_VALUES = {
