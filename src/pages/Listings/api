@@ -1,0 +1,414 @@
+<!-- http://yourwebsite.com/wp-json/cubewp-forms/v1/get_form?post_type=post&form_type=search_filters -->
+
+https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?post_type=post&form_type=search_filters
+
+
+<?php
+
+/**
+ * CubeWp rest api for custom field data.
+ *
+ * @version 1.0
+ * @package cubewp/cube/classes
+ */
+
+if (!defined('ABSPATH')) {
+	exit;
+}
+
+/**
+ * CubeWp_Rest_API
+ */
+class CubeWp_Rest_API extends WP_REST_Controller
+{
+
+	//Query Type.
+	const F_TYPE = 'fields_type';
+
+	//Query source.
+	const F_SOURCE = 'fields_source';
+
+	//Query source.
+	const F_INPUT_TYPE = 'fields_input_type';
+
+	//Query Name.
+	const F_NAME = 'field_name';
+
+	//Query ID.
+	const P_ID = 'post_id';
+
+	//Query POST TYPE.
+	const POST_TYPE = 'post_type';
+	
+	//Query FORM TYPE.
+	const FORM_TYPE = 'form_type';
+
+	public $CF_namespace = '';
+	public $STATS_namespace = '';
+	public $FORMS_namespace = '';
+	public $base = '';
+	public $custom_fields = '';
+	public $cubewp_stats = '';
+	public $cubewp_forms = '';
+	public $post_card = '';
+
+	/**
+	 * Constructor.
+	 */
+	public function __construct()
+	{
+		$this->CF_namespace = 'cubewp-custom-fields/v1';
+		$this->STATS_namespace = 'cubewp-stats-request/v1';
+		$this->FORMS_namespace = 'cubewp-forms/v1';
+		$this->base = 'render';
+		$this->custom_fields = 'custom_fields';
+		$this->cubewp_stats = 'cubewp_stats';
+		$this->cubewp_forms = 'get_form';
+		$this->post_card = 'post_card';
+		$this->rest_field_init();
+		$this->register_routes();
+	}
+
+
+	public function rest_field_init()
+	{
+		register_rest_field(self::get_types(), 'cubewp_post_meta', [
+			'get_callback'    => [__CLASS__, 'get_post_meta'],
+			'update_callback' => [__CLASS__, 'update_post_meta'],
+		]);
+		register_rest_field(self::get_types(), 'taxonomies', [
+			'get_callback'    => [__CLASS__, 'get_taxonomies'],
+			'update_callback' => '',
+		]);
+		register_rest_field('user', 'cubewp_user_meta', [
+			'get_callback'    => [__CLASS__, 'get_user_meta'],
+			'update_callback' => [__CLASS__, 'update_user_meta'],
+		]);
+		register_rest_field(self::get_types('taxonomy'), 'cubewp_term_meta', [
+			'get_callback'    => [__CLASS__, 'get_term_meta'],
+			'update_callback' => [__CLASS__, 'update_term_meta'],
+		]);
+	}
+
+	/**
+	 * Registers the routes for the objects of the controller.
+	 *
+	 * @see register_rest_route()
+	 */
+	public function register_routes()
+	{
+		register_rest_route(
+			$this->CF_namespace,
+			'/' . $this->base,
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array($this, 'get_render_field'),
+					'permission_callback' => array($this, 'get_permission_check'),
+					'args'                => $this->get_render_params(),
+				),
+			)
+		);
+		register_rest_route(
+			$this->CF_namespace,
+			'/' . $this->custom_fields,
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array($this, 'get_custom_fields'),
+					'permission_callback' => array($this, 'get_permission_check'),
+					'args'                => $this->get_render_params(),
+				),
+			)
+		);
+		register_rest_route(
+			$this->STATS_namespace,
+			'/' . $this->cubewp_stats,
+			array(
+				array(
+					'methods'             => 'POST',
+					'callback'            => array($this, 'cubewp_stats_update'),
+					'permission_callback' => function () {
+						return true;
+					},
+					'args'                => array(
+						'postIds' => array(
+							'required'    => true,
+							'type'        => 'array',
+							'description' => 'Array of post IDs to cubewp stats table.',
+						),
+					),
+				),
+			)
+		);
+		register_rest_route(
+			$this->FORMS_namespace,
+			'/' . $this->cubewp_forms,
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array($this, 'cubewp_get_Forms'),
+					'permission_callback' => function () {
+						return true;
+					},
+					'args'                => $this->get_render_params(),
+				),
+			)
+		);
+		register_rest_route(
+			$this->FORMS_namespace,
+			'/' . $this->post_card,
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array($this, 'cubewp_process_post_card'),
+					'permission_callback' => function () {
+						return true;
+					},
+					'args'                => $this->get_render_params(),
+				),
+			)
+		);
+	}
+
+	
+	/**
+	 * Checks if a given request has permission to access content.
+	 *
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return true|WP_Error True if the request has search access, WP_Error object otherwise.
+	 */
+	public function get_permission_check($request)
+	{
+		return current_user_can('edit_posts');
+	}
+
+	/**
+	 * Retrieves the query params for the search results.
+	 *
+	 * @return array Collection parameters.
+	 */
+	public function get_render_params()
+	{
+		$query_params  = parent::get_collection_params();
+
+		$query_params[self::F_TYPE] = array(
+			'description' => __('The custom field Key.', 'cubewp-framework'),
+			'type'        => 'string',
+		);
+		$query_params[self::F_SOURCE] = array(
+			'description' => __('The source of the content', 'cubewp-framework'),
+			'type'        => 'string',
+			'default'     => 'post',
+		);
+		$query_params[self::F_NAME] = array(
+			'description' => __('The custom field Name.', 'cubewp-framework'),
+			'type'        => 'string',
+		);
+		$query_params[self::F_INPUT_TYPE] = array(
+			'description' => __('The custom field Type.', 'cubewp-framework'),
+			'type'        => 'string',
+		);
+		$query_params[self::P_ID] = array(
+			'description' => __('The custom field Name.', 'cubewp-framework'),
+			'type'        => 'string',
+		);
+		$query_params[self::POST_TYPE] = array(
+			'description' => __('Post type', 'cubewp-framework'),
+			'type'        => 'string',
+		);
+		$query_params[self::FORM_TYPE] = array(
+			'description' => __('Form type', 'cubewp-framework'),
+			'type'        => 'string',
+		);
+		return $query_params;
+	}
+
+	/**
+	 * Retrieves Custom field value.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function cubewp_process_post_card($request)
+	{
+		$loop_layout_html =   $request->get_param(self::FORM_TYPE);
+		$string = stripslashes( $loop_layout_html );
+        preg_match_all( '/\[loop_[^\]]*\]/', $string, $matches );
+        $values = array();
+        foreach ( $matches as $fields ) {
+            foreach ( $fields as $field ) {
+                $field            = trim( $field, '[]' );
+                $name             = str_replace( 'loop_', '', $field );
+                $values[ $field ] = cubewp_get_loop_builder_shortcode_value( $name, 638 );
+            }
+        }
+        foreach ( $values as $field => $value ) {
+            $string = str_replace( '[' . $field . ']', (string) $value, $string );
+        }
+        return $string;
+	}
+
+
+	/**
+	 * Retrieves Custom field value.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function cubewp_get_Forms($request)
+	{
+		$post_type =   $request->get_param(self::POST_TYPE);
+		if(!$post_type) return wp_send_json(array('There is no parameter provided to fetch the CubeWP Form')); 
+
+		$cwp_form = CWP()->get_form( $request->get_param(self::FORM_TYPE) );
+
+		$form = isset($cwp_form[$post_type]) ? $cwp_form[$post_type] : array();
+
+		return wp_send_json($form);
+	}
+
+	/**
+	 * Retrieves Custom fields.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function cubewp_stats_update($request)
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'cubewp_stats';
+		$post_ids = $request->get_param('postIds');
+		if (is_array($post_ids) && !empty($post_ids)) {
+			$dataToInsert = '';
+			$date = date('j/n/Y');
+			foreach ($post_ids as $post_data) {
+				$post_id = $post_data['id'];
+				$post_type = $post_data['type'];
+				$impression = array(
+					$date =>  1,
+				);
+				$impressions = cubewp_set_data_for_stats_column($impression, $post_id, 'impressions');
+				$daily_impressions = serialize($impressions['daily']);
+				$monthly_impressions = serialize($impressions['monthly']);
+				$yearly_impressions = serialize($impressions['yearly']);
+				$total_impressions = array_sum(array_values($impressions['yearly']));
+				$dataToInsert .= "('$post_id', '$post_type', '$daily_impressions', '$monthly_impressions', '$yearly_impressions', '$total_impressions'),";
+			}
+			$dataToInsert = rtrim($dataToInsert, ',');
+			if (!empty($dataToInsert)) {
+				$sql = "INSERT INTO {$table_name} (post_id, post_type, daily_impressions, monthly_impressions, yearly_impressions, total_impressions) 
+            VALUES $dataToInsert 
+            ON DUPLICATE KEY UPDATE 
+            daily_impressions = VALUES(daily_impressions), 
+            monthly_impressions = VALUES(monthly_impressions), 
+            yearly_impressions = VALUES(yearly_impressions),
+            total_impressions = VALUES(total_impressions)";
+				$wpdb->query($sql);
+			}
+			return wp_send_json('success');
+		}
+	}
+
+	/**
+	 * Retrieves Custom field value.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function get_render_field($request)
+	{
+		$args = [];
+		$args['f_type']  = $request->get_param(self::F_TYPE);
+		$args['f_name']  = $request->get_param(self::F_NAME);
+		$args['p_id'] = $request->get_param(self::P_ID);
+		if ($args['f_type']  == 'user_custom_fields') {
+			$args['p_id']  = get_post_field('post_author', $args['p_id']);
+		}
+		$value = get_any_field_value($args);
+		return wp_send_json($value);
+	}
+
+	/**
+	 * Retrieves Custom fields.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function get_custom_fields($request)
+	{
+		$source        = $request->get_param(self::F_SOURCE);
+		$type          = $request->get_param(self::F_TYPE);
+		$input_type    = $request->get_param(self::F_INPUT_TYPE);
+		$output = array();
+		$output[''] = 'Select Field';
+		if ($type == 'post_custom_fields' || $type == 'user_custom_fields') {
+			if (isset($source) && !empty($source)) {
+				if ($type == 'post_custom_fields') {
+					$groups = cwp_get_groups_by_post_type($source);
+				} elseif ($type == 'user_custom_fields') {
+					$groups = cwp_get_groups_by_user_role($source);
+				}
+				if (isset($groups) && !empty($groups)) {
+					foreach ($groups as $group) {
+						$fields = get_post_meta($group, '_cwp_group_fields', true);
+						if ($type == 'post_custom_fields') {
+							$fields = isset($fields) && !empty($fields) ? explode(',', $fields) : '';
+						} elseif ($type == 'user_custom_fields') {
+							$fields = isset($fields) && !empty($fields) ? json_decode($fields, true) : '';
+						}
+						if (is_array($fields)) {
+							foreach ($fields as $field) {
+								if ($type == 'post_custom_fields') {
+									$option = get_field_options($field);
+								} elseif ($type == 'user_custom_fields') {
+									$option = get_user_field_options($field);
+								}
+								$field_type = $option['type'];
+								if ($input_type) {
+									$input_typeArray = isset($input_type) && !empty($input_type) ? explode(',', $input_type) : array();
+									if (in_array($field_type, $input_typeArray)) {
+										$output[$field] = $option['label'];
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} elseif ($type == 'taxonomy_custom_fields') {
+			// $fields = CWP()->get_custom_fields('taxonomy');
+			// if(isset($fields) && !empty($fields)){
+			// 	foreach($fields as $field){
+			// 		if(is_array($fields)){
+			// 			foreach($fields as $field){
+			// 				$option = get_field_options($field);
+			// 				$output[$field] = $option['label'];
+			// 			}
+			// 		}
+			// 	}
+			// }
+		}
+		return wp_send_json($output);
+	}
+
+
+	/**
+	 * Get post meta for the rest API.
+	 *
+	 * @param array $object Post object.
+	 *
+	 * @return array
+	 */
+	public static function get_post_meta($object)
+	{
+		$post_id   = $object['id'];
+		$fields = CubeWp_Single_Cpt::cubewp_post_metas($post_id, true);
+		return $fields;
+	}
+
+	/**
+	 * Get all taxonomies and terms for the rest API.
+	...
+Collap
