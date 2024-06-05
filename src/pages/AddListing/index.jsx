@@ -43,7 +43,7 @@ const AddListing = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // First, submit the form data without files
+   
       const response = await axios.post(
         "https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?form_type=user_register",
         formData
