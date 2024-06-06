@@ -37,7 +37,6 @@ const StyledInput = styled(FormControl)`
 `;
 
 const StyledLabel = styled(FormLabel)`
-
     color: #23262F;
     font-size: 14px;
     line-height: 21px;
@@ -45,32 +44,45 @@ const StyledLabel = styled(FormLabel)`
     font-family: Plus Jakarta Sans;
 `;
 
-export default function GenericInput({ label, ...props }) {
+export default function GenericInput({ label, type, onFileChange, ...props }) {
+  const isFileInput = type === "file";
+
   return (
     <>
       <StyledLabel>{label}</StyledLabel>
-      <StyledInput
-        {...props}
-        type={props.type}
-        defaultValue={props.defaultValue}
-        value={props.value}
-        placeholder={props.placeholder}
-        name={props.name}
-        onChange={props.onChange}
-        className={props.className}
-        ref={props.inputRef}
-      />
+      {isFileInput ? (
+        <StyledInput
+          {...props}
+          type="file"
+          name={props.name}
+          onChange={onFileChange}
+          className={props.className}
+          ref={props.inputRef}
+        />
+      ) : (
+        <StyledInput
+          {...props}
+          type={type}
+          defaultValue={props.defaultValue}
+          value={props.value}
+          placeholder={props.placeholder}
+          name={props.name}
+          onChange={props.onChange}
+          className={props.className}
+          ref={props.inputRef}
+        />
+      )}
     </>
   );
 }
 
 GenericInput.propTypes = {
   label: PropTypes.string.isRequired,
+  type: PropTypes.string,
   name: PropTypes.string,
   inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
   placeholder: PropTypes.string,
   placeHolderColor: PropTypes.string,
-  type: PropTypes.string,
   className: PropTypes.string,
   onClick: PropTypes.func,
   icon: PropTypes.node,
@@ -86,9 +98,11 @@ GenericInput.propTypes = {
   padding: PropTypes.string,
   height: PropTypes.string,
   background: PropTypes.string,
+  onFileChange: PropTypes.func,
 };
 
 GenericInput.defaultProps = {
+  type: "text",
   name: "",
   inputRef: () => { },
   placeholder: "Enter Text Here",
@@ -97,11 +111,11 @@ GenericInput.defaultProps = {
   padding: "10px",
   height: "",
   background: "",
-  type: "text",
   className: "",
   onClick: () => { },
   icon: null,
   defaultValue: "",
   onChange: () => { },
   value: null,
+  onFileChange: () => {},
 };
