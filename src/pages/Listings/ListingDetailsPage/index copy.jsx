@@ -52,13 +52,11 @@ const StyledPopover = styled(Popover)`
 const ListingDetailsPage = () => {
   const { id } = useParams();
   const location = useLocation();
-  // const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
-  const [jsonData, setJsonData] = useState({});
+  const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const fetchListingData = async () => {
@@ -74,10 +72,7 @@ const ListingDetailsPage = () => {
           listingData.mediaUrl = mediaResponse.data.source_url;
         }
 
-        // Check if jsonData is empty or listing ID differs
-        if (!jsonData.id || jsonData.id !== listingData.id) {
-          setJsonData(listingData);
-        }
+        setJsonData(listingData);
 
         // Fetch gallery images
         const galleryMeta =
@@ -130,20 +125,16 @@ const ListingDetailsPage = () => {
   const qualificationsData = qualificationsDataString
     ? qualificationsDataString.split(",").map((item) => item.trim())
     : [];
-  const doctorPackageName = `${
-    jsonData.cubewp_post_meta?.["cwp_field_631649982329"]?.meta_value || ""
-  } Doctor`;
+  const doctorPackageName = `${jsonData.cubewp_post_meta?.["cwp_field_631649982329"]?.meta_value.label} Doctor`;
   const doctorDesignation =
     jsonData.cubewp_post_meta?.["cwp_field_40228862441"]?.meta_value;
-  // const doctorLanguages = jsonData.cubewp_post_meta?.["fc-languages"]?.meta_value;
   const doctorLanguages =
-    jsonData.cubewp_post_meta?.["fc-languages"]?.meta_value || [];
+    jsonData.cubewp_post_meta?.["fc-languages"]?.meta_value;
   const doctorSpecializations =
     jsonData.cubewp_post_meta?.["cwp_field_136461069401"]?.meta_value;
   const doctorSpecialties = jsonData.taxonomies;
 
   console.log("doctorSpecialties", doctorSpecialties);
-  console.log("jsonData", jsonData);
 
   const listingDetailSocial = [
     {
@@ -230,7 +221,6 @@ const ListingDetailsPage = () => {
   );
 
   console.log("jsonData", jsonData);
-  console.log("doctorLanguages", doctorLanguages);
 
   return (
     <AppLayout>

@@ -11,6 +11,8 @@ const StyledSelecte = styled(Select)`
     // width: ${(props) => props.width};
     width: 100%;
     height: 100%;
+    // display: flex;
+    // justify-content: space-between;
     min-height: ${(props) => props.minheight};
     max-height: ${(props) => props.maxheight};
     font-size: ${(props) => props.fontSize};
@@ -50,6 +52,9 @@ const StyledSelecte = styled(Select)`
   .react-select__placeholder {
     color: ${(props) => props.placeholderColor} !important;
   }
+  .without-image{
+    margin-left: 10px !important;
+  }
 `;
 
 const customStyles = {
@@ -85,27 +90,29 @@ const customStyles = {
 const customComponents = ({ imageComponent }) => ({
   SingleValue: ({ children, ...props }) => (
     <div className="d-flex align-items-center gap-1">
-      {imageComponent && <span>{imageComponent}</span>} {children}
+      {imageComponent ? (<span>{imageComponent}</span>) : ""}
+      <span className={!imageComponent ? 'without-image' : ''}>{children}</span>
     </div>
   ),
   Placeholder: ({ children, ...props }) => (
     <div className="d-flex align-items-center gap-1">
-      {imageComponent && <span>{imageComponent}</span>} {children}
+      {imageComponent ? (<span>{imageComponent}</span>) : ""}
+      <span className={!imageComponent ? 'without-image' : ''}>{children}</span>
     </div>
   ),
 });
-// const customComponents = ({ imageComponent }) => ({
-//   SingleValue: ({ children, ...props }) => (
-//     <div className="d-flex align-items-center gap-1">
-//       {imageComponent && <img width={20} src={imageComponent} alt="icon" />} {children}
-//     </div>
-//   ),
-//   Placeholder: ({ children, ...props }) => (
-//     <div className="d-flex align-items-center gap-1">
-//       {imageComponent && <img className="" width={20} src={imageComponent} alt="icon" />} {children}
-//     </div>
-//   ),
-// });
+// const Placeholder = ({ children, imageComponent, spaceBeforeChildren, ...props }) => (
+//   <div className="d-flex align-items-center gap-1" {...props}>
+//     {imageComponent ? (
+//       <span>{imageComponent}</span>
+//     ) : null}
+//     <span className={!imageComponent && spaceBeforeChildren ? 'without-image' : ''}>
+//       {children}
+//     </span>
+//   </div>
+// );
+
+
 
 const GenericSelect = ({
   imageComponent,

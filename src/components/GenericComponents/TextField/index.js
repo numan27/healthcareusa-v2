@@ -117,5 +117,5 @@ GenericInput.defaultProps = {
   defaultValue: "",
   onChange: () => { },
   value: null,
-  onFileChange: () => {},
+  onFileChange: () => { },
 };

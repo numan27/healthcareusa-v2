@@ -14,7 +14,6 @@ import InternetIcon from "../../../assets/SVGs/Internet";
 import DoctorLocationIcon from "../../../assets/SVGs/DoctorLocation";
 import PhoneCircleIcon from "../../../assets/SVGs/PhoneCircle";
 import axios from "axios";
-// import axios from "../../../assets/axios";
 import IMAGES from "../../../assets/images";
 import { LoaderCenter } from "../../../assets/Loader";
 
@@ -39,6 +38,8 @@ const ProfileCard = ({
       try {
         const response = await axios.get(url);
         setProfile(response.data);
+        setProfileLength(response.data.length);
+
         // Fetch media URLs
         const mediaIds = response.data
           .map((post) => post.featured_media)
@@ -59,7 +60,6 @@ const ProfileCard = ({
         setLoading(false);
       }
     };
-    setProfileLength(profile.length);
 
     fetchPosts();
   }, []);

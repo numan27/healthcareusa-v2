@@ -5,6 +5,7 @@ import GenericBadge from "./Badge"
 import GenericSelect from "./SelectDropdown"
 import GenericModal from "./Modal"
 import GenericMultiSelect from "./MultiselectDropdown"
+import CustomMultiSelect from "./CustomMultiSelect"
 import CheckboxDropdown from "./CheckboxDropdown"
 import PrimaryDropdown from "./PrimaryDropdown"
 import GenericIconButton from "./IconButton"
@@ -20,6 +21,7 @@ export {
     GenericModal,
     GenericMultiSelect,
     CheckboxDropdown,
+    CustomMultiSelect,
     PrimaryDropdown,
     GenericIconButton,
     GenericInput,

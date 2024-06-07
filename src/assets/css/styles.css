@@ -529,6 +529,14 @@ body {
     box-shadow: none;
 }
 
+.form_label {
+    color: #23262f !important;
+    font-size: 14px !important;
+    line-height: 21px !important;
+    font-weight: 400 !important;
+    font-family: Plus Jakarta Sans !important;
+}
+
 /* Media Queries */
 
 @media screen and (max-width: 1400px) {
