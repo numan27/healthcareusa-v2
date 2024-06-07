@@ -8,6 +8,8 @@ import {
 } from "../../components/GenericComponents";
 import AppLayout from "../../components/Layout/AppLayout";
 import { Col, Container, Form, Row } from "react-bootstrap";
+import { LoaderCenter } from "../../assets/Loader";
+import { toast } from "react-toastify";
 
 const AddListing = () => {
   const initialFormState = {
@@ -19,14 +21,18 @@ const AddListing = () => {
     languages: [],
     qualifications: [],
     specializations: [],
+    specialties: [],
     description: "",
     profilePicture: null,
+    gallery: [],
     package: [],
+    latitude: "",
+    longitude: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [formKey, setFormKey] = useState(Date.now());
-  // const [languages, setLanguages] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,8 +43,14 @@ const AddListing = () => {
     setFormData({ ...formData, profilePicture: e.target.files[0] });
   };
 
+  const handleGalleryChange = (files) => {
+    const fileList = Array.from(files);
+    setFormData({ ...formData, gallery: fileList });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const credentials = btoa("numan27:findhealthcareusa");
       if (!formData.profilePicture) {
@@ -70,6 +82,28 @@ const AddListing = () => {
       if (!mediaId) {
         throw new Error("Media ID not found in the response");
       }
+      const mediaIds = await Promise.all(
+        formData.gallery.map(async (picture) => {
+          const credentials = btoa("numan27:findhealthcareusa");
+          const uploadFormData = new FormData();
+          uploadFormData.append("file", picture);
+          const uploadResponse = await fetch(
+            "https://jsappone.demowp.io/wp-json/wp/v2/media",
+            {
+              method: "POST",
+              headers: { Authorization: `Basic ${credentials}` },
+              body: uploadFormData,
+            }
+          );
+
+          if (!uploadResponse.ok) {
+            throw new Error("Failed to upload media file to WordPress");
+          }
+
+          const uploadData = await uploadResponse.json();
+          return uploadData.id;
+        })
+      );
 
       const payload = {
         title: formData.doctorName,
@@ -77,29 +111,34 @@ const AddListing = () => {
         cubewp_post_meta: {
           cwp_field_40228862441: { meta_value: formData.designation },
           cwp_field_288766456392: { meta_value: formData.description },
-          cwp_field_631649982329: { meta_value: formData.package },
+          cwp_field_631649982329: { meta_value: formData.package[0] },
+          cwp_field_310681993623: { meta_value: mediaIds },
           cwp_field_930729608352: {
-            meta_value: formData.qualifications.join(", "),
+            meta_value: formData.qualifications,
           },
           cwp_field_136461069401: {
-            meta_value: formData.specializations.join(", "),
+            meta_value: formData.specializations,
           },
           "fc-phone": { meta_value: formData.phone },
           "fc-website": { meta_value: formData.website },
           "fc-languages": {
-            meta_value: formData.languages.join(", "),
+            meta_value: formData.languages,
           },
           "fc-google-address": {
             meta_value: { address: formData.address },
-            lat: "", // latitude if available
-            lng: "", // longitude if available
+            lat: formData.latitude,
+            lng: formData.longitude,
           },
         },
         status: "publish",
-        taxonomies: formData.specializations,
+        taxonomies: formData.specialties.map(
+          (specialty) =>
+            specialtiesData.find((s) => s.value === specialty).label
+        ),
       };
 
-      console.log("languages", formData.languages);
+      console.log("payload", payload);
+      console.log("formData.specialties", formData.specialties);
 
       const response = await fetch(
         "https://jsappone.demowp.io/wp-json/wp/v2/listing",
@@ -123,49 +162,45 @@ const AddListing = () => {
 
       // Reset form
       setFormData(initialFormState);
-      setFormKey(Date.now()); // Force re-render of CheckboxDropdown components
+      setFormKey(Date.now());
+
+      toast.success("Doctor added successfully!", {
+        autoClose: 1000,
+      });
     } catch (error) {
       console.error("Error submitting form", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // const languagesData = [
-  //   {
-  //     value: 1,
-  //     label: "English",
-  //   },
-  //   {
-  //     value: 2,
-  //     label: "French",
-  //   },
-  //   {
-  //     value: 3,
-  //     label: "Spanish",
-  //   },
-  //   {
-  //     value: 4,
-  //     label: "German",
-  //   },
-  // ];
-
   const languagesData = [
-    { id: "1", label: "English" },
-    { id: "2", label: "French" },
-    { id: "3", label: "Spanish" },
-    { id: "4", label: "German" },
+    { id: "1", label: "English", value: "english" },
+    { id: "2", label: "French", value: "french" },
+    { id: "3", label: "Spanish", value: "spanish" },
+    { id: "4", label: "German", value: "german" },
   ];
+
   const qualificationsData = [
-    { id: "1", label: "M.B.B.S" },
-    { id: "2", label: "M.R.C.P" },
-    { id: "3", label: "D.M.R.D" },
-    { id: "4", label: "F.C.P.S" },
+    { id: "1", label: "M.B.B.S", value: "mbbs" },
+    { id: "2", label: "M.R.C.P", value: "mrcp" },
+    { id: "3", label: "D.M.R.D", value: "dmrd" },
+    { id: "4", label: "F.C.P.S", value: "fcps" },
   ];
   const specializationsData = [
-    { id: "1", label: "Neurologist" },
-    { id: "2", label: "Psychologist" },
-    { id: "3", label: "Dermatologist" },
-    { id: "4", label: "Oncologist" },
-    { id: "5", label: "Cardiologist" },
+    { id: "1", label: "Neurologist", value: "neurologist" },
+    { id: "2", label: "Psychologist", value: "psychologist" },
+    { id: "3", label: "Dermatologist", value: "dermatologist" },
+    { id: "4", label: "Oncologist", value: "oncologist" },
+    { id: "5", label: "Cardiologist", value: "cardiologist" },
+  ];
+
+  const specialtiesData = [
+    { id: "1", label: "Neurology", value: "neurology" },
+    { id: "2", label: "Pediatrics", value: "pediatrics" },
+    { id: "3", label: "Orthopedics", value: "orthopedics" },
+    { id: "4", label: "Ophthalmology", value: "ophthalmology" },
+    { id: "5", label: "ENT (Otorhinolaryngology)", value: "ent" },
   ];
 
   return (
@@ -235,7 +270,29 @@ const AddListing = () => {
             />
           </Col>
 
-          <Col md={6}>
+          <Col lg={3} md={6}>
+            <GenericInput
+              type="text"
+              height="44px"
+              name="latitude"
+              label="Latitude"
+              value={formData.latitude}
+              onChange={handleChange}
+            />
+          </Col>
+
+          <Col lg={3} md={6}>
+            <GenericInput
+              type="text"
+              height="44px"
+              name="longitude"
+              label="Longitude"
+              value={formData.longitude}
+              onChange={handleChange}
+            />
+          </Col>
+
+          <Col md={6} className="mb-2 pb-1">
             <CheckboxDropdown
               key={`${formKey}-languages`}
               title="Languages"
@@ -245,21 +302,18 @@ const AddListing = () => {
               haveLabel
               labelValue="Choose Language(s)"
               border
-              // onChange={(selectedLanguages) => {
-              //   setFormData({ ...formData, languages: selectedLanguages });
-              // }}
               onChange={(selectedLanguages) => {
-                const languageLabels = selectedLanguages.map(
-                  (language) => language.label
+                const languageValues = selectedLanguages.map(
+                  (language) => language.value
                 );
-                setFormData({ ...formData, languages: languageLabels });
+                setFormData({ ...formData, languages: languageValues });
               }}
             />
           </Col>
 
-          <Col md={6}>
+          <Col md={6} className="mb-2 pb-1">
             <CheckboxDropdown
-              key={`${formKey}-qualifications`} // Add key to force re-render
+              key={`${formKey}-qualifications`}
               title="Qualifications"
               height="44px"
               width="100%"
@@ -268,16 +322,19 @@ const AddListing = () => {
               labelValue="Choose Qualification(s)"
               border
               onChange={(selectedQualifications) => {
+                const qualificationValues = selectedQualifications.map(
+                  (qualification) => qualification.value
+                );
                 setFormData({
                   ...formData,
-                  qualifications: selectedQualifications,
+                  qualifications: qualificationValues,
                 });
               }}
             />
           </Col>
-          <Col md={6}>
+          <Col md={6} className="mb-2 pb-1">
             <CheckboxDropdown
-              key={`${formKey}-specializations`} // Add key to force re-render
+              key={`${formKey}-specializations`}
               title="Specializations"
               height="44px"
               width="100%"
@@ -287,14 +344,41 @@ const AddListing = () => {
               labelValue="Choose Specialization(s)"
               border
               onChange={(selectedSpecializations) => {
+                const specializationValues = selectedSpecializations.map(
+                  (specialization) => specialization.value
+                );
                 setFormData({
                   ...formData,
-                  specializations: selectedSpecializations,
+                  specializations: specializationValues,
                 });
               }}
             />
           </Col>
-          <Col className="mt-2 pt-1" md={6}>
+
+          <Col md={6}>
+            <CheckboxDropdown
+              key={`${formKey}-specialties`}
+              title="Specialties"
+              height="44px"
+              width="100%"
+              background="#F4F5F7"
+              items={specialtiesData}
+              haveLabel
+              labelValue="Choose Specialty(s)"
+              border
+              onChange={(selectedSpecialties) => {
+                const specialtyValues = selectedSpecialties.map(
+                  (specialty) => specialty.value
+                );
+                setFormData({
+                  ...formData,
+                  specialties: specialtyValues,
+                });
+              }}
+            />
+          </Col>
+
+          <Col md={6}>
             <Form.Label className="form_label">
               Choose Doctor Package
             </Form.Label>
@@ -311,30 +395,39 @@ const AddListing = () => {
               menuPlacement="auto"
               options={[
                 {
+                  id: "1",
                   label: "Gold",
-                  value: "Gold",
+                  value: "gold",
                 },
+                { id: "2", label: "Platinum", value: "platinum" },
                 {
-                  label: "Platinum",
-                  value: "Platinum",
-                },
-                {
+                  id: "3",
                   label: "Silver",
-                  value: "Silver",
+                  value: "silver",
                 },
               ]}
               onChange={(selectedPackage) => {
-                setFormData({ ...formData, package: selectedPackage });
+                setFormData({ ...formData, package: [selectedPackage.value] });
               }}
             />
           </Col>
-          <Col className="mt-2 pt-1" md={6}>
+          <Col className="" md={6}>
             <GenericInput
               type="file"
               name="profilePicture"
               label="Profile Picture"
               onFileChange={handleProfilePictureChange}
-              key={`${formKey}-profilePicture`} // Add key to force re-render
+              key={`${formKey}-profilePicture`}
+            />
+          </Col>
+          <Col className="" md={6}>
+            <GenericInput
+              type="file"
+              name="gallery"
+              label="Gallery"
+              multiple
+              onFileChange={(e) => handleGalleryChange(e.target.files)}
+              key={`${formKey}-gallery`}
             />
           </Col>
 
@@ -350,11 +443,18 @@ const AddListing = () => {
           </Col>
 
           <Col xs={12} className="mt-3">
-            <GenericButton width="100%" height="44px" onClick={handleSubmit}>
-              Submit Listing
+            <GenericButton
+              width="100%"
+              height="44px"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? <LoaderCenter /> : "Submit Listing"}
             </GenericButton>
           </Col>
         </Row>
+
+        {/* <FormData /> */}
       </Container>
     </AppLayout>
   );

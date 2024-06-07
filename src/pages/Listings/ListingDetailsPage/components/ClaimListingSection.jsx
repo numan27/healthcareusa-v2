@@ -5,14 +5,22 @@ import {
   Typography,
 } from "../../../../components/GenericComponents";
 import { HiOutlineChevronDoubleRight } from "react-icons/hi";
+import { PATH } from "../../../../config";
+import { useNavigate } from "react-router-dom";
 
-const ClaimListing = () => {
+const ClaimListingSection = () => {
   const claimListingData = [
     { title: "Get Verified Badge" },
     { title: "Access to Dashboard" },
     { title: "Upload Profile" },
     { title: "Promote your Lisitng" },
   ];
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(PATH.CLAIM_LISTING);
+  };
 
   return (
     <div>
@@ -48,7 +56,7 @@ const ClaimListing = () => {
       </div>
 
       <div className="d-flex flex-column align-items-center gap-2">
-        <GenericButton width="100%" height="44px">
+        <GenericButton onClick={handleNavigate} width="100%" height="44px">
           Claim this Listing
         </GenericButton>
         <LinkButton text="Find another listing" />
@@ -57,4 +65,4 @@ const ClaimListing = () => {
   );
 };
 
-export default ClaimListing;
+export default ClaimListingSection;

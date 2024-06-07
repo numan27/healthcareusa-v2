@@ -10,11 +10,14 @@ import ProtectedRoute from "../components/ProtectedRoute";
 function RouterConfig() {
   return (
     <Routes>
-
       <Route element={<ProtectedRoute />}>
         <Route
           path={PATH.ADD_LISTING}
           element={<PublicRoute element={<WEB_PAGES.ADD_LISTING />} />}
+        />
+        <Route
+          path={PATH.CLAIM_LISTING}
+          element={<PublicRoute element={<WEB_PAGES.CLAIM_LISTING />} />}
         />
       </Route>
       <Route
@@ -53,7 +56,6 @@ function RouterConfig() {
         path={PATH.LISTING_DETAILS}
         element={<PublicRoute element={<WEB_PAGES.LISTING_DETAILS />} />}
       />
-
 
       {/* <Route
         path={PATH.ADD_LISTING}

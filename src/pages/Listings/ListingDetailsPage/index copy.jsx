@@ -27,7 +27,7 @@ import BookmarkIcon from "../../../assets/SVGs/Bookmark";
 import ShareIcon from "../../../assets/SVGs/Share";
 import ContactForm from "./components/ContactForm";
 import Schedule from "./components/Schedule";
-import ClaimListing from "./components/ClaimListing";
+import ClaimListingSection from "./components/ClaimListingSection";
 import axios from "axios";
 import styled from "styled-components";
 import { LoaderCenter } from "../../../assets/Loader";
@@ -52,7 +52,8 @@ const StyledPopover = styled(Popover)`
 const ListingDetailsPage = () => {
   const { id } = useParams();
   const location = useLocation();
-  const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
+  // const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
+  const [jsonData, setJsonData] = useState({});
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
@@ -72,7 +73,10 @@ const ListingDetailsPage = () => {
           listingData.mediaUrl = mediaResponse.data.source_url;
         }
 
-        setJsonData(listingData);
+        // Check if jsonData is empty or listing ID differs
+        if (!jsonData.id || jsonData.id !== listingData.id) {
+          setJsonData(listingData);
+        }
 
         // Fetch gallery images
         const galleryMeta =
@@ -125,16 +129,18 @@ const ListingDetailsPage = () => {
   const qualificationsData = qualificationsDataString
     ? qualificationsDataString.split(",").map((item) => item.trim())
     : [];
-  const doctorPackageName = `${jsonData.cubewp_post_meta?.["cwp_field_631649982329"]?.meta_value.label} Doctor`;
+  const doctorPackageName =
+    jsonData.cubewp_post_meta?.["cwp_field_631649982329"]?.meta_value;
   const doctorDesignation =
     jsonData.cubewp_post_meta?.["cwp_field_40228862441"]?.meta_value;
   const doctorLanguages =
-    jsonData.cubewp_post_meta?.["fc-languages"]?.meta_value;
+    jsonData.cubewp_post_meta?.["fc-languages"]?.meta_value || [];
   const doctorSpecializations =
     jsonData.cubewp_post_meta?.["cwp_field_136461069401"]?.meta_value;
   const doctorSpecialties = jsonData.taxonomies;
 
-  console.log("doctorSpecialties", doctorSpecialties);
+  console.log("doctorPackageName", doctorPackageName);
+  console.log("jsonData", jsonData);
 
   const listingDetailSocial = [
     {
@@ -221,6 +227,7 @@ const ListingDetailsPage = () => {
   );
 
   console.log("jsonData", jsonData);
+  console.log("doctorLanguages", doctorLanguages);
 
   return (
     <AppLayout>
@@ -313,7 +320,7 @@ const ListingDetailsPage = () => {
                                 weight="700"
                                 color="#fff"
                               >
-                                {doctorPackageName}
+                                {doctorPackageName} Doctor
                               </Typography>
                             </span>
                           </div>
@@ -432,7 +439,7 @@ const ListingDetailsPage = () => {
                   </Typography>
 
                   <div className="mt-4 d-flex gap-2 flex-wrap">
-                    {jsonData.taxonomies?.map((name, index) => (
+                    {doctorSpecialties?.map((name, index) => (
                       <GenericBadge
                         key={index}
                         text={name}
@@ -489,23 +496,6 @@ const ListingDetailsPage = () => {
                   </div>
                 </Box>
 
-                {/* Contact Information */}
-                {/* <div className='d-flex gap-4 mt-4'>
-                  <div className='d-flex flex-column'>
-                    <Typography className="mb-2" as="h5" size="16px" weight="600" color="#23262F">
-                      Contact
-                    </Typography>
-                    <Typography className="mb-1" as="p" size="14px" weight="500" color="#777E90">
-                      Phone: {jsonData.cubewp_post_meta?.['fc-phone']?.meta_value}
-                    </Typography>
-                    <Typography className="mb-1" as="p" size="14px" weight="500" color="#777E90">
-                      Email: {jsonData.cubewp_post_meta?.['fc-email']?.meta_value}
-                    </Typography>
-                    <Typography className="mb-1" as="p" size="14px" weight="500" color="#777E90">
-                      Address: {jsonData.cubewp_post_meta?.['fc-address']?.meta_value}
-                    </Typography>
-                  </div>
-                </div> */}
                 <AdsSection margin={1} padding={0} />
               </>
             )}
@@ -523,6 +513,8 @@ const ListingDetailsPage = () => {
             lg={3}
             className="pb-4"
           >
+
+            {/* Google Map */}
             <Box className="w-100 rounded-3">
               <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
             </Box>
@@ -708,7 +700,7 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative">
-              <ClaimListing />
+              <ClaimListingSection />
               <img
                 width={120}
                 src={IMAGES.CLAIM_LISTING_IMG}

@@ -1,5 +1,5 @@
 /* global google */
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Container, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
 import { LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { Link, useLocation, useParams } from "react-router-dom";
@@ -52,6 +52,7 @@ const StyledPopover = styled(Popover)`
 
 const ListingDetailsPage = () => {
   const { id } = useParams();
+  const mapRef = useRef(null);
   const location = useLocation();
   // const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
   const [jsonData, setJsonData] = useState({});
@@ -74,11 +75,6 @@ const ListingDetailsPage = () => {
           listingData.mediaUrl = mediaResponse.data.source_url;
         }
 
-        // Check if jsonData is empty or listing ID differs
-        if (!jsonData.id || jsonData.id !== listingData.id) {
-          setJsonData(listingData);
-        }
-
         if (listingData.cubewp_post_meta?.["fc-google-address"]?.meta_value) {
           const { lat, lng } =
             listingData.cubewp_post_meta["fc-google-address"].meta_value;
@@ -96,7 +92,6 @@ const ListingDetailsPage = () => {
           setJsonData(listingData);
         }
 
-        // Fetch gallery images
         const galleryMeta =
           listingData.cubewp_post_meta?.["cwp_field_310681993623"]?.meta_value;
         if (galleryMeta && Array.isArray(galleryMeta)) {
@@ -547,11 +542,13 @@ const ListingDetailsPage = () => {
             className="pb-4"
           >
             {/* Google Map */}
+
             <Box
               id="map"
               className="w-100 rounded-top-3 border border-bottom-0"
               style={{ height: "300px" }}
             ></Box>
+
             <Box className="border border-top-0 py-3 rounded-bottom-3 w-100 mb-4">
               <div
                 className="px-3 border-bottom pb-3"
