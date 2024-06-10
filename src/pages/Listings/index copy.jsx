@@ -14,7 +14,6 @@ import ProfileCard from "./components/ProfileCard";
 import { FaCircleInfo } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
 import { useLocation } from "react-router-dom";
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
 
 const Listings = () => {
   const [temperatureRange, setTemperatureRange] = useState([20, 67]);
@@ -59,28 +58,14 @@ const Listings = () => {
     { id: "3", label: "Option 3" },
   ];
 
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-    borderRadius: "8px",
-  };
-
-  const center = {
-    lat: place?.lat || 0,
-    lng: place?.lng || 0,
-  };
-
   return (
     <AppLayout>
       <Container className="min-vh-100 ">
         <div className="mt-5">
-          {place && (
-            <p>
-              Search Keywords:
-              <span className="fw-bold ms-2">{searchKeywords}</span>
-            </p>
-          )}
-
+          <p>
+            Search Keywords:
+            <span className="fw-bold ms-2">{searchKeywords}</span>
+          </p>
           {place && (
             <p>
               <span>{place.title}</span>
@@ -194,20 +179,16 @@ const Listings = () => {
             </div>
 
             <div className="pt-3 mb-3">
-              {place && (
-                <Typography
-                  as="p"
-                  color="#7B7B7B"
-                  weight="400"
-                  size="16px"
-                  lineHeight="26px"
-                >
-                  <span className="text-dark">{profileLength}</span> search
-                  result for <span className="fw-bold">{searchKeywords} </span>{" "}
-                  in
-                  <span className="fw-bold"> {place?.address} </span>
-                </Typography>
-              )}
+              <Typography
+                as="p"
+                color="#7B7B7B"
+                weight="400"
+                size="16px"
+                lineHeight="26px"
+              >
+                <span className="text-dark">{profileLength}</span> search result
+                for Chiropractors in Los Angeles
+              </Typography>
 
               <div className="d-flex align-items-center gap-2">
                 <Typography
@@ -264,18 +245,7 @@ const Listings = () => {
             className="pb-4"
           >
             <Box className="w-100 mb-3">
-              {place && (
-                <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
-                  <GoogleMap
-                    className="rounded-3"
-                    mapContainerStyle={containerStyle}
-                    center={center}
-                    zoom={10}
-                  >
-                    {/* You can add markers or other map components here if needed */}
-                  </GoogleMap>
-                </LoadScript>
-              )}
+              <img src={IMAGES.MAP_IMG} className="img-fluid" alt="map" />
             </Box>
 
             <div>

@@ -207,8 +207,9 @@ const ListingDetailsPage = () => {
     <StyledPopover className="border-0 me-2" id="popover-basic">
       <Popover.Body>
         <Box className="w-100 d-flex justify-content-evenly gap-1">
-          {listingDetailSocialShare.map((items) => (
+          {listingDetailSocialShare.map((items, index) => (
             <Box
+              key={index}
               width="30px"
               height="30px"
               className="border rounded-2 listing-detail-social"
@@ -238,7 +239,7 @@ const ListingDetailsPage = () => {
             {/* Profile Media */}
             <Row className="profile-gallery px-2">
               {galleryImages.map((imgSrc, index) => (
-                <Suspense fallback={<LoaderCenter />}>
+                <Suspense key={index} fallback={<LoaderCenter />}>
                   {loading ? (
                     <LoaderCenter />
                   ) : (
@@ -513,7 +514,6 @@ const ListingDetailsPage = () => {
             lg={3}
             className="pb-4"
           >
-
             {/* Google Map */}
             <Box className="w-100 rounded-3">
               <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
@@ -674,8 +674,9 @@ const ListingDetailsPage = () => {
               </div>
 
               <Box className="pt-3 px-3 d-flex justify-content-sm-start justify-content-center gap-2 w-100">
-                {listingDetailSocial.map((items) => (
+                {listingDetailSocial.map((items, index) => (
                   <Box
+                    key={index}
                     width="44px"
                     height="44px"
                     className="border rounded-5 listing-detail-social"

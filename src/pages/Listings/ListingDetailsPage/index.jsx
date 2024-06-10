@@ -1,4 +1,3 @@
-/* global google */
 import { Suspense, useEffect, useState } from "react";
 import { Container, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
 import { LuChevronDown, LuChevronUp } from "react-icons/lu";
@@ -76,23 +75,6 @@ const ListingDetailsPage = () => {
 
         // Check if jsonData is empty or listing ID differs
         if (!jsonData.id || jsonData.id !== listingData.id) {
-          setJsonData(listingData);
-        }
-
-        if (listingData.cubewp_post_meta?.["fc-google-address"]?.meta_value) {
-          const { lat, lng } =
-            listingData.cubewp_post_meta["fc-google-address"].meta_value;
-          const geocoder = new google.maps.Geocoder();
-          geocoder.geocode(
-            { location: { lat: parseFloat(lat), lng: parseFloat(lng) } },
-            (results, status) => {
-              if (status === "OK" && results[0]) {
-                listingData.addressFromLatLng = results[0].formatted_address;
-                setJsonData(listingData);
-              }
-            }
-          );
-        } else {
           setJsonData(listingData);
         }
 
@@ -202,21 +184,6 @@ const ListingDetailsPage = () => {
     },
   ];
 
-  useEffect(() => {
-    if (jsonData.cubewp_post_meta?.["fc-google-address"]?.meta_value) {
-      const { lat, lng } =
-        jsonData.cubewp_post_meta["fc-google-address"].meta_value;
-      const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: parseFloat(lat), lng: parseFloat(lng) },
-        zoom: 15,
-      });
-      new google.maps.Marker({
-        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
-        map,
-      });
-    }
-  }, [jsonData]);
-
   const cubewpPostMeta = jsonData.cubewp_post_meta || [];
   const googleAddress = cubewpPostMeta["fc-google-address"]?.meta_value || [];
 
@@ -240,8 +207,9 @@ const ListingDetailsPage = () => {
     <StyledPopover className="border-0 me-2" id="popover-basic">
       <Popover.Body>
         <Box className="w-100 d-flex justify-content-evenly gap-1">
-          {listingDetailSocialShare.map((items) => (
+          {listingDetailSocialShare.map((items, index) => (
             <Box
+              key={index}
               width="30px"
               height="30px"
               className="border rounded-2 listing-detail-social"
@@ -271,7 +239,7 @@ const ListingDetailsPage = () => {
             {/* Profile Media */}
             <Row className="profile-gallery px-2">
               {galleryImages.map((imgSrc, index) => (
-                <Suspense fallback={<LoaderCenter />}>
+                <Suspense key={index} fallback={<LoaderCenter />}>
                   {loading ? (
                     <LoaderCenter />
                   ) : (
@@ -547,12 +515,10 @@ const ListingDetailsPage = () => {
             className="pb-4"
           >
             {/* Google Map */}
-            <Box
-              id="map"
-              className="w-100 rounded-top-3 border border-bottom-0"
-              style={{ height: "300px" }}
-            ></Box>
-            <Box className="border border-top-0 py-3 rounded-bottom-3 w-100 mb-4">
+            <Box className="w-100 rounded-3">
+              <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
+            </Box>
+            <Box className="border py-3 rounded-bottom-3 w-100 mb-4">
               <div
                 className="px-3 border-bottom pb-3"
                 onMouseEnter={() => setCopyIconVisible(true)}
@@ -571,7 +537,7 @@ const ListingDetailsPage = () => {
                           lineHeight="18px"
                           weight="400"
                         >
-                          {jsonData.addressFromLatLng || googleAddress.address}
+                          {googleAddress.address}
                         </Typography>
                       </div>
                       <GenericButton
@@ -708,8 +674,9 @@ const ListingDetailsPage = () => {
               </div>
 
               <Box className="pt-3 px-3 d-flex justify-content-sm-start justify-content-center gap-2 w-100">
-                {listingDetailSocial.map((items) => (
+                {listingDetailSocial.map((items, index) => (
                   <Box
+                    key={index}
                     width="44px"
                     height="44px"
                     className="border rounded-5 listing-detail-social"
