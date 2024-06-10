@@ -1,9 +1,9 @@
-import AppLayout from '../../components/Layout/AppLayout'
-import AdsSection from '../../components/Shared/AdsSection'
-import PartnersSection from '../../components/Shared/PartnersSection'
-import Blogs from './components/Blogs'
-import Hero from './components/Hero'
-import AdsSectionTop from './components/AdsSectionTop'
+import AppLayout from "../../components/Layout/AppLayout.jsx";
+import AdsSection from "../../components/Shared/AdsSection.jsx";
+import PartnersSection from "../../components/Shared/PartnersSection.jsx";
+import Blogs from "./components/Blogs.jsx";
+import Hero from "./components/Hero.jsx";
+import AdsSectionTop from "./components/AdsSectionTop.jsx";
 
 const Home = () => {
   return (
@@ -16,7 +16,7 @@ const Home = () => {
         <PartnersSection />
       </AppLayout>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

@@ -1,11 +1,11 @@
 /** @format */
 
 import { Routes, Route } from "react-router-dom";
-import PublicRoute from "./Routes/PublicRoute";
+import PublicRoute from "./Routes/PublicRoute.jsx";
 // import ProtectedRoute from "./Routes/ProtectedRoute";
 import WEB_PAGES from "../pages";
 import { PATH } from "../config";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "../components/ProtectedRoute.jsx";
 
 function RouterConfig() {
   return (
