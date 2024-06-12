@@ -10,7 +10,6 @@ import AppLayout from "../../components/Layout/AppLayout";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { LoaderCenter } from "../../assets/Loader";
 import { toast } from "react-toastify";
-import axios from "axios";
 
 const AddListing = () => {
   const initialFormState = {
@@ -22,7 +21,7 @@ const AddListing = () => {
     languages: [],
     qualifications: [],
     specializations: [],
-    specialties: [],
+    taxonomies: [],
     description: "",
     profilePicture: null,
     gallery: [],
@@ -56,14 +55,11 @@ const AddListing = () => {
     setIsSubmitting(true);
     try {
       const credentials = btoa("numan27:findhealthcareusa");
-
       if (!formData.profilePicture) {
         throw new Error("Please select a profile picture");
       }
-
       const uploadFormData = new FormData();
       uploadFormData.append("file", formData.profilePicture);
-
       const uploadResponse = await fetch(
         "https://jsappone.demowp.io/wp-json/wp/v2/media",
         {
@@ -82,12 +78,12 @@ const AddListing = () => {
       }
 
       const uploadData = await uploadResponse.json();
-      const mediaId = uploadData.id;
+      console.log("Media upload response:", uploadData);
 
+      const mediaId = uploadData.id;
       if (!mediaId) {
         throw new Error("Media ID not found in the response");
       }
-
       const mediaIds = await Promise.all(
         formData.gallery.map(async (picture) => {
           const credentials = btoa("numan27:findhealthcareusa");
@@ -111,27 +107,6 @@ const AddListing = () => {
         })
       );
 
-      // Fetch latitude and longitude from address
-      const address = formData.address;
-      const geocodeResponse = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json`,
-        {
-          params: {
-            address: address,
-            key: "AIzaSyDyTmixiuM073rwv8ADLPl6mqrf8S3DNFQ", 
-            // key: "AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg", old
-          },
-        }
-      );
-
-      if (geocodeResponse.data.status !== "OK") {
-        throw new Error("Failed to fetch geocode data");
-      }
-
-      const location = geocodeResponse.data.results[0].geometry.location;
-      const latitude = location.lat;
-      const longitude = location.lng;
-
       const payload = {
         title: formData.doctorName,
         featured_media: mediaId,
@@ -154,19 +129,18 @@ const AddListing = () => {
           "fc-google-address": {
             meta_value: {
               address: formData.address,
-              lat: latitude,
-              lng: longitude,
+              // lat: formData.latitude,
+              // lng: formData.longitude,
             },
           },
         },
         status: "publish",
-        taxonomies: formData.specialties.map(
-          (specialty) =>
-            specialtiesData.find((s) => s.value === specialty).label
-        ),
+        // taxonomies: formData.taxonomies,
+        taxonomies: formData.taxonomies,
       };
 
-      console.log("Payload:", payload);
+      console.log("payload", payload);
+      console.log("formData", formData);
 
       const response = await fetch(
         "https://jsappone.demowp.io/wp-json/wp/v2/listing",
@@ -223,12 +197,19 @@ const AddListing = () => {
     { id: "5", label: "Cardiologist", value: "cardiologist" },
   ];
 
-  const specialtiesData = [
-    { id: "1", label: "Neurology", value: "neurology" },
-    { id: "2", label: "Pediatrics", value: "pediatrics" },
-    { id: "3", label: "Orthopedics", value: "orthopedics" },
-    { id: "4", label: "Ophthalmology", value: "ophthalmology" },
-    { id: "5", label: "ENT (Otorhinolaryngology)", value: "ent" },
+  // const taxonomiesData = [
+  //   "Neurology",
+  //   "Pediatrics",
+  //   "Orthopedics",
+  //   "Ophthalmology",
+  //   "ENT",
+  // ];
+  const taxonomiesData = [
+    { id: 1, label: "Neurology", value: "neurology" },
+    { id: 2, label: "Pediatrics", value: "pediatrics" },
+    { id: 3, label: "Orthopedics", value: "orthopedics" },
+    { id: 4, label: "Ophthalmology", value: "ophthalmology" },
+    { id: 5, label: "ENT (Otorhinolaryngology)", value: "ent" },
   ];
 
   return (
@@ -298,7 +279,7 @@ const AddListing = () => {
             />
           </Col>
 
-          <Col lg={3} md={6}>
+          {/* <Col lg={3} md={6}>
             <GenericInput
               type="text"
               height="44px"
@@ -318,7 +299,7 @@ const AddListing = () => {
               value={formData.longitude}
               onChange={handleChange}
             />
-          </Col>
+          </Col> */}
 
           <Col md={6} className="mb-2 pb-1">
             <CheckboxDropdown
@@ -385,22 +366,20 @@ const AddListing = () => {
 
           <Col md={6}>
             <CheckboxDropdown
-              key={`${formKey}-specialties`}
+              key={`${formKey}-taxonomies`}
               title="Specialties"
               height="44px"
               width="100%"
               background="#F4F5F7"
-              items={specialtiesData}
+              items={taxonomiesData}
               haveLabel
               labelValue="Choose Specialty(s)"
               border
-              onChange={(selectedSpecialties) => {
-                const specialtyValues = selectedSpecialties.map(
-                  (specialty) => specialty.value
-                );
+              onChange={(selectedTaxonomies) => {
+                const taxonomyValues = selectedTaxonomies;
                 setFormData({
-                  ...formData,
-                  specialties: specialtyValues,
+                  // ...formData,
+                  taxonomies: taxonomyValues,
                 });
               }}
             />
@@ -439,7 +418,7 @@ const AddListing = () => {
               }}
             />
           </Col>
-          <Col className="" md={6}>
+          <Col className="my-2 pt-1" md={6}>
             <GenericInput
               type="file"
               name="profilePicture"
@@ -453,7 +432,7 @@ const AddListing = () => {
               </small>
             )}
           </Col>
-          <Col className="" md={6}>
+          <Col className="mt-2 pt-1" md={6}>
             <GenericInput
               type="file"
               name="gallery"
@@ -476,14 +455,16 @@ const AddListing = () => {
           </Col>
 
           <Col xs={12} className="mt-3">
-            <GenericButton
-              width="100%"
-              height="44px"
-              onClick={handleSubmit}
-              disabled={!profilePictureUploaded || isSubmitting}
-            >
-              {isSubmitting ? <LoaderCenter /> : "Submit Listing"}
-            </GenericButton>
+            <Col xs={12} className="mt-3">
+              <GenericButton
+                width="100%"
+                height="44px"
+                onClick={handleSubmit}
+                disabled={!profilePictureUploaded || isSubmitting}
+              >
+                {isSubmitting ? <LoaderCenter /> : "Submit Listing"}
+              </GenericButton>
+            </Col>
           </Col>
         </Row>
 

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Dropdown, Form, FormLabel } from "react-bootstrap";
@@ -42,6 +44,7 @@ const StyledDropdown = styled.div`
     padding-top: 0px;
     padding-bottom: 0px;
     width: 100%;
+    min-width: 200px;
   }
 
   .dropdown-menu .dropdown-item:nth-last-child(1) {
@@ -157,6 +160,8 @@ const CheckboxMenu = React.forwardRef(
   }
 );
 
+CheckboxMenu.displayName = "CheckboxMenu";
+
 const CheckDropdownItem = React.forwardRef(
   ({ children, id, checked, onChange, haveLabel, labelValue }, ref) => {
     return (
@@ -176,6 +181,8 @@ const CheckDropdownItem = React.forwardRef(
   }
 );
 
+CheckDropdownItem.displayName = "CheckDropdownItem";
+
 const CheckboxDropdown = observer(
   ({
     items,
@@ -187,8 +194,11 @@ const CheckboxDropdown = observer(
     border,
     borderColor,
     onChange,
+    singleSelect,
   }) => {
-    const [checkboxItems, setCheckboxItems] = useState(items);
+    const nonEmptyItems = items.filter((item) => item.label.trim());
+
+    const [checkboxItems, setCheckboxItems] = useState(nonEmptyItems);
 
     const handleChecked = (key, event) => {
       const updatedItems = checkboxItems.map((item) =>
@@ -212,6 +222,7 @@ const CheckboxDropdown = observer(
         {haveLabel ? <StyledLabel>{labelValue}</StyledLabel> : ""}
         <Dropdown>
           <Dropdown.Toggle variant="primary" id="dropdown-basic">
+            
             <div className="selected-items">
               {checkboxItems
                 .filter((item) => item.checked)
@@ -230,18 +241,33 @@ const CheckboxDropdown = observer(
           </Dropdown.Toggle>
 
           <Dropdown.Menu as={CheckboxMenu}>
-            {checkboxItems.map((item) => (
-              <Dropdown.Item
-                key={item.id}
-                as={CheckDropdownItem}
-                id={item.id}
-                checked={item.checked}
-                onChange={handleChecked}
-                className="d-flex align-items-center cursor-pointer"
-              >
-                {item.label}
-              </Dropdown.Item>
-            ))}
+            {checkboxItems.map((item) =>
+              // Render either checkbox or dropdown item based on singleSelect prop
+              singleSelect ? (
+                <Dropdown.Item
+                  key={item.id}
+                  onClick={() =>
+                    handleChecked(item.id, {
+                      target: { checked: !item.checked },
+                    })
+                  }
+                  className="d-flex align-items-center cursor-pointer"
+                >
+                  {item.label}
+                </Dropdown.Item>
+              ) : (
+                <Dropdown.Item
+                  key={item.id}
+                  as={CheckDropdownItem}
+                  id={item.id}
+                  checked={item.checked}
+                  onChange={handleChecked}
+                  className="d-flex align-items-center cursor-pointer"
+                >
+                  {item.label}
+                </Dropdown.Item>
+              )
+            )}
           </Dropdown.Menu>
         </Dropdown>
       </StyledDropdown>
@@ -250,7 +276,13 @@ const CheckboxDropdown = observer(
 );
 
 CheckboxDropdown.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      checked: PropTypes.bool.isRequired,
+    })
+  ).isRequired,
   height: PropTypes.string,
   width: PropTypes.string,
   title: PropTypes.string,
@@ -259,6 +291,7 @@ CheckboxDropdown.propTypes = {
   border: PropTypes.bool,
   borderColor: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  singleSelect: PropTypes.bool,
 };
 
 CheckboxDropdown.defaultProps = {
@@ -269,6 +302,9 @@ CheckboxDropdown.defaultProps = {
   borderColor: "#B2BAC0",
   haveLabel: false,
   labelValue: "",
+  singleSelect: false,
 };
+
+CheckboxDropdown.displayName = "CheckboxDropdown";
 
 export default CheckboxDropdown;

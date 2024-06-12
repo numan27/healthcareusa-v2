@@ -1,4 +1,5 @@
-import React, { Suspense, useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
+import { Suspense, useEffect, useState } from "react";
 import {
   Box,
   GenericBadge,

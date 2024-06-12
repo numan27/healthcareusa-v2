@@ -8,7 +8,9 @@ import {
 } from "../../components/GenericComponents";
 import AppLayout from "../../components/Layout/AppLayout";
 import { Col, Container, Form, Row } from "react-bootstrap";
-// import FormData from "./FormData";
+import { LoaderCenter } from "../../assets/Loader";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const AddListing = () => {
   const initialFormState = {
@@ -20,15 +22,19 @@ const AddListing = () => {
     languages: [],
     qualifications: [],
     specializations: [],
-    specialties: [],
+    taxonomies: [],
     description: "",
     profilePicture: null,
     gallery: [],
     package: [],
+    latitude: "",
+    longitude: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [formKey, setFormKey] = useState(Date.now());
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profilePictureUploaded, setProfilePictureUploaded] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +43,7 @@ const AddListing = () => {
 
   const handleProfilePictureChange = (e) => {
     setFormData({ ...formData, profilePicture: e.target.files[0] });
+    setProfilePictureUploaded(true);
   };
 
   const handleGalleryChange = (files) => {
@@ -46,13 +53,17 @@ const AddListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const credentials = btoa("numan27:findhealthcareusa");
+
       if (!formData.profilePicture) {
         throw new Error("Please select a profile picture");
       }
+
       const uploadFormData = new FormData();
       uploadFormData.append("file", formData.profilePicture);
+
       const uploadResponse = await fetch(
         "https://jsappone.demowp.io/wp-json/wp/v2/media",
         {
@@ -71,12 +82,12 @@ const AddListing = () => {
       }
 
       const uploadData = await uploadResponse.json();
-      console.log("Media upload response:", uploadData);
-
       const mediaId = uploadData.id;
+
       if (!mediaId) {
         throw new Error("Media ID not found in the response");
       }
+
       const mediaIds = await Promise.all(
         formData.gallery.map(async (picture) => {
           const credentials = btoa("numan27:findhealthcareusa");
@@ -100,6 +111,27 @@ const AddListing = () => {
         })
       );
 
+      // Fetch latitude and longitude from address
+      const address = formData.address;
+      const geocodeResponse = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json`,
+        {
+          params: {
+            address: address,
+            // key: "AIzaSyDyTmixiuM073rwv8ADLPl6mqrf8S3DNFQ",
+            key: "AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg",
+          },
+        }
+      );
+
+      if (geocodeResponse.data.status !== "OK") {
+        throw new Error("Failed to fetch geocode data");
+      }
+
+      const location = geocodeResponse.data.results[0].geometry.location;
+      const latitude = location.lat;
+      const longitude = location.lng;
+
       const payload = {
         title: formData.doctorName,
         featured_media: mediaId,
@@ -120,9 +152,11 @@ const AddListing = () => {
             meta_value: formData.languages,
           },
           "fc-google-address": {
-            meta_value: { address: formData.address },
-            lat: "", // latitude if available
-            lng: "", // longitude if available
+            meta_value: {
+              address: formData.address,
+              lat: latitude,
+              lng: longitude,
+            },
           },
         },
         status: "publish",
@@ -132,8 +166,7 @@ const AddListing = () => {
         ),
       };
 
-      console.log("payload", payload);
-      console.log("formData.specialties", formData.specialties);
+      console.log("Payload:", payload);
 
       const response = await fetch(
         "https://jsappone.demowp.io/wp-json/wp/v2/listing",
@@ -158,8 +191,14 @@ const AddListing = () => {
       // Reset form
       setFormData(initialFormState);
       setFormKey(Date.now());
+
+      toast.success("Doctor added successfully!", {
+        autoClose: 1000,
+      });
     } catch (error) {
       console.error("Error submitting form", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -259,6 +298,28 @@ const AddListing = () => {
             />
           </Col>
 
+          <Col lg={3} md={6}>
+            <GenericInput
+              type="text"
+              height="44px"
+              name="latitude"
+              label="Latitude"
+              value={formData.latitude}
+              onChange={handleChange}
+            />
+          </Col>
+
+          <Col lg={3} md={6}>
+            <GenericInput
+              type="text"
+              height="44px"
+              name="longitude"
+              label="Longitude"
+              value={formData.longitude}
+              onChange={handleChange}
+            />
+          </Col>
+
           <Col md={6} className="mb-2 pb-1">
             <CheckboxDropdown
               key={`${formKey}-languages`}
@@ -324,7 +385,7 @@ const AddListing = () => {
 
           <Col md={6}>
             <CheckboxDropdown
-              key={`${formKey}-specialties`}
+              key={`${formKey}-taxonomies`}
               title="Specialties"
               height="44px"
               width="100%"
@@ -333,13 +394,13 @@ const AddListing = () => {
               haveLabel
               labelValue="Choose Specialty(s)"
               border
-              onChange={(selectedSpecialties) => {
-                const specialtyValues = selectedSpecialties.map(
-                  (specialty) => specialty.value
+              onChange={(selectedTaxonomies) => {
+                const taxonomyValues = selectedTaxonomies.map(
+                  (taxonomy) => taxonomy.value
                 );
                 setFormData({
                   ...formData,
-                  specialties: specialtyValues,
+                  taxonomies: taxonomyValues,
                 });
               }}
             />
@@ -378,7 +439,7 @@ const AddListing = () => {
               }}
             />
           </Col>
-          <Col className="mt-2 pt-1" md={6}>
+          <Col className="" md={6}>
             <GenericInput
               type="file"
               name="profilePicture"
@@ -386,8 +447,13 @@ const AddListing = () => {
               onFileChange={handleProfilePictureChange}
               key={`${formKey}-profilePicture`}
             />
+            {!profilePictureUploaded && (
+              <small className="text-danger" size="14px">
+                Profile picture required
+              </small>
+            )}
           </Col>
-          <Col className="mt-2 pt-1" md={6}>
+          <Col className="" md={6}>
             <GenericInput
               type="file"
               name="gallery"
@@ -410,8 +476,13 @@ const AddListing = () => {
           </Col>
 
           <Col xs={12} className="mt-3">
-            <GenericButton width="100%" height="44px" onClick={handleSubmit}>
-              Submit Listing
+            <GenericButton
+              width="100%"
+              height="44px"
+              onClick={handleSubmit}
+              disabled={!profilePictureUploaded || isSubmitting}
+            >
+              {isSubmitting ? <LoaderCenter /> : "Submit Listing"}
             </GenericButton>
           </Col>
         </Row>

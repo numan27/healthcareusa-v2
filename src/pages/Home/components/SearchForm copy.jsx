@@ -59,6 +59,7 @@ const SearchForm = () => {
     <LoadScript
       key={loadScriptKey}
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
+      // googleMapsApiKey="AIzaSyDyTmixiuM073rwv8ADLPl6mqrf8S3DNFQ"
       libraries={libraries}
     >
       <Box width="100" padding="18px" className="bg-white rounded-3 mt-3 pb-3">
@@ -108,7 +109,7 @@ const SearchForm = () => {
                 width="138px"
                 height="48px"
                 className="d-flex align-items-center justify-content-center gap-2"
-                // disabled={!searchKeywords || !place}
+                disabled={!searchKeywords || !place}
               >
                 <IoSearch className="" size={20} /> Search
               </GenericButton>
