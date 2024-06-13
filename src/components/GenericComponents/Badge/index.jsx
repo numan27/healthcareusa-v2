@@ -1,4 +1,4 @@
-/*eslint-disable*/
+/* eslint-disable */
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { GoDotFill } from "react-icons/go";
@@ -11,7 +11,7 @@ const StyledBadge = styled.div`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   border-radius: ${(props) => props.borderRadius};
-  border-color: ${(props) => props.borderColor || '#E4E4E4'};
+  border-color: ${(props) => props.borderColor || "#E4E4E4"};
   border: ${(props) => props.border} !important;
   font-weight: ${(props) => props.weight};
   // font-weight: 600 !important;
@@ -109,6 +109,4 @@ GenericBadge.defaultProps = {
   statusText: "",
 };
 
-
 export default GenericBadge;
-

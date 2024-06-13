@@ -26,6 +26,7 @@ const AddListing = () => {
     profilePicture: null,
     gallery: [],
     package: [],
+    gender: [],
     latitude: "",
     longitude: "",
   };
@@ -113,7 +114,8 @@ const AddListing = () => {
         cubewp_post_meta: {
           cwp_field_40228862441: { meta_value: formData.designation },
           cwp_field_288766456392: { meta_value: formData.description },
-          cwp_field_631649982329: { meta_value: formData.package[0] },
+          cwp_field_631649982329: { meta_value: formData.package },
+          cwp_field_224925973684: { meta_value: formData.gender },
           cwp_field_310681993623: { meta_value: mediaIds },
           cwp_field_930729608352: {
             meta_value: formData.qualifications,
@@ -129,14 +131,13 @@ const AddListing = () => {
           "fc-google-address": {
             meta_value: {
               address: formData.address,
-              // lat: formData.latitude,
-              // lng: formData.longitude,
+              lat: "",
+              lng: "",
             },
           },
         },
         status: "publish",
-        // taxonomies: formData.taxonomies,
-        taxonomies: formData.taxonomies,
+        taxonomies: formData.taxonomies.map((taxonomy) => taxonomy.value),
       };
 
       console.log("payload", payload);
@@ -197,20 +198,15 @@ const AddListing = () => {
     { id: "5", label: "Cardiologist", value: "cardiologist" },
   ];
 
-  // const taxonomiesData = [
-  //   "Neurology",
-  //   "Pediatrics",
-  //   "Orthopedics",
-  //   "Ophthalmology",
-  //   "ENT",
-  // ];
   const taxonomiesData = [
-    { id: 1, label: "Neurology", value: "neurology" },
-    { id: 2, label: "Pediatrics", value: "pediatrics" },
-    { id: 3, label: "Orthopedics", value: "orthopedics" },
-    { id: 4, label: "Ophthalmology", value: "ophthalmology" },
-    { id: 5, label: "ENT (Otorhinolaryngology)", value: "ent" },
+    { id: "1", label: "Neurology", value: "neurology" },
+    { id: "2", label: "Pediatrics", value: "pediatrics" },
+    { id: "3", label: "Orthopedics", value: "orthopedics" },
+    { id: "4", label: "Ophthalmology", value: "ophthalmology" },
+    { id: "5", label: "ENT (Otorhinolaryngology)", value: "ent" },
   ];
+
+  console.log("formData", formData);
 
   return (
     <AppLayout>
@@ -415,6 +411,42 @@ const AddListing = () => {
               ]}
               onChange={(selectedPackage) => {
                 setFormData({ ...formData, package: [selectedPackage.value] });
+              }}
+            />
+          </Col>
+          <Col md={6} className="mt-2 pt-1">
+            <Form.Label className="form_label">Choose Gender</Form.Label>
+            <GenericSelect
+              key={`${formKey}-gender`}
+              minWidth="120px"
+              minheight="44px"
+              borderColor="#B2BAC0"
+              borderRadius="4px"
+              bgcolor="#F4F5F7"
+              placeholder="Select Gender"
+              placeholderColor="#333333"
+              iconColor="#06312E"
+              menuPlacement="auto"
+              options={[
+                {
+                  id: "1",
+                  label: "Male",
+                  value: "male",
+                },
+                { id: "2", label: "Female", value: "female" },
+                {
+                  id: "3",
+                  label: "Other",
+                  value: "other",
+                },
+                {
+                  id: "4",
+                  label: "Not to say",
+                  value: "not to say",
+                },
+              ]}
+              onChange={(selectedGender) => {
+                setFormData({ ...formData, gender: [selectedGender.value] });
               }}
             />
           </Col>

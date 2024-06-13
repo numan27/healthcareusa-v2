@@ -103,35 +103,34 @@ const Listings = () => {
     fetchDropdownOptions();
   }, []);
 
-useEffect(() => {
-  const fetchListings = async () => {
-    const query = new URLSearchParams({
-      "cwp_query[post_type]": "listing",
-      "cwp_query[orderby]": "ASC",
-      "cwp_query[s]": searchKeywordsState,
-      "cwp_query[fc-google-address_range]": temperatureRange,
-      "cwp_query[fc-google-address]": place?.address || "",
-      "cwp_query[fc-google-address_lat]": place?.lat || "",
-      "cwp_query[fc-google-address_lng]": place?.lng || "",
-    }).toString();
+  useEffect(() => {
+    const fetchListings = async () => {
+      const query = new URLSearchParams({
+        "cwp_query[post_type]": "listing",
+        "cwp_query[orderby]": "ASC",
+        "cwp_query[s]": searchKeywordsState,
+        "cwp_query[fc-google-address_range]": temperatureRange,
+        "cwp_query[fc-google-address]": place?.address || "",
+        "cwp_query[fc-google-address_lat]": place?.lat || "",
+        "cwp_query[fc-google-address_lng]": place?.lng || "",
+      }).toString();
 
-    try {
-      const response = await axios.get(
-        `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-      );
-      setListingsState(response.data);
+      try {
+        const response = await axios.get(
+          `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
+        );
+        setListingsState(response.data);
 
-      if (place) {
-        setMapCenter({ lat: place.lat, lng: place.lng });
+        if (place) {
+          setMapCenter({ lat: place.lat, lng: place.lng });
+        }
+      } catch (error) {
+        console.error("Error fetching listings:", error);
       }
-    } catch (error) {
-      console.error("Error fetching listings:", error);
-    }
-  };
+    };
 
-  fetchListings();
-}, [searchKeywordsState, temperatureRange, place]);
-
+    fetchListings();
+  }, [searchKeywordsState, temperatureRange, place]);
 
   const containerStyle = {
     width: "100%",
@@ -462,6 +461,7 @@ useEffect(() => {
             <Box className="w-100 mb-3">
               {place && (
                 <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
+                  {/* // <LoadScript googleMapsApiKey="AIzaSyDyTmixiuM073rwv8ADLPl6mqrf8S3DNFQ"> */}
                   <GoogleMap
                     className="rounded-3"
                     mapContainerStyle={containerStyle}
