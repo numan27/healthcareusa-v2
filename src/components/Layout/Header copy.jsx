@@ -49,7 +49,7 @@ const Header = () => {
         const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/menus/', {
           auth: {
             username: 'numankhalil27@gmail.com',
-            password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
+            password: 'findhealthcareusa'
           }
         });
         setMenus(response.data.items);

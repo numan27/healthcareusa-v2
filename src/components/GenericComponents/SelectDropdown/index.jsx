@@ -39,7 +39,7 @@ const StyledSelecte = styled(Select)`
   }
   // .react-select__option--is-selected,
   .react-select__option:hover {
-    background-color: #00C1B6;
+    background-color: #00c1b6;
     color: #fff !important;
   }
   .react-select__single-value {
@@ -51,8 +51,9 @@ const StyledSelecte = styled(Select)`
   }
   .react-select__placeholder {
     color: ${(props) => props.placeholderColor} !important;
+    font-size: 14px !important;
   }
-  .without-image{
+  .without-image {
     margin-left: 10px !important;
   }
 `;
@@ -80,7 +81,7 @@ const customStyles = {
     borderBottom: "1px solid #e5e5e5!important",
   }),
 
-  placeholder: (styles) => ({ ...styles, color: "#969696" }),
+  placeholder: (styles) => ({ ...styles, color: "#969696", fontSize: '12px' }),
   singleValue: (styles, { data }) => ({ ...styles, color: "#969696" }),
   indicatorSeparator: (state) => ({
     display: "none",
@@ -90,14 +91,14 @@ const customStyles = {
 const customComponents = ({ imageComponent }) => ({
   SingleValue: ({ children, ...props }) => (
     <div className="d-flex align-items-center gap-1">
-      {imageComponent ? (<span>{imageComponent}</span>) : ""}
-      <span className={!imageComponent ? 'without-image' : ''}>{children}</span>
+      {imageComponent ? <span>{imageComponent}</span> : ""}
+      <span className={!imageComponent ? "without-image" : ""}>{children}</span>
     </div>
   ),
   Placeholder: ({ children, ...props }) => (
     <div className="d-flex align-items-center gap-1">
-      {imageComponent ? (<span>{imageComponent}</span>) : ""}
-      <span className={!imageComponent ? 'without-image' : ''}>{children}</span>
+      {imageComponent ? <span>{imageComponent}</span> : ""}
+      <span className={!imageComponent ? "without-image" : ""}>{children}</span>
     </div>
   ),
 });
@@ -111,8 +112,6 @@ const customComponents = ({ imageComponent }) => ({
 //     </span>
 //   </div>
 // );
-
-
 
 const GenericSelect = ({
   imageComponent,
@@ -134,7 +133,6 @@ const GenericSelect = ({
   valueColor,
   ...props
 }) => {
-
   const handleSelect = (selectedItem) => {
     if (onSelect) {
       onSelect(selectedItem);
@@ -183,7 +181,7 @@ GenericSelect.propTypes = {
 };
 
 GenericSelect.defaultProps = {
-  onSelect: () => { },
+  onSelect: () => {},
   borderColor: "rgb(213, 217, 229)",
   minheight: "",
   maxheight: "50px",

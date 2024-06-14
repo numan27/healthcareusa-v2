@@ -28,12 +28,11 @@ const Listings = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [listingsState, setListingsState] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
-  const [filteredProfiles, setFilteredProfiles] = useState([]);
 
   const location = useLocation();
   const { searchKeywords, place } = location.state || {};
 
-  // Fetch dropdown options
+  // Dropdowns
   useEffect(() => {
     const fetchDropdownOptions = async () => {
       try {
@@ -66,7 +65,38 @@ const Listings = () => {
               optionsMap[label] = parsedOptions;
             }
           });
+          console.log("Fields from API:", fields);
 
+          const genderField = fields.find((field) => field.label === "Gender");
+          const specializationField = fields.find(
+            (field) => field.label === "Specialization"
+          );
+
+          if (genderField && genderField.label.trim()) {
+            const genderOptions = JSON.parse(genderField.options);
+            const parsedGenderOptions = genderOptions.label.map(
+              (label, index) => ({
+                id: index,
+                label: label,
+                value: genderOptions.value[index],
+              })
+            );
+            optionsMap["Gender"] = parsedGenderOptions;
+          }
+
+          if (specializationField && specializationField.label.trim()) {
+            const specializationOptions = JSON.parse(
+              specializationField.options
+            );
+            const parsedSpecializationOptions = specializationOptions.label.map(
+              (label, index) => ({
+                id: index,
+                label: label,
+                value: specializationOptions.value[index],
+              })
+            );
+            optionsMap["Specialization"] = parsedSpecializationOptions;
+          }
           setDropdownOptions(optionsMap);
         }
       } catch (error) {
@@ -77,33 +107,37 @@ const Listings = () => {
     fetchDropdownOptions();
   }, []);
 
-  // Fetch listings based on search criteria
-  useEffect(() => {
-    const fetchListings = async () => {
-      const query = new URLSearchParams({
-        "cwp_query[post_type]": "listing",
-        "cwp_query[orderby]": "ASC",
-        "cwp_query[s]": searchKeywordsState,
-        "cwp_query[fc-google-address_range]": areaRange,
-        "cwp_query[fc-google-address]": place?.address || "",
-        "cwp_query[fc-google-address_lat]": place?.lat || "",
-        "cwp_query[fc-google-address_lng]": place?.lng || "",
-      }).toString();
+  // Search Form
+  // useEffect(() => {
+  //   const fetchListings = async () => {
+  //     const query = new URLSearchParams({
+  //       "cwp_query[post_type]": "listing",
+  //       "cwp_query[orderby]": "ASC",
+  //       "cwp_query[s]": searchKeywordsState,
+  //       "cwp_query[fc-google-address_range]": areaRange,
+  //       "cwp_query[fc-google-address]": place?.address || "",
+  //       "cwp_query[fc-google-address_lat]": place?.lat || "",
+  //       "cwp_query[fc-google-address_lng]": place?.lng || "",
+  //     }).toString();
 
-      try {
-        const response = await axios.get(
-          `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-        );
-        setListingsState(response.data);
-      } catch (error) {
-        console.error("Error fetching listings:", error);
-      }
-    };
+  //     try {
+  //       const response = await axios.get(
+  //         `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
+  //       );
+  //       setListingsState(response.data);
 
-    fetchListings();
-  }, [searchKeywordsState, areaRange, place]);
+  //       if (place) {
+  //         setMapCenter({ lat: place.lat, lng: place.lng });
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching listings:", error);
+  //     }
+  //   };
 
-  // Fetch posts and media
+  //   fetchListings();
+  // }, [searchKeywordsState, areaRange, place]);
+
+  // Listings
   useEffect(() => {
     const fetchPosts = async () => {
       const url = "https://jsappone.demowp.io/wp-json/wp/v2/listing";
@@ -140,16 +174,12 @@ const Listings = () => {
           address:
             profile.cubewp_post_meta["fc-google-address"]?.meta_value.address ||
             "N/A",
-          phone:
-            profile.cubewp_post_meta["fc-phone"]?.meta_value?.meta_value ||
-            "N/A",
+          phone: profile.cubewp_post_meta["fc-phone"]?.meta_value || "N/A",
           comment_status: profile.comment_status || "N/A",
           status: profile.status || "N/A",
         }));
 
         setListingProfiles(transformedProfileData);
-        setFilteredProfiles(transformedProfileData); // Initialize filtered profiles with all profiles
-        setProfileLength(transformedProfileData.length);
       } catch (error) {
         console.error("Error fetching posts or media:", error);
       } finally {
@@ -160,46 +190,22 @@ const Listings = () => {
     fetchPosts();
   }, []);
 
-  // Synchronize search keywords and place
-  useEffect(() => {
-    if (searchKeywords) {
-      setSearchKeywordsState(searchKeywords);
-    }
-    if (place) {
-      setAreaRange([place.lat, place.lng]);
-    }
-  }, [searchKeywords, place]);
-
-  // Filter profiles based on searchKeywordsState and place.address
-  useEffect(() => {
-    const filterProfiles = () => {
-      let filtered = [...listingProfiles];
-
-      if (searchKeywordsState.trim() !== "") {
-        filtered = filtered.filter((profile) =>
-          profile.title
-            .toLowerCase()
-            .includes(searchKeywordsState.toLowerCase())
-        );
-      }
-
-      if (place && place.address.trim() !== "") {
-        filtered = filtered.filter((profile) =>
-          profile.address.toLowerCase().includes(place.address.toLowerCase())
-        );
-      }
-
-      setFilteredProfiles(filtered);
-    };
-
-    filterProfiles();
-  }, [searchKeywordsState, place, listingProfiles]);
+  if (loading) {
+    return (
+      <div>
+        <LoaderPageWithoutBG />
+      </div>
+    );
+  }
+  console.log("listingProfiles at Parent", listingProfiles);
 
   const containerStyle = {
     width: "100%",
     height: "400px",
     borderRadius: "8px",
   };
+
+  console.log("listingsState", listingsState);
 
   const center = {
     lat: place?.lat || 0,
@@ -214,44 +220,78 @@ const Listings = () => {
     setAreaRange(newRange);
   };
 
-  const handleDropdownOptions = (value) => {
-    setSelectedOptions(value);
-  };
+  // useEffect(() => {
+  //   if (searchKeywords) {
+  //     setSearchKeywordsState(searchKeywords);
+  //   }
+  //   if (place) {
+  //     setAreaRange([place.lat, place.lng]);
+  //   }
+  // }, [searchKeywords, place]);
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    handleSearchButton();
-  };
+  // const handleMapCenterChange = (newCenter) => {
+  //   setMapCenter(newCenter);
+  // };
 
-  const handleSearchButton = async () => {
-    try {
-      const query = new URLSearchParams({
-        "cwp_query[post_type]": "listing",
-        "cwp_query[orderby]": "ASC",
-        "cwp_query[s]": searchKeywordsState,
-        "cwp_query[fc-google-address_range]": areaRange,
-        "cwp_query[fc-google-address]": place?.address || "",
-        "cwp_query[fc-google-address_lat]": place?.lat || "",
-        "cwp_query[fc-google-address_lng]": place?.lng || "",
-      }).toString();
+  // const handleDropdownOptions = (value) => {
+  //   setSelectedOptions(value);
+  // };
 
-      const response = await axios.get(
-        `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-      );
+  // const handleFormSubmit = (e) => {
+  //   e.preventDefault();
+  //   handleSearchButton();
+  // };
 
-      setListingsState(response.data);
-    } catch (error) {
-      console.error("Error fetching listings:", error);
-    }
-  };
+  // const handleSearchButton = async () => {
+  //   try {
+  //     const query = new URLSearchParams({
+  //       "cwp_query[post_type]": "listing",
+  //       "cwp_query[orderby]": "ASC",
+  //       "cwp_query[s]": searchKeywordsState,
+  //       "cwp_query[fc-google-address_range]": areaRange,
+  //       "cwp_query[fc-google-address]": place?.address || "",
+  //       "cwp_query[fc-google-address_lat]": place?.lat || "",
+  //       "cwp_query[fc-google-address_lng]": place?.lng || "",
+  //     }).toString();
 
-  if (loading) {
-    return (
-      <div>
-        <LoaderPageWithoutBG />
-      </div>
-    );
-  }
+  //     const response = await axios.get(
+  //       `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
+  //     );
+
+  //     setListingsState(response.data);
+
+  //     if (place) {
+  //       setMapCenter({ lat: place.lat, lng: place.lng });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching listings:", error);
+  //   }
+  // };
+
+  // const profileData = [
+  //   {
+  //     id: 1,
+  //     profileImg: IMAGES.DOCTOR_LIST_PROFILE,
+  //     title: profileTitle,
+  //     designation: "Physiotherapist",
+  //     languages: languages,
+  //     address: "Lahore, Pakistan",
+  //     phone: "123(456) - 789",
+  //     comment_status: "Yes",
+  //     status: "Open",
+  //   },
+  //   {
+  //     id: 2,
+  //     profileImg: IMAGES.DOCTOR_LIST_PROFILE,
+  //     title: "Doctor Jane",
+  //     designation: "Dentist",
+  //     languages: "English, Spanish",
+  //     address: "Karachi, Pakistan",
+  //     phone: "987(654) - 321",
+  //     comment_status: "Close",
+  //     status: "Close",
+  //   },
+  // ];
 
   return (
     <AppLayout>
@@ -317,7 +357,10 @@ const Listings = () => {
               radius="8px"
               className="custom-shadow-2 py-3 px-4 w-100"
             >
-              <Form onSubmit={handleFormSubmit} className="h-100 p-1">
+              <Form
+                // onSubmit={handleFormSubmit}
+                className="h-100 p-1"
+              >
                 <Row className="d-flex align-items-center">
                   <Col
                     md={6}
@@ -340,7 +383,8 @@ const Listings = () => {
                       max={500}
                       step={0.1}
                       value={areaRange}
-                      onChange={handleTemperatureRangeChange}
+                      // onChange={setAreaRange}
+                      // onChange={handleTemperatureRangeChange}
                     />
                   </Col>
 
@@ -352,13 +396,13 @@ const Listings = () => {
                         aria-describedby="basic-addon1"
                         className="py-3"
                         value={searchKeywordsState}
-                        onChange={handleSearchKeywordsChange}
+                        // onChange={handleSearchKeywordsChange}
                       />
                     </InputGroup>
 
                     <div className="ms-1">
                       <GenericButton
-                        onClick={handleSearchButton}
+                        // onClick={handleSearchButton}
                         width="50px"
                         height="50px"
                         padding="0"
@@ -395,9 +439,9 @@ const Listings = () => {
                   size="16px"
                   lineHeight="26px"
                 >
-                  <span className="text-dark">{filteredProfiles.length}</span>{" "}
-                  search result for{" "}
-                  <span className="fw-bold">{searchKeywords} </span> in
+                  <span className="text-dark">{profileLength}</span> search
+                  result for <span className="fw-bold">{searchKeywords} </span>{" "}
+                  in
                   <span className="fw-bold"> {place?.address} </span>
                 </Typography>
               ) : (
@@ -428,7 +472,7 @@ const Listings = () => {
             </div>
 
             <div>
-              {filteredProfiles.map((profileItem) => (
+              {listingProfiles.map((profileItem) => (
                 <ProfileCard
                   key={profileItem.id}
                   enableSponsoredProfile
@@ -453,9 +497,11 @@ const Listings = () => {
               </Typography>
 
               <div className="mt-3">
-                {filteredProfiles.map((profileItem) => (
+                {listingProfiles.map((profileItem) => (
                   <ProfileCard
                     key={profileItem.id}
+                    // enableSponsoredProfile
+                    // columnPadding
                     singleProfile={profileItem}
                   />
                 ))}

@@ -16,6 +16,7 @@ const PATH = {
   LISTING_DETAILS: "/listing-details/:id",
   ADD_LISTING: "/add-listing",
   CLAIM_LISTING: "/claim-listing",
+  LISTING_SUBMISSION: "/listing-submission",
 };
 
 const TOASTER_STYLING_VALUES = {

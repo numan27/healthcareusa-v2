@@ -152,23 +152,23 @@ const Hero = () => {
                   >
                     <div className="d-flex align-items-center gap-2">
                       <img
-                        width={30}
+                        width={27}
                         src={IMAGES.PRODUCTS_SERVICES_ICON}
                         alt="icon"
                       />
                       <Typography
-                        className="mb-0"
+                        className="mb-0 text-nowrap text-uppercase"
                         align="center"
                         as="h3"
                         weight="700"
-                        size="18px"
+                        size="16px"
                         color="#333333"
                       >
                         {group.heading.name}
                       </Typography>
                     </div>
 
-                    <div className="columns-container">
+                    <div className="columns-container mt-2">
                       {renderItemsInColumns(group.items.slice(0, 4)).map(
                         (column, columnIndex) => (
                           <ul className="list-unstyled" key={columnIndex}>

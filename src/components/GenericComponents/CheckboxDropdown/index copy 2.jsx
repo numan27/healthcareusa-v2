@@ -77,28 +77,6 @@ const StyledDropdown = styled.div`
   svg {
     margin-left: 10px !important;
   }
-
-  .selected-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  .selected-item {
-    background-color: #e0e0e0;
-    border-radius: 12px;
-    padding: 2px 8px;
-    display: flex;
-    align-items: center;
-  }
-
-  .selected-item span {
-    margin-right: 4px;
-  }
-
-  .selected-item svg {
-    cursor: pointer;
-  }
 `;
 
 const StyledCheckbox = styled(Form)`
@@ -196,11 +174,9 @@ const CheckboxDropdown = observer(
     onChange,
     singleSelect,
   }) => {
-    const nonEmptyItems = items.filter(
-      (item) => item && item.label && item.label.trim()
-    );
+    // const nonEmptyItems = items.filter((item) => item && item.label && item.label.trim());
 
-    const [checkboxItems, setCheckboxItems] = useState(nonEmptyItems);
+    const [checkboxItems, setCheckboxItems] = useState(items || []);
 
     const handleChecked = (key, event) => {
       const updatedItems = checkboxItems.map((item) =>
@@ -224,51 +200,37 @@ const CheckboxDropdown = observer(
         {haveLabel ? <StyledLabel>{labelValue}</StyledLabel> : ""}
         <Dropdown>
           <Dropdown.Toggle variant="primary" id="dropdown-basic">
-            <div className="selected-items">
-              {checkboxItems
-                .filter((item) => item.checked)
-                .map((item) => (
-                  <div className="selected-item" key={item.id}>
-                    <span>{item.label}</span>
-                    <FaTimes
-                      onClick={() =>
-                        handleChecked(item.id, { target: { checked: false } })
-                      }
-                    />
-                  </div>
-                ))}
-              {!checkboxItems.some((item) => item.checked) && title}
-            </div>
+            {title}
           </Dropdown.Toggle>
 
           <Dropdown.Menu as={CheckboxMenu}>
-            {checkboxItems.map((item) =>
-              // Render either checkbox or dropdown item based on singleSelect prop
-              singleSelect ? (
-                <Dropdown.Item
-                  key={item.id}
-                  onClick={() =>
-                    handleChecked(item.id, {
-                      target: { checked: !item.checked },
-                    })
-                  }
-                  className="d-flex align-items-center cursor-pointer"
-                >
-                  {item.label}
-                </Dropdown.Item>
-              ) : (
-                <Dropdown.Item
-                  key={item.id}
-                  as={CheckDropdownItem}
-                  id={item.id}
-                  checked={item.checked}
-                  onChange={handleChecked}
-                  className="d-flex align-items-center cursor-pointer"
-                >
-                  {item.label}
-                </Dropdown.Item>
-              )
-            )}
+            {checkboxItems &&
+              checkboxItems.map((item) =>
+                singleSelect ? (
+                  <Dropdown.Item
+                    key={item.id}
+                    onClick={() =>
+                      handleChecked(item.id, {
+                        target: { checked: !item.checked },
+                      })
+                    }
+                    className="d-flex align-items-center cursor-pointer"
+                  >
+                    {item.label}
+                  </Dropdown.Item>
+                ) : (
+                  <Dropdown.Item
+                    key={item.id}
+                    as={CheckDropdownItem}
+                    id={item.id}
+                    checked={item.checked}
+                    onChange={handleChecked}
+                    className="d-flex align-items-center cursor-pointer"
+                  >
+                    {item.label}
+                  </Dropdown.Item>
+                )
+              )}
           </Dropdown.Menu>
         </Dropdown>
       </StyledDropdown>

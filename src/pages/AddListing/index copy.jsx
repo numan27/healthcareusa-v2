@@ -8,7 +8,8 @@ import {
 } from "../../components/GenericComponents";
 import AppLayout from "../../components/Layout/AppLayout";
 import { Col, Container, Form, Row } from "react-bootstrap";
-// import FormData from "./FormData";
+import { LoaderCenter } from "../../assets/Loader";
+import { toast } from "react-toastify";
 
 const AddListing = () => {
   const initialFormState = {
@@ -20,15 +21,20 @@ const AddListing = () => {
     languages: [],
     qualifications: [],
     specializations: [],
-    specialties: [],
+    taxonomies: [],
     description: "",
     profilePicture: null,
     gallery: [],
     package: [],
+    gender: [],
+    latitude: "",
+    longitude: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [formKey, setFormKey] = useState(Date.now());
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profilePictureUploaded, setProfilePictureUploaded] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +43,7 @@ const AddListing = () => {
 
   const handleProfilePictureChange = (e) => {
     setFormData({ ...formData, profilePicture: e.target.files[0] });
+    setProfilePictureUploaded(true);
   };
 
   const handleGalleryChange = (files) => {
@@ -46,6 +53,7 @@ const AddListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const credentials = btoa("numan27:findhealthcareusa");
       if (!formData.profilePicture) {
@@ -106,7 +114,8 @@ const AddListing = () => {
         cubewp_post_meta: {
           cwp_field_40228862441: { meta_value: formData.designation },
           cwp_field_288766456392: { meta_value: formData.description },
-          cwp_field_631649982329: { meta_value: formData.package[0] },
+          cwp_field_631649982329: { meta_value: formData.package },
+          cwp_field_224925973684: { meta_value: formData.gender },
           cwp_field_310681993623: { meta_value: mediaIds },
           cwp_field_930729608352: {
             meta_value: formData.qualifications,
@@ -120,20 +129,19 @@ const AddListing = () => {
             meta_value: formData.languages,
           },
           "fc-google-address": {
-            meta_value: { address: formData.address },
-            lat: "", // latitude if available
-            lng: "", // longitude if available
+            meta_value: {
+              address: formData.address,
+              lat: "",
+              lng: "",
+            },
           },
         },
         status: "publish",
-        taxonomies: formData.specialties.map(
-          (specialty) =>
-            specialtiesData.find((s) => s.value === specialty).label
-        ),
+        taxonomies: formData.taxonomies.map((taxonomy) => taxonomy.value),
       };
 
       console.log("payload", payload);
-      console.log("formData.specialties", formData.specialties);
+      console.log("formData", formData);
 
       const response = await fetch(
         "https://jsappone.demowp.io/wp-json/wp/v2/listing",
@@ -158,8 +166,14 @@ const AddListing = () => {
       // Reset form
       setFormData(initialFormState);
       setFormKey(Date.now());
+
+      toast.success("Doctor added successfully!", {
+        autoClose: 1000,
+      });
     } catch (error) {
       console.error("Error submitting form", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -184,13 +198,15 @@ const AddListing = () => {
     { id: "5", label: "Cardiologist", value: "cardiologist" },
   ];
 
-  const specialtiesData = [
+  const taxonomiesData = [
     { id: "1", label: "Neurology", value: "neurology" },
     { id: "2", label: "Pediatrics", value: "pediatrics" },
     { id: "3", label: "Orthopedics", value: "orthopedics" },
     { id: "4", label: "Ophthalmology", value: "ophthalmology" },
     { id: "5", label: "ENT (Otorhinolaryngology)", value: "ent" },
   ];
+
+  console.log("formData", formData);
 
   return (
     <AppLayout>
@@ -259,6 +275,28 @@ const AddListing = () => {
             />
           </Col>
 
+          {/* <Col lg={3} md={6}>
+            <GenericInput
+              type="text"
+              height="44px"
+              name="latitude"
+              label="Latitude"
+              value={formData.latitude}
+              onChange={handleChange}
+            />
+          </Col>
+
+          <Col lg={3} md={6}>
+            <GenericInput
+              type="text"
+              height="44px"
+              name="longitude"
+              label="Longitude"
+              value={formData.longitude}
+              onChange={handleChange}
+            />
+          </Col> */}
+
           <Col md={6} className="mb-2 pb-1">
             <CheckboxDropdown
               key={`${formKey}-languages`}
@@ -324,22 +362,20 @@ const AddListing = () => {
 
           <Col md={6}>
             <CheckboxDropdown
-              key={`${formKey}-specialties`}
+              key={`${formKey}-taxonomies`}
               title="Specialties"
               height="44px"
               width="100%"
               background="#F4F5F7"
-              items={specialtiesData}
+              items={taxonomiesData}
               haveLabel
               labelValue="Choose Specialty(s)"
               border
-              onChange={(selectedSpecialties) => {
-                const specialtyValues = selectedSpecialties.map(
-                  (specialty) => specialty.value
-                );
+              onChange={(selectedTaxonomies) => {
+                const taxonomyValues = selectedTaxonomies;
                 setFormData({
-                  ...formData,
-                  specialties: specialtyValues,
+                  // ...formData,
+                  taxonomies: taxonomyValues,
                 });
               }}
             />
@@ -378,7 +414,43 @@ const AddListing = () => {
               }}
             />
           </Col>
-          <Col className="mt-2 pt-1" md={6}>
+          <Col md={6} className="mt-2 pt-1">
+            <Form.Label className="form_label">Choose Gender</Form.Label>
+            <GenericSelect
+              key={`${formKey}-gender`}
+              minWidth="120px"
+              minheight="44px"
+              borderColor="#B2BAC0"
+              borderRadius="4px"
+              bgcolor="#F4F5F7"
+              placeholder="Select Gender"
+              placeholderColor="#333333"
+              iconColor="#06312E"
+              menuPlacement="auto"
+              options={[
+                {
+                  id: "1",
+                  label: "Male",
+                  value: "male",
+                },
+                { id: "2", label: "Female", value: "female" },
+                {
+                  id: "3",
+                  label: "Other",
+                  value: "other",
+                },
+                {
+                  id: "4",
+                  label: "Not to say",
+                  value: "not to say",
+                },
+              ]}
+              onChange={(selectedGender) => {
+                setFormData({ ...formData, gender: [selectedGender.value] });
+              }}
+            />
+          </Col>
+          <Col className="my-2 pt-1" md={6}>
             <GenericInput
               type="file"
               name="profilePicture"
@@ -386,6 +458,11 @@ const AddListing = () => {
               onFileChange={handleProfilePictureChange}
               key={`${formKey}-profilePicture`}
             />
+            {!profilePictureUploaded && (
+              <small className="text-danger" size="14px">
+                Profile picture required
+              </small>
+            )}
           </Col>
           <Col className="mt-2 pt-1" md={6}>
             <GenericInput
@@ -410,9 +487,16 @@ const AddListing = () => {
           </Col>
 
           <Col xs={12} className="mt-3">
-            <GenericButton width="100%" height="44px" onClick={handleSubmit}>
-              Submit Listing
-            </GenericButton>
+            <Col xs={12} className="mt-3">
+              <GenericButton
+                width="100%"
+                height="44px"
+                onClick={handleSubmit}
+                disabled={!profilePictureUploaded || isSubmitting}
+              >
+                {isSubmitting ? <LoaderCenter /> : "Submit Listing"}
+              </GenericButton>
+            </Col>
           </Col>
         </Row>
 

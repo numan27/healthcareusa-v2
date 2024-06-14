@@ -11,6 +11,7 @@ import PrimaryDropdown from "./PrimaryDropdown"
 import GenericIconButton from "./IconButton"
 import GenericInput from "./TextField"
 import LinkButton from "./LinkButton"
+import Checkbox from "./Checkbox"
 
 export {
     Typography,
@@ -26,4 +27,5 @@ export {
     GenericIconButton,
     GenericInput,
     LinkButton,
+    Checkbox,
 };

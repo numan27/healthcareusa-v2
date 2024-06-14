@@ -21,14 +21,12 @@ const AddListing = () => {
     languages: [],
     qualifications: [],
     specializations: [],
-    taxonomies: [],
+    // taxonomies: [],
     description: "",
     profilePicture: null,
     gallery: [],
     package: [],
-    gender: [],
-    latitude: "",
-    longitude: "",
+    // gender: [],
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -54,13 +52,17 @@ const AddListing = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     try {
-      const credentials = btoa("numan27:findhealthcareusa");
+      // Upload profile picture
       if (!formData.profilePicture) {
         throw new Error("Please select a profile picture");
       }
+
+      const credentials = btoa("numan27:findhealthcareusa");
       const uploadFormData = new FormData();
       uploadFormData.append("file", formData.profilePicture);
+
       const uploadResponse = await fetch(
         "https://jsappone.demowp.io/wp-json/wp/v2/media",
         {
@@ -73,28 +75,25 @@ const AddListing = () => {
       );
 
       if (!uploadResponse.ok) {
-        const uploadError = await uploadResponse.json();
-        console.error("Upload error response:", uploadError);
-        throw new Error("Failed to upload media file to WordPress");
+        throw new Error("Failed to upload profile picture to WordPress");
       }
 
       const uploadData = await uploadResponse.json();
-      console.log("Media upload response:", uploadData);
-
       const mediaId = uploadData.id;
-      if (!mediaId) {
-        throw new Error("Media ID not found in the response");
-      }
+
+      // Upload gallery images
       const mediaIds = await Promise.all(
         formData.gallery.map(async (picture) => {
-          const credentials = btoa("numan27:findhealthcareusa");
           const uploadFormData = new FormData();
           uploadFormData.append("file", picture);
+
           const uploadResponse = await fetch(
             "https://jsappone.demowp.io/wp-json/wp/v2/media",
             {
               method: "POST",
-              headers: { Authorization: `Basic ${credentials}` },
+              headers: {
+                Authorization: `Basic ${credentials}`,
+              },
               body: uploadFormData,
             }
           );
@@ -108,26 +107,27 @@ const AddListing = () => {
         })
       );
 
+      // Prepare payload for listing creation
       const payload = {
         title: formData.doctorName,
         featured_media: mediaId,
         cubewp_post_meta: {
-          cwp_field_40228862441: { meta_value: formData.designation },
+          // Add other fields as needed
+          cwp_field_40228862441: formData.designation,
           cwp_field_288766456392: { meta_value: formData.description },
           cwp_field_631649982329: { meta_value: formData.package },
-          cwp_field_224925973684: { meta_value: formData.gender },
-          cwp_field_310681993623: { meta_value: mediaIds },
-          cwp_field_930729608352: {
-            meta_value: formData.qualifications,
+          // cwp_field_224925973684: { meta_value: formData.gender },
+          cwp_field_310681993623: {
+            type: "gallery",
+            meta_key: "cwp_field_310681993623",
+            meta_value: mediaIds.map((id) => id.toString()),
+            label: "Gallery",
           },
-          cwp_field_136461069401: {
-            meta_value: formData.specializations,
-          },
+          cwp_field_930729608352: { meta_value: formData.qualifications },
+          cwp_field_136461069401: { meta_value: formData.specializations },
           "fc-phone": { meta_value: formData.phone },
           "fc-website": { meta_value: formData.website },
-          "fc-languages": {
-            meta_value: formData.languages,
-          },
+          "fc-languages": { meta_value: formData.languages },
           "fc-google-address": {
             meta_value: {
               address: formData.address,
@@ -137,12 +137,10 @@ const AddListing = () => {
           },
         },
         status: "publish",
-        taxonomies: formData.taxonomies.map((taxonomy) => taxonomy.value),
+        // taxonomies: formData.taxonomies.map((taxonomy) => taxonomy.value),
       };
 
-      console.log("payload", payload);
-      console.log("formData", formData);
-
+      // Submit payload to create listing
       const response = await fetch(
         "https://jsappone.demowp.io/wp-json/wp/v2/listing",
         {
@@ -156,22 +154,20 @@ const AddListing = () => {
       );
 
       if (!response.ok) {
-        const createListingError = await response.json();
-        console.error("Create listing error response:", createListingError);
         throw new Error("Failed to create listing on WordPress");
       }
 
-      console.log("Form submitted successfully", response);
-
-      // Reset form
+      // Reset form on successful submission
       setFormData(initialFormState);
       setFormKey(Date.now());
+      setProfilePictureUploaded(false);
 
       toast.success("Doctor added successfully!", {
         autoClose: 1000,
       });
     } catch (error) {
       console.error("Error submitting form", error);
+      toast.error("Failed to add doctor");
     } finally {
       setIsSubmitting(false);
     }
@@ -198,13 +194,13 @@ const AddListing = () => {
     { id: "5", label: "Cardiologist", value: "cardiologist" },
   ];
 
-  const taxonomiesData = [
-    { id: "1", label: "Neurology", value: "neurology" },
-    { id: "2", label: "Pediatrics", value: "pediatrics" },
-    { id: "3", label: "Orthopedics", value: "orthopedics" },
-    { id: "4", label: "Ophthalmology", value: "ophthalmology" },
-    { id: "5", label: "ENT (Otorhinolaryngology)", value: "ent" },
-  ];
+  // const taxonomiesData = [
+  //   { id: "1", label: "Neurology", value: "neurology" },
+  //   { id: "2", label: "Pediatrics", value: "pediatrics" },
+  //   { id: "3", label: "Orthopedics", value: "orthopedics" },
+  //   { id: "4", label: "Ophthalmology", value: "ophthalmology" },
+  //   { id: "5", label: "ENT (Otorhinolaryngology)", value: "ent" },
+  // ];
 
   console.log("formData", formData);
 
@@ -275,28 +271,6 @@ const AddListing = () => {
             />
           </Col>
 
-          {/* <Col lg={3} md={6}>
-            <GenericInput
-              type="text"
-              height="44px"
-              name="latitude"
-              label="Latitude"
-              value={formData.latitude}
-              onChange={handleChange}
-            />
-          </Col>
-
-          <Col lg={3} md={6}>
-            <GenericInput
-              type="text"
-              height="44px"
-              name="longitude"
-              label="Longitude"
-              value={formData.longitude}
-              onChange={handleChange}
-            />
-          </Col> */}
-
           <Col md={6} className="mb-2 pb-1">
             <CheckboxDropdown
               key={`${formKey}-languages`}
@@ -360,7 +334,7 @@ const AddListing = () => {
             />
           </Col>
 
-          <Col md={6}>
+          {/* <Col md={6}>
             <CheckboxDropdown
               key={`${formKey}-taxonomies`}
               title="Specialties"
@@ -379,7 +353,7 @@ const AddListing = () => {
                 });
               }}
             />
-          </Col>
+          </Col> */}
 
           <Col md={6}>
             <Form.Label className="form_label">
@@ -414,7 +388,7 @@ const AddListing = () => {
               }}
             />
           </Col>
-          <Col md={6} className="mt-2 pt-1">
+          {/* <Col md={6} className="mt-2 pt-1">
             <Form.Label className="form_label">Choose Gender</Form.Label>
             <GenericSelect
               key={`${formKey}-gender`}
@@ -449,7 +423,7 @@ const AddListing = () => {
                 setFormData({ ...formData, gender: [selectedGender.value] });
               }}
             />
-          </Col>
+          </Col> */}
           <Col className="my-2 pt-1" md={6}>
             <GenericInput
               type="file"
@@ -499,8 +473,6 @@ const AddListing = () => {
             </Col>
           </Col>
         </Row>
-
-        {/* <FormData /> */}
       </Container>
     </AppLayout>
   );

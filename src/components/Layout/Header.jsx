@@ -68,7 +68,7 @@ const Header = () => {
   const SITE_DOMAIN = 'https://jsappone.demowp.io';
 
   const handleNavigateAddListing = () => {
-    navigate(PATH.ADD_LISTING)
+    navigate(PATH.LISTING_SUBMISSION)
   }
 
   const handleLogout = () => {

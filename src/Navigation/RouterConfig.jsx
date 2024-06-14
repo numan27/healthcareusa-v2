@@ -19,6 +19,10 @@ function RouterConfig() {
           path={PATH.CLAIM_LISTING}
           element={<PublicRoute element={<WEB_PAGES.CLAIM_LISTING />} />}
         />
+        <Route
+          path={PATH.LISTING_SUBMISSION}
+          element={<PublicRoute element={<WEB_PAGES.LISTING_SUBMISSION />} />}
+        />
       </Route>
       <Route
         path={PATH.LOGIN}
