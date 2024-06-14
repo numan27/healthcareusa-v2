@@ -355,7 +355,7 @@ const AddListing = () => {
             />
           </Col> */}
 
-          <Col md={6}>
+          <Col className="mt-2 pt-1" md={6}>
             <Form.Label className="form_label">
               Choose Doctor Package
             </Form.Label>
