@@ -14,6 +14,12 @@ const LISTING_DETAILS = React.lazy(() =>
 const ADD_LISTING = React.lazy(() => import("./AddListing"));
 const CLAIM_LISTING = React.lazy(() => import("./ClaimListingSubmission"));
 const LISTING_SUBMISSION = React.lazy(() => import("./ListingSubmission"));
+const NAVIGATE_TO_LISTINGS = React.lazy(() =>
+  import("./AdScreens/NavigateToListings")
+);
+const NAVIGATE_TO_EXTERNAL_LINK = React.lazy(() =>
+  import("./AdScreens/NavigateToExternalLink")
+);
 
 const WEB_PAGES = {
   NOPAGE,
@@ -28,5 +34,7 @@ const WEB_PAGES = {
   ADD_LISTING,
   CLAIM_LISTING,
   LISTING_SUBMISSION,
+  NAVIGATE_TO_LISTINGS,
+  NAVIGATE_TO_EXTERNAL_LINK,
 };
 export default WEB_PAGES;

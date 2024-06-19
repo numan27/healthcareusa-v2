@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
 import {
   Box,
@@ -22,13 +22,14 @@ const Listings = () => {
   const [listingProfiles, setListingProfiles] = useState([]);
   const [mediaUrls, setMediaUrls] = useState({});
   const [loading, setLoading] = useState(true);
-  const [areaRange, setAreaRange] = useState([20, 67]);
+  const [areaRange, setAreaRange] = useState("");
   const [profileLength, setProfileLength] = useState(0);
   const [dropdownOptions, setDropdownOptions] = useState({});
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [listingsState, setListingsState] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
   const [filteredProfiles, setFilteredProfiles] = useState([]);
+  // const [place, setPlace] = useState(null);
 
   const location = useLocation();
   const { searchKeywords, place } = location.state || {};
@@ -50,7 +51,7 @@ const Listings = () => {
             "Gender",
             "Languages",
             "Qualifications",
-            "Specializations",
+            "Specialization",
             "Doctor Package",
           ];
 
@@ -84,16 +85,21 @@ const Listings = () => {
         "cwp_query[post_type]": "listing",
         "cwp_query[orderby]": "ASC",
         "cwp_query[s]": searchKeywordsState,
-        "cwp_query[fc-google-address_range]": areaRange,
+        "cwp_query[fc-google-address_range]": areaRange.toString(),
         "cwp_query[fc-google-address]": place?.address || "",
         "cwp_query[fc-google-address_lat]": place?.lat || "",
         "cwp_query[fc-google-address_lng]": place?.lng || "",
       }).toString();
 
+      console.log(
+        `Query: https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
+      );
+
       try {
         const response = await axios.get(
           `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
         );
+        console.log("Response data:", response.data);
         setListingsState(response.data);
       } catch (error) {
         console.error("Error fetching listings:", error);
@@ -136,19 +142,33 @@ const Listings = () => {
             profile.cubewp_post_meta["cwp_field_40228862441"]?.meta_value ||
             "N/A",
           languages:
-            profile.cubewp_post_meta["fc-languages"]?.meta_value || "N/A",
+            profile.cubewp_post_meta["fc-languages"]?.meta_value.split(", ") ||
+            [],
+          specialization:
+            profile.cubewp_post_meta[
+              "cwp_field_136461069401"
+            ]?.meta_value.split(", ") || [],
+          qualifications:
+            profile.cubewp_post_meta[
+              "cwp_field_930729608352"
+            ]?.meta_value.split(", ") || [],
+          gender:
+            profile.cubewp_post_meta["cwp_field_224925973684"]?.meta_value ||
+            "N/A",
+          doctorPackage:
+            profile.cubewp_post_meta[
+              "cwp_field_631649982329"
+            ]?.meta_value.split(", ") || [],
           address:
             profile.cubewp_post_meta["fc-google-address"]?.meta_value.address ||
             "N/A",
-          phone:
-            profile.cubewp_post_meta["fc-phone"]?.meta_value?.meta_value ||
-            "N/A",
+          phone: profile.cubewp_post_meta["fc-phone"]?.meta_value || "N/A",
           comment_status: profile.comment_status || "N/A",
           status: profile.status || "N/A",
         }));
 
         setListingProfiles(transformedProfileData);
-        setFilteredProfiles(transformedProfileData); // Initialize filtered profiles with all profiles
+        setFilteredProfiles(transformedProfileData);
         setProfileLength(transformedProfileData.length);
       } catch (error) {
         console.error("Error fetching posts or media:", error);
@@ -170,11 +190,12 @@ const Listings = () => {
     }
   }, [searchKeywords, place]);
 
-  // Filter profiles based on searchKeywordsState and place.address
+  // Filter profiles based on searchKeywordsState, place, and selectedOptions
   useEffect(() => {
     const filterProfiles = () => {
       let filtered = [...listingProfiles];
 
+      // Keyword search
       if (searchKeywordsState.trim() !== "") {
         filtered = filtered.filter((profile) =>
           profile.title
@@ -183,17 +204,119 @@ const Listings = () => {
         );
       }
 
+      // Address filter
       if (place && place.address.trim() !== "") {
+        const addressFilter = place.address.toLowerCase();
         filtered = filtered.filter((profile) =>
-          profile.address.toLowerCase().includes(place.address.toLowerCase())
+          profile.address.toLowerCase().includes(addressFilter)
         );
       }
 
-      setFilteredProfiles(filtered);
+      // Location filter
+      if (place && place.lat && place.lng) {
+        filtered = filtered.filter((profile) => {
+          // Perform distance calculation if necessary
+          return true; // Modify this line based on your distance calculation logic
+        });
+      }
+
+      if (selectedOptions.length > 0) {
+        selectedOptions.forEach((selectedOption) => {
+          filtered = filtered.filter((profile) => {
+            let profileField = [];
+            switch (selectedOption.label) {
+              case "Languages":
+                profileField = profile.languages || [];
+                break;
+              case "Qualifications":
+                profileField = profile.qualifications || [];
+                break;
+              case "Specialization":
+                profileField = profile.specialization || [];
+                break;
+              case "Gender":
+                profileField = [profile.gender];
+                break;
+              case "Doctor Package":
+                profileField = profile.doctorPackage || [];
+                break;
+              default:
+                return true;
+            }
+
+            profileField = profileField.map((item) =>
+              item.toString().trim().toLowerCase()
+            );
+            const selectedValues = selectedOption.values.map((item) =>
+              item.value.toString().trim().toLowerCase()
+            );
+
+            const matches = selectedValues.some((value) =>
+              profileField.includes(value)
+            );
+
+            return matches;
+          });
+        });
+      }
+
+      return filtered;
     };
 
-    filterProfiles();
-  }, [searchKeywordsState, place, listingProfiles]);
+    const filteredProfiles = filterProfiles();
+    setFilteredProfiles(filteredProfiles);
+  }, [listingProfiles, searchKeywordsState, place, selectedOptions]);
+
+  const handleDropdownOptions = useCallback((label, items) => {
+    setSelectedOptions((prevSelectedOptions) => {
+      const updatedOptions = [...prevSelectedOptions];
+      const optionIndex = updatedOptions.findIndex(
+        (option) => option.label === label
+      );
+
+      const values = items
+        .filter((item) => item.checked)
+        .map((item) => ({
+          id: item.id,
+          label: item.label,
+          value: item.value.toLowerCase(),
+          checked: item.checked,
+        }));
+
+      if (optionIndex >= 0) {
+        if (values.length > 0) {
+          updatedOptions[optionIndex] = { label, values };
+        } else {
+          updatedOptions.splice(optionIndex, 1); // Remove the option if no values are selected
+        }
+      } else if (values.length > 0) {
+        updatedOptions.push({ label, values });
+      }
+
+      return updatedOptions;
+    });
+  }, []);
+
+  // Function to calculate the distance between two coordinates
+  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371; // Radius of the Earth in km
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+    return distance;
+  };
+
+  // console.log("selectedOptions", selectedOptions);
+
+  // console.log("filteredProfiles", filteredProfiles);
 
   const containerStyle = {
     width: "100%",
@@ -212,10 +335,6 @@ const Listings = () => {
 
   const handleTemperatureRangeChange = (newRange) => {
     setAreaRange(newRange);
-  };
-
-  const handleDropdownOptions = (value) => {
-    setSelectedOptions(value);
   };
 
   const handleFormSubmit = (e) => {
@@ -378,14 +497,16 @@ const Listings = () => {
                   key={label}
                   title={label}
                   items={dropdownOptions[label]}
-                  selected={label === "Options" ? selectedOptions : []}
-                  onChange={
-                    label === "Options" ? handleDropdownOptions : undefined
+                  selected={
+                    selectedOptions.find((option) => option.label === label)
+                      ?.values || []
                   }
+                  onChange={(values) => handleDropdownOptions(label, values)}
                   singleSelect={label === "Doctor Package"}
                 />
               ))}
             </div>
+
             <div className="pt-3 mb-3">
               {place ? (
                 <Typography

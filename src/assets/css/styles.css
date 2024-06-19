@@ -544,6 +544,21 @@ body {
     background: linear-gradient(270deg, rgba(103, 143, 220, 0.85) 0%, rgba(22, 201, 190, 0.85) 100%);
 } */
 
+
+.ad-progress-bar {
+    border: 2px solid #00C1B6;
+    border-radius: 50px;
+    height: 26px;
+    padding: 1px 2px 1px 2px;
+    display: flex;
+    align-items: center;
+}
+
+.ad-progress-bar .progress-bar {
+    background-image: linear-gradient(to right, #2BBCBF 10%, #6B91DA 50%);
+    border-radius: 50px;
+}
+
 .live-preview-form {
     background-image: url(../images/live-preview-bg.png);
     min-height: 84vh;
@@ -558,6 +573,26 @@ body {
     height: 12px;
     /* z-index: -1 !important; */
 }
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.ads-loading-icon {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+
 
 /* Media Queries */
 
@@ -720,5 +755,9 @@ body {
     .box-link-grid {
         grid-template-columns: repeat(1, 1fr);
         gap: 10px;
+    }
+
+    .ads-square-box {
+        width: 95% !important;
     }
 }

@@ -60,6 +60,16 @@ function RouterConfig() {
         path={PATH.LISTING_DETAILS}
         element={<PublicRoute element={<WEB_PAGES.LISTING_DETAILS />} />}
       />
+      <Route
+        path={PATH.NAVIGATE_TO_LISTINGS}
+        element={<PublicRoute element={<WEB_PAGES.NAVIGATE_TO_LISTINGS />} />}
+      />
+      <Route
+        path={PATH.NAVIGATE_TO_EXTERNAL_LINK}
+        element={
+          <PublicRoute element={<WEB_PAGES.NAVIGATE_TO_EXTERNAL_LINK />} />
+        }
+      />
 
       {/* <Route
         path={PATH.ADD_LISTING}

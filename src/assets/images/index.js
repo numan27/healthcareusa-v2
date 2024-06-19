@@ -44,6 +44,8 @@ import bookmarkIcon from "./bookmark-icon.png"
 import copyIcon from "./copy-icon.png"
 import locationIcon2 from "./location-2.png"
 import claimListing from "./claim-listing.png"
+import adsLoading from "./ads-loading.png"
+import adsSquare from "./ads-square.png"
 
 const IMAGES = {
     LOGO: logo,
@@ -92,6 +94,8 @@ const IMAGES = {
     COPY_ICON: copyIcon,
     LOCATION_ICON_2: locationIcon2,
     CLAIM_LISTING_IMG: claimListing,
+    ADS_LOADING_ICON: adsLoading,
+    ADS_SQUARE_IMG: adsSquare,
 }
 
 export default IMAGES;

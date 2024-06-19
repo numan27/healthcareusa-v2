@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { Container, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
 import { LuChevronDown, LuChevronUp } from "react-icons/lu";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import {
   FaFacebookF,
   FaLinkedin,
@@ -50,6 +50,7 @@ const StyledPopover = styled(Popover)`
 `;
 
 const ListingDetailsPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
   // const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
@@ -145,18 +146,22 @@ const ListingDetailsPage = () => {
   const listingDetailSocial = [
     {
       icon: <FaFacebookF size={18} color="#23262F" />,
+      // link: "https://facebook.com/numan27",
       link: jsonData.cubewp_post_meta?.["fc-facebook"]?.meta_value || "#",
     },
     {
       icon: <FaTwitter size={18} color="#23262F" />,
+      // link: "https://twitter.com/abc",
       link: jsonData.cubewp_post_meta?.["fc-x"]?.meta_value || "#",
     },
     {
       icon: <RiInstagramFill size={18} color="#23262F" />,
+      // link: "https://instagram.com/media",
       link: jsonData.cubewp_post_meta?.["fc-instagram"]?.meta_value || "#",
     },
     {
       icon: <FaYoutube size={18} color="#23262F" />,
+      // link: "https://youtube.com/ayc",
       link: jsonData.cubewp_post_meta?.["fc-youtube"]?.meta_value || "#",
     },
   ];
@@ -183,6 +188,10 @@ const ListingDetailsPage = () => {
       link: "https://www.pinterest.com/shareProfile?mini=true&url=https://jsappone.demowp.io/",
     },
   ];
+
+  const handleLinkClick = (externalLink) => {
+    navigate("/navigate-to-external-link", { state: { externalLink } });
+  };
 
   const cubewpPostMeta = jsonData.cubewp_post_meta || [];
   const googleAddress = cubewpPostMeta["fc-google-address"]?.meta_value || [];
@@ -216,7 +225,11 @@ const ListingDetailsPage = () => {
             >
               <a
                 className="w-100 h-100 d-flex align-items-center justify-content-center"
-                href={items.link}
+                // href={items.link}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLinkClick(items.link);
+                }}
               >
                 {items.icon}
               </a>
@@ -683,7 +696,11 @@ const ListingDetailsPage = () => {
                   >
                     <a
                       className="w-100 h-100 rounded-5 d-flex align-items-center justify-content-center"
-                      href={items.link}
+                      // href={items.link}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLinkClick(items.link);
+                      }}
                     >
                       {items.icon}
                     </a>

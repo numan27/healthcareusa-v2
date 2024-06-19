@@ -112,7 +112,6 @@ const AddListing = () => {
         title: formData.doctorName,
         featured_media: mediaId,
         cubewp_post_meta: {
-          // Add other fields as needed
           cwp_field_40228862441: formData.designation,
           cwp_field_288766456392: { meta_value: formData.description },
           cwp_field_631649982329: { meta_value: formData.package },

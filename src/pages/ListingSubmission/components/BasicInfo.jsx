@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Form, Row, Col } from "react-bootstrap";
 import {
@@ -6,11 +6,61 @@ import {
   GenericSelect,
   Typography,
 } from "../../../components/GenericComponents";
+import { ServicesContext } from "../../../components/api/ServicesContext";
+import { LoaderPageWithoutBG } from "../../../assets";
 
 const BasicInfo = ({ formData, setFormData }) => {
+  const { groupedServices, loading } = useContext(ServicesContext);
+  const [primaryCategoryOptions, setPrimaryCategoryOptions] = useState([]);
+  const [subCategoryOptions, setSubCategoryOptions] = useState([]);
+  const [selectedPrimaryCategory, setSelectedPrimaryCategory] = useState(null);
+
+  useEffect(() => {
+    if (groupedServices.length > 0) {
+      const primaryOptions = groupedServices.map((group) => ({
+        label: group.heading.name,
+        value: group.heading.id,
+      }));
+      setPrimaryCategoryOptions(primaryOptions);
+    }
+  }, [groupedServices]);
+
+  useEffect(() => {
+    if (selectedPrimaryCategory) {
+      const selectedGroup = groupedServices.find(
+        (group) => group.heading.id === selectedPrimaryCategory.value
+      );
+      const subOptions =
+        selectedGroup?.items.map((item) => ({
+          label: item.name,
+          value: item.id,
+        })) || [];
+      setSubCategoryOptions(subOptions);
+    } else {
+      setSubCategoryOptions([]);
+    }
+  }, [selectedPrimaryCategory, groupedServices]);
+
+  if (loading) {
+    return (
+      <div>
+        <LoaderPageWithoutBG />
+      </div>
+    );
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handlePrimaryCategoryChange = (selectedOption) => {
+    setSelectedPrimaryCategory(selectedOption);
+    setFormData({ ...formData, primaryCategory: selectedOption });
+  };
+
+  const handleSubCategoryChange = (selectedOption) => {
+    setFormData({ ...formData, subCategory: selectedOption });
   };
 
   return (
@@ -51,11 +101,11 @@ const BasicInfo = ({ formData, setFormData }) => {
               placeholderColor="#333333"
               iconColor="#06312E"
               menuPlacement="auto"
-              options={[
-                { id: "1", label: "Gold", value: "gold" },
-                { id: "2", label: "Platinum", value: "platinum" },
-                { id: "3", label: "Silver", value: "silver" },
-              ]}
+              options={primaryCategoryOptions}
+              onChange={handlePrimaryCategoryChange}
+              value={primaryCategoryOptions.find(
+                (option) => option.value === formData.primaryCategory?.value
+              )}
             />
           </Col>
           <Col md={6} className="mb-4">
@@ -70,11 +120,11 @@ const BasicInfo = ({ formData, setFormData }) => {
               placeholderColor="#333333"
               iconColor="#06312E"
               menuPlacement="auto"
-              options={[
-                { id: "1", label: "Gold", value: "gold" },
-                { id: "2", label: "Platinum", value: "platinum" },
-                { id: "3", label: "Silver", value: "silver" },
-              ]}
+              options={subCategoryOptions}
+              onChange={handleSubCategoryChange}
+              value={subCategoryOptions.find(
+                (option) => option.value === formData.subCategory?.value
+              )}
             />
           </Col>
           <Col md={6} className="mb-2">
@@ -108,11 +158,11 @@ const BasicInfo = ({ formData, setFormData }) => {
               type="text"
               background="#F8F9FC"
               borderColor="#EEF0F5"
-              name="businessEmail"
+              name="email"
               label="Business Email"
               height="34px"
               placeholder="Enter Email"
-              value={formData.businessEmail}
+              value={formData.email}
               onChange={handleChange}
             />
           </Col>
@@ -121,11 +171,11 @@ const BasicInfo = ({ formData, setFormData }) => {
               type="text"
               background="#F8F9FC"
               borderColor="#EEF0F5"
-              name="businessPhone"
+              name="phone"
               label="Business Phone"
               height="34px"
               placeholder="Enter Phone No"
-              value={formData.businessPhone}
+              value={formData.phone}
               onChange={handleChange}
             />
           </Col>
@@ -134,11 +184,11 @@ const BasicInfo = ({ formData, setFormData }) => {
               type="text"
               background="#F8F9FC"
               borderColor="#EEF0F5"
-              name="businessWebsite"
+              name="website"
               label="Business Website URL"
               height="34px"
               placeholder="Enter Website URL"
-              value={formData.businessWebsite}
+              value={formData.website}
               onChange={handleChange}
             />
           </Col>

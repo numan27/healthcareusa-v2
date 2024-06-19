@@ -71,10 +71,19 @@ const Header = () => {
   const SITE_DOMAIN = "https://jsappone.demowp.io";
 
   const handleNavigateListingSubmission = () => {
-    navigate(PATH.LISTING_SUBMISSION);
+    if (auth) {
+      navigate(PATH.LISTING_SUBMISSION);
+    } else {
+      openSignInModal();
+    }
   };
+
   const handleNavigateAddListing = () => {
-    navigate(PATH.ADD_LISTING);
+    if (auth) {
+      navigate(PATH.ADD_LISTING);
+    } else {
+      openSignInModal();
+    }
   };
 
   const handleLogout = () => {
@@ -199,7 +208,6 @@ const Header = () => {
                       </GenericButton>
                     )}
                     <GenericButton
-                      disabled={!auth}
                       onClick={handleNavigateListingSubmission}
                       className="my-sm-0 my-2"
                     >
@@ -207,7 +215,6 @@ const Header = () => {
                       (New)
                     </GenericButton>
                     <GenericButton
-                      disabled={!auth}
                       onClick={handleNavigateAddListing}
                       className="my-sm-0 my-2"
                     >

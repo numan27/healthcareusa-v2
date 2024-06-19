@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Dropdown, Form, FormLabel } from "react-bootstrap";
@@ -209,6 +207,7 @@ const CheckboxDropdown = observer(
       setCheckboxItems(updatedItems);
 
       const selectedItems = updatedItems.filter((item) => item.checked);
+      console.log("Selected items:", selectedItems); // Add this log
       onChange(selectedItems); // Pass selected items to onChange
     };
 

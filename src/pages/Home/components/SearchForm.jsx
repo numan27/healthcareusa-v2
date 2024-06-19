@@ -34,12 +34,17 @@ const SearchForm = () => {
     }
   };
 
+  // const handleNavigateListingDetail = () => {
+  //   if (searchKeywords || place) {
+  //     navigate("/listings", { state: { searchKeywords, place } });
+  //   } else {
+  //     navigate("/listings");
+  //   }
+  // };
+
   const handleNavigateListingDetail = () => {
-    if (searchKeywords || place) {
-      navigate("/listings", { state: { searchKeywords, place } });
-    } else {
-      navigate("/listings");
-    }
+    const stateData = searchKeywords || place ? { searchKeywords, place } : {};
+    navigate("/navigate-to-listings", { state: stateData });
   };
 
   const handleFormSubmit = (e) => {

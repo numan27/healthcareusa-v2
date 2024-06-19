@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
 import {
   Box,
@@ -22,17 +22,19 @@ const Listings = () => {
   const [listingProfiles, setListingProfiles] = useState([]);
   const [mediaUrls, setMediaUrls] = useState({});
   const [loading, setLoading] = useState(true);
-  const [areaRange, setAreaRange] = useState([20, 67]);
+  const [areaRange, setAreaRange] = useState("");
   const [profileLength, setProfileLength] = useState(0);
   const [dropdownOptions, setDropdownOptions] = useState({});
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [listingsState, setListingsState] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
+  const [filteredProfiles, setFilteredProfiles] = useState([]);
+  // const [place, setPlace] = useState(null);
 
   const location = useLocation();
   const { searchKeywords, place } = location.state || {};
 
-  // Dropdowns
+  // Fetch dropdown options
   useEffect(() => {
     const fetchDropdownOptions = async () => {
       try {
@@ -49,7 +51,7 @@ const Listings = () => {
             "Gender",
             "Languages",
             "Qualifications",
-            "Specializations",
+            "Specialization",
             "Doctor Package",
           ];
 
@@ -65,38 +67,7 @@ const Listings = () => {
               optionsMap[label] = parsedOptions;
             }
           });
-          console.log("Fields from API:", fields);
 
-          const genderField = fields.find((field) => field.label === "Gender");
-          const specializationField = fields.find(
-            (field) => field.label === "Specialization"
-          );
-
-          if (genderField && genderField.label.trim()) {
-            const genderOptions = JSON.parse(genderField.options);
-            const parsedGenderOptions = genderOptions.label.map(
-              (label, index) => ({
-                id: index,
-                label: label,
-                value: genderOptions.value[index],
-              })
-            );
-            optionsMap["Gender"] = parsedGenderOptions;
-          }
-
-          if (specializationField && specializationField.label.trim()) {
-            const specializationOptions = JSON.parse(
-              specializationField.options
-            );
-            const parsedSpecializationOptions = specializationOptions.label.map(
-              (label, index) => ({
-                id: index,
-                label: label,
-                value: specializationOptions.value[index],
-              })
-            );
-            optionsMap["Specialization"] = parsedSpecializationOptions;
-          }
           setDropdownOptions(optionsMap);
         }
       } catch (error) {
@@ -107,37 +78,38 @@ const Listings = () => {
     fetchDropdownOptions();
   }, []);
 
-  // Search Form
-  // useEffect(() => {
-  //   const fetchListings = async () => {
-  //     const query = new URLSearchParams({
-  //       "cwp_query[post_type]": "listing",
-  //       "cwp_query[orderby]": "ASC",
-  //       "cwp_query[s]": searchKeywordsState,
-  //       "cwp_query[fc-google-address_range]": areaRange,
-  //       "cwp_query[fc-google-address]": place?.address || "",
-  //       "cwp_query[fc-google-address_lat]": place?.lat || "",
-  //       "cwp_query[fc-google-address_lng]": place?.lng || "",
-  //     }).toString();
+  // Fetch listings based on search criteria
+  useEffect(() => {
+    const fetchListings = async () => {
+      const query = new URLSearchParams({
+        "cwp_query[post_type]": "listing",
+        "cwp_query[orderby]": "ASC",
+        "cwp_query[s]": searchKeywordsState,
+        "cwp_query[fc-google-address_range]": areaRange.toString(),
+        "cwp_query[fc-google-address]": place?.address || "",
+        "cwp_query[fc-google-address_lat]": place?.lat || "",
+        "cwp_query[fc-google-address_lng]": place?.lng || "",
+      }).toString();
 
-  //     try {
-  //       const response = await axios.get(
-  //         `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-  //       );
-  //       setListingsState(response.data);
+      console.log(
+        `Query: https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
+      );
 
-  //       if (place) {
-  //         setMapCenter({ lat: place.lat, lng: place.lng });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching listings:", error);
-  //     }
-  //   };
+      try {
+        const response = await axios.get(
+          `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
+        );
+        console.log("Response data:", response.data);
+        setListingsState(response.data);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+      }
+    };
 
-  //   fetchListings();
-  // }, [searchKeywordsState, areaRange, place]);
+    fetchListings();
+  }, [searchKeywordsState, areaRange, place]);
 
-  // Listings
+  // Fetch posts and media
   useEffect(() => {
     const fetchPosts = async () => {
       const url = "https://jsappone.demowp.io/wp-json/wp/v2/listing";
@@ -170,7 +142,23 @@ const Listings = () => {
             profile.cubewp_post_meta["cwp_field_40228862441"]?.meta_value ||
             "N/A",
           languages:
-            profile.cubewp_post_meta["fc-languages"]?.meta_value || "N/A",
+            profile.cubewp_post_meta["fc-languages"]?.meta_value.split(", ") ||
+            [],
+          specialization:
+            profile.cubewp_post_meta[
+              "cwp_field_136461069401"
+            ]?.meta_value.split(", ") || [],
+          qualifications:
+            profile.cubewp_post_meta[
+              "cwp_field_930729608352"
+            ]?.meta_value.split(", ") || [],
+          gender:
+            profile.cubewp_post_meta["cwp_field_224925973684"]?.meta_value ||
+            "N/A",
+          doctorPackage:
+            profile.cubewp_post_meta[
+              "cwp_field_631649982329"
+            ]?.meta_value.split(", ") || [],
           address:
             profile.cubewp_post_meta["fc-google-address"]?.meta_value.address ||
             "N/A",
@@ -180,6 +168,8 @@ const Listings = () => {
         }));
 
         setListingProfiles(transformedProfileData);
+        setFilteredProfiles(transformedProfileData);
+        setProfileLength(transformedProfileData.length);
       } catch (error) {
         console.error("Error fetching posts or media:", error);
       } finally {
@@ -190,22 +180,149 @@ const Listings = () => {
     fetchPosts();
   }, []);
 
-  if (loading) {
-    return (
-      <div>
-        <LoaderPageWithoutBG />
-      </div>
-    );
-  }
-  console.log("listingProfiles at Parent", listingProfiles);
+  // Synchronize search keywords and place
+  useEffect(() => {
+    if (searchKeywords) {
+      setSearchKeywordsState(searchKeywords);
+    }
+    if (place) {
+      setAreaRange([place.lat, place.lng]);
+    }
+  }, [searchKeywords, place]);
+
+  // Filter profiles based on searchKeywordsState, place, and selectedOptions
+  useEffect(() => {
+    const filterProfiles = () => {
+      let filtered = [...listingProfiles];
+
+      // Keyword search
+      if (searchKeywordsState.trim() !== "") {
+        filtered = filtered.filter((profile) =>
+          profile.title
+            .toLowerCase()
+            .includes(searchKeywordsState.toLowerCase())
+        );
+      }
+
+      // Address filter
+      if (place && place.address.trim() !== "") {
+        const addressFilter = place.address.toLowerCase();
+        filtered = filtered.filter((profile) =>
+          profile.address.toLowerCase().includes(addressFilter)
+        );
+      }
+
+      // Location filter
+      if (place && place.lat && place.lng) {
+        filtered = filtered.filter((profile) => {
+          // Perform distance calculation if necessary
+          return true; // Modify this line based on your distance calculation logic
+        });
+      }
+
+      if (selectedOptions.length > 0) {
+        selectedOptions.forEach((selectedOption) => {
+          filtered = filtered.filter((profile) => {
+            let profileField = [];
+            switch (selectedOption.label) {
+              case "Languages":
+                profileField = profile.languages || [];
+                break;
+              case "Qualifications":
+                profileField = profile.qualifications || [];
+                break;
+              case "Specialization":
+                profileField = profile.specialization || [];
+                break;
+              case "Gender":
+                profileField = [profile.gender];
+                break;
+              case "Doctor Package":
+                profileField = profile.doctorPackage || [];
+                break;
+              default:
+                return true;
+            }
+
+            profileField = profileField.map((item) =>
+              item.toString().trim().toLowerCase()
+            );
+            const selectedValues = selectedOption.values.map((item) =>
+              item.value.toString().trim().toLowerCase()
+            );
+
+            const matches = selectedValues.some((value) =>
+              profileField.includes(value)
+            );
+
+            return matches;
+          });
+        });
+      }
+
+      return filtered;
+    };
+
+    const filteredProfiles = filterProfiles();
+    setFilteredProfiles(filteredProfiles);
+  }, [listingProfiles, searchKeywordsState, place, selectedOptions]);
+
+  const handleDropdownOptions = useCallback((label, items) => {
+    setSelectedOptions((prevSelectedOptions) => {
+      const updatedOptions = [...prevSelectedOptions];
+      const optionIndex = updatedOptions.findIndex(
+        (option) => option.label === label
+      );
+
+      const values = items
+        .filter((item) => item.checked)
+        .map((item) => ({
+          id: item.id,
+          label: item.label,
+          value: item.value.toLowerCase(),
+          checked: item.checked,
+        }));
+
+      if (optionIndex >= 0) {
+        if (values.length > 0) {
+          updatedOptions[optionIndex] = { label, values };
+        } else {
+          updatedOptions.splice(optionIndex, 1); // Remove the option if no values are selected
+        }
+      } else if (values.length > 0) {
+        updatedOptions.push({ label, values });
+      }
+
+      return updatedOptions;
+    });
+  }, []);
+
+  // Function to calculate the distance between two coordinates
+  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371; // Radius of the Earth in km
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+    return distance;
+  };
+
+  // console.log("selectedOptions", selectedOptions);
+
+  // console.log("filteredProfiles", filteredProfiles);
 
   const containerStyle = {
     width: "100%",
     height: "400px",
     borderRadius: "8px",
   };
-
-  console.log("listingsState", listingsState);
 
   const center = {
     lat: place?.lat || 0,
@@ -220,78 +337,40 @@ const Listings = () => {
     setAreaRange(newRange);
   };
 
-  // useEffect(() => {
-  //   if (searchKeywords) {
-  //     setSearchKeywordsState(searchKeywords);
-  //   }
-  //   if (place) {
-  //     setAreaRange([place.lat, place.lng]);
-  //   }
-  // }, [searchKeywords, place]);
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    handleSearchButton();
+  };
 
-  // const handleMapCenterChange = (newCenter) => {
-  //   setMapCenter(newCenter);
-  // };
+  const handleSearchButton = async () => {
+    try {
+      const query = new URLSearchParams({
+        "cwp_query[post_type]": "listing",
+        "cwp_query[orderby]": "ASC",
+        "cwp_query[s]": searchKeywordsState,
+        "cwp_query[fc-google-address_range]": areaRange,
+        "cwp_query[fc-google-address]": place?.address || "",
+        "cwp_query[fc-google-address_lat]": place?.lat || "",
+        "cwp_query[fc-google-address_lng]": place?.lng || "",
+      }).toString();
 
-  // const handleDropdownOptions = (value) => {
-  //   setSelectedOptions(value);
-  // };
+      const response = await axios.get(
+        `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
+      );
 
-  // const handleFormSubmit = (e) => {
-  //   e.preventDefault();
-  //   handleSearchButton();
-  // };
+      setListingsState(response.data);
+    } catch (error) {
+      console.error("Error fetching listings:", error);
+    }
+  };
 
-  // const handleSearchButton = async () => {
-  //   try {
-  //     const query = new URLSearchParams({
-  //       "cwp_query[post_type]": "listing",
-  //       "cwp_query[orderby]": "ASC",
-  //       "cwp_query[s]": searchKeywordsState,
-  //       "cwp_query[fc-google-address_range]": areaRange,
-  //       "cwp_query[fc-google-address]": place?.address || "",
-  //       "cwp_query[fc-google-address_lat]": place?.lat || "",
-  //       "cwp_query[fc-google-address_lng]": place?.lng || "",
-  //     }).toString();
-
-  //     const response = await axios.get(
-  //       `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-  //     );
-
-  //     setListingsState(response.data);
-
-  //     if (place) {
-  //       setMapCenter({ lat: place.lat, lng: place.lng });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching listings:", error);
-  //   }
-  // };
-
-  // const profileData = [
-  //   {
-  //     id: 1,
-  //     profileImg: IMAGES.DOCTOR_LIST_PROFILE,
-  //     title: profileTitle,
-  //     designation: "Physiotherapist",
-  //     languages: languages,
-  //     address: "Lahore, Pakistan",
-  //     phone: "123(456) - 789",
-  //     comment_status: "Yes",
-  //     status: "Open",
-  //   },
-  //   {
-  //     id: 2,
-  //     profileImg: IMAGES.DOCTOR_LIST_PROFILE,
-  //     title: "Doctor Jane",
-  //     designation: "Dentist",
-  //     languages: "English, Spanish",
-  //     address: "Karachi, Pakistan",
-  //     phone: "987(654) - 321",
-  //     comment_status: "Close",
-  //     status: "Close",
-  //   },
-  // ];
+  if (loading) {
+    return (
+      <div>
+        <LoaderPageWithoutBG />
+      </div>
+    );
+  }
 
   return (
     <AppLayout>
@@ -357,10 +436,7 @@ const Listings = () => {
               radius="8px"
               className="custom-shadow-2 py-3 px-4 w-100"
             >
-              <Form
-                // onSubmit={handleFormSubmit}
-                className="h-100 p-1"
-              >
+              <Form onSubmit={handleFormSubmit} className="h-100 p-1">
                 <Row className="d-flex align-items-center">
                   <Col
                     md={6}
@@ -383,8 +459,7 @@ const Listings = () => {
                       max={500}
                       step={0.1}
                       value={areaRange}
-                      // onChange={setAreaRange}
-                      // onChange={handleTemperatureRangeChange}
+                      onChange={handleTemperatureRangeChange}
                     />
                   </Col>
 
@@ -396,13 +471,13 @@ const Listings = () => {
                         aria-describedby="basic-addon1"
                         className="py-3"
                         value={searchKeywordsState}
-                        // onChange={handleSearchKeywordsChange}
+                        onChange={handleSearchKeywordsChange}
                       />
                     </InputGroup>
 
                     <div className="ms-1">
                       <GenericButton
-                        // onClick={handleSearchButton}
+                        onClick={handleSearchButton}
                         width="50px"
                         height="50px"
                         padding="0"
@@ -422,14 +497,16 @@ const Listings = () => {
                   key={label}
                   title={label}
                   items={dropdownOptions[label]}
-                  selected={label === "Options" ? selectedOptions : []}
-                  onChange={
-                    label === "Options" ? handleDropdownOptions : undefined
+                  selected={
+                    selectedOptions.find((option) => option.label === label)
+                      ?.values || []
                   }
+                  onChange={(values) => handleDropdownOptions(label, values)}
                   singleSelect={label === "Doctor Package"}
                 />
               ))}
             </div>
+
             <div className="pt-3 mb-3">
               {place ? (
                 <Typography
@@ -439,9 +516,9 @@ const Listings = () => {
                   size="16px"
                   lineHeight="26px"
                 >
-                  <span className="text-dark">{profileLength}</span> search
-                  result for <span className="fw-bold">{searchKeywords} </span>{" "}
-                  in
+                  <span className="text-dark">{filteredProfiles.length}</span>{" "}
+                  search result for{" "}
+                  <span className="fw-bold">{searchKeywords} </span> in
                   <span className="fw-bold"> {place?.address} </span>
                 </Typography>
               ) : (
@@ -472,7 +549,7 @@ const Listings = () => {
             </div>
 
             <div>
-              {listingProfiles.map((profileItem) => (
+              {filteredProfiles.map((profileItem) => (
                 <ProfileCard
                   key={profileItem.id}
                   enableSponsoredProfile
@@ -497,11 +574,9 @@ const Listings = () => {
               </Typography>
 
               <div className="mt-3">
-                {listingProfiles.map((profileItem) => (
+                {filteredProfiles.map((profileItem) => (
                   <ProfileCard
                     key={profileItem.id}
-                    // enableSponsoredProfile
-                    // columnPadding
                     singleProfile={profileItem}
                   />
                 ))}
