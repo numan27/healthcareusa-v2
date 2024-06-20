@@ -1,34 +1,58 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Container } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import IMAGES from "../../assets/images";
-import { Box, Typography } from "../../components/GenericComponents";
+import {
+  Box,
+  Typography,
+  GenericButton,
+} from "../../components/GenericComponents";
 
 const ExternalLinkAdScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const externalLink = location.state?.externalLink || null;
+  const timerRef = useRef(null);
+  const [countdown, setCountdown] = useState(10);
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
 
   useEffect(() => {
     if (externalLink) {
-      const timer = setTimeout(() => {
-        window.location.href = externalLink;
-      }, 10000); // 10 seconds
+      timerRef.current = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown === 1) {
+            window.location.href = externalLink;
+            clearInterval(timerRef.current);
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
 
-      return () => clearTimeout(timer);
+      return () => clearInterval(timerRef.current);
     } else {
-      // No externalLink, navigate back to the previous page
       navigate(-1);
     }
   }, [externalLink, navigate]);
+
+  useEffect(() => {
+    if (isNavigatingBack) {
+      navigate(-1); // Navigate back to the listingDetailsPage
+    }
+  }, [isNavigatingBack, navigate]);
+
+  const handleNavigateBack = () => {
+    clearInterval(timerRef.current);
+    setIsNavigatingBack(true);
+  };
 
   return (
     <div className="w-100" style={{ height: "calc(100vh - 80px)" }}>
       <Container className="d-flex flex-column justify-content-center align-items-center pt-5">
         <img
           className="ads-loading-icon"
-          width={260}
-          src={IMAGES.ADS_LOADING_ICON}
+          width={240}
+          src={IMAGES.ADS_EXTERNAL_LINK}
           alt="icon"
         />
 
@@ -42,8 +66,20 @@ const ExternalLinkAdScreen = () => {
           lineHeight="27px"
           font="Plus Jakarta Sans"
         >
-          You are being redirected to an external link. Please wait...
+          You will be redirected to an External Link in{" "}
+          <span className="text-decoration-underline">{countdown} secs</span>
         </Typography>
+
+        <GenericButton
+          size="16px"
+          weight="700"
+          radius="50px"
+          height="50px"
+          padding="10px 30px"
+          onClick={handleNavigateBack}
+        >
+          I changed my mind. Let’s go back.
+        </GenericButton>
 
         <Box width="450px" className="ads-square-box">
           <img

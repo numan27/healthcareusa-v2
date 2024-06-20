@@ -46,6 +46,7 @@ import locationIcon2 from "./location-2.png"
 import claimListing from "./claim-listing.png"
 import adsLoading from "./ads-loading.png"
 import adsSquare from "./ads-square.png"
+import adsExternalLink from "./ads-external-link.png"
 
 const IMAGES = {
     LOGO: logo,
@@ -96,6 +97,7 @@ const IMAGES = {
     CLAIM_LISTING_IMG: claimListing,
     ADS_LOADING_ICON: adsLoading,
     ADS_SQUARE_IMG: adsSquare,
+    ADS_EXTERNAL_LINK: adsExternalLink,
 }
 
 export default IMAGES;

@@ -27,7 +27,7 @@ const StyledButton = styled(Button)`
   background: ${(props) =>
     props.background ? props.background : "#00C1B6"} !important;
   padding: ${(props) => props.padding};
-  border-radius: ${(props) => props.radius}!important;
+  border-radius: ${(props) => props.radius} !important;
   border: ${(props) => props.border} !important;
   min-width: ${(props) => props.minWidth};
   max-width: ${(props) => props.maxWidth};
