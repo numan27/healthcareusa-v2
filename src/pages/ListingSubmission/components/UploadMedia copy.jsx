@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { Form, Row, Col } from "react-bootstrap";
-import { v4 as uuidv4 } from "uuid"; // Import uuidv4 for generating unique IDs
 import {
   GenericInput,
   Typography,
@@ -17,39 +16,18 @@ const UploadMedia = ({ formData, setFormData }) => {
 
   const handleGalleryChange = (files) => {
     const fileList = Array.from(files);
-    const updatedGallery = [...formData.gallery];
-
-    // Generate unique IDs and push them to updatedGallery
-    fileList.forEach((file) => {
-      const uniqueId = uuidv4(); // Generate unique ID
-      updatedGallery.push({ id: uniqueId, file, isSelected: false }); // Store { id, file, isSelected } object
-    });
-
-    // Limit gallery to 4 items
-    if (updatedGallery.length > 4) {
-      updatedGallery.splice(4);
-    }
-
+    const updatedGallery = [...formData.gallery, ...fileList].slice(0, 4);
     setFormData({ ...formData, gallery: updatedGallery });
   };
 
   const handleImageSelect = (index) => {
     setSelectedImage(index);
-
-    // Update isSelected flag for the selected image
-    const updatedGallery = formData.gallery.map((item, idx) => ({
-      ...item,
-      isSelected: idx === index,
-    }));
-
-    setFormData({ ...formData, gallery: updatedGallery });
+    setFormData({ ...formData, profileImage: formData.gallery[index] });
   };
 
   const handleRemoveImage = (index) => {
     const updatedGallery = formData.gallery.filter((_, i) => i !== index);
     setFormData({ ...formData, gallery: updatedGallery });
-
-    // Reset selectedImage and profileImage if the removed image was selected
     if (index === selectedImage) {
       setSelectedImage(null);
       setFormData({ ...formData, profileImage: null });
@@ -106,22 +84,22 @@ const UploadMedia = ({ formData, setFormData }) => {
       </Form>
       <Row>
         {formData.gallery &&
-          formData.gallery.map((item, index) => (
-            <Col key={item.id} xs={3} className="mb-2">
+          formData.gallery.map((file, index) => (
+            <Col key={index} xs={3} className="mb-2">
               <div
                 style={{
                   position: "relative",
                   cursor: "pointer",
-                  border: item.isSelected ? "2px solid green" : "none",
+                  border: selectedImage === index ? "2px solid green" : "none",
                 }}
                 onClick={() => handleImageSelect(index)}
               >
                 <img
-                  src={URL.createObjectURL(item.file)}
+                  src={URL.createObjectURL(file)}
                   alt={`preview-${index}`}
                   style={{ width: "100%", height: "auto" }}
                 />
-                {item.isSelected && (
+                {selectedImage === index && (
                   <FaCheckCircle
                     size={24}
                     color="green"
@@ -135,6 +113,7 @@ const UploadMedia = ({ formData, setFormData }) => {
                     position: "absolute",
                     top: 10,
                     left: 10,
+                    // display: "none",
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -153,6 +132,7 @@ const UploadMedia = ({ formData, setFormData }) => {
 UploadMedia.propTypes = {
   formData: PropTypes.object.isRequired,
   setFormData: PropTypes.func.isRequired,
+  nextStep: PropTypes.func.isRequired,
 };
 
 export default UploadMedia;

@@ -14,13 +14,18 @@ import CallIcon from "../../../assets/SVGs/Call";
 import MapIcon from "../../../assets/SVGs/Map";
 import InternetIcon from "../../../assets/SVGs/Internet";
 
-const ProfileCardListingSubmission = ({ formData }) => {
-  console.log(formData);
+const ProfileCardListingSubmission = ({ formData = {} }) => {
+  const profileName = `${formData.firstName || "John"} ${
+    formData.lastName || "Doe"
+  }`;
 
-  const profileName = `${formData.firstName} ${formData.lastName}`;
+  const businessAddress = `${formData.streetAddress || "156 APT Square"}, ${
+    formData.city || "New York"
+  }, ${formData.state || "NY"} ${formData.zip || "10001"}`;
 
-  const businessAddress = `${formData.streetAddress || "--"}, ${formData.city || "--"}, ${formData.state || "--"} ${formData.zip || "--"}`;
-
+  // Determine which image to display as the profile picture
+  const profileImage =
+    formData.gallery && formData.gallery.find((img) => img.isSelected);
 
   return (
     <Box padding="16px" className="custom-border rounded bg-white w-100">
@@ -28,25 +33,40 @@ const ProfileCardListingSubmission = ({ formData }) => {
         <Col
           lg={3}
           md={6}
-          className="d-flex justify-content-center mx-auto mb-3 mb-lg-0 pt-md-0 pt-4"
+          className="d-flex justify-content-center mx-auto mb-3 mb-lg-0 pt-md-0 pt-4 pe-0"
         >
-          <img className="img-fluid" src="" alt="Profile Image" />
+          {profileImage ? (
+            <img
+              className="img-fluid"
+              src={
+                profileImage
+                  ? URL.createObjectURL(profileImage.file)
+                  : IMAGES.DEFAULT_PROFILE_IMAGE
+              }
+              alt="Profile Image"
+            />
+          ) : (
+            <img
+              style={{ opacity: "0.2" }}
+              className="img-fluid"
+              src={IMAGES.DOCTOR_LIST_PROFILE}
+              alt="Profile Image"
+            />
+          )}
         </Col>
 
         <Col className="d-flex flex-column justify-content-between">
           <div className="d-flex flex-sm-row flex-column justify-content-between align-items-sm-center">
             <div>
-              <Link className="text-decoration-none">
-                <Typography
-                  as="h2"
-                  color="#23262F"
-                  weight="700"
-                  size="24px"
-                  lineHeight="36px"
-                >
-                  {profileName}
-                </Typography>
-              </Link>
+              <Typography
+                as="h2"
+                color="#23262F"
+                weight="700"
+                size="24px"
+                lineHeight="36px"
+              >
+                {profileName}
+              </Typography>
 
               <div className="d-flex align-items-center gap-2">
                 <Typography
@@ -58,7 +78,7 @@ const ProfileCardListingSubmission = ({ formData }) => {
                   size="14px"
                   lineHeight="16px"
                 >
-                  {formData.designation}
+                  {formData.designation || "Physiotherapist"}
                 </Typography>
                 <Typography
                   className="text-uppercase"
@@ -68,7 +88,7 @@ const ProfileCardListingSubmission = ({ formData }) => {
                   size="14px"
                   lineHeight="16px"
                 >
-                  Languages
+                  {formData.languages || "English, French"}
                 </Typography>
               </div>
 
@@ -116,7 +136,7 @@ const ProfileCardListingSubmission = ({ formData }) => {
                   size="16px"
                   lineHeight="24px"
                 >
-                  {formData.businessPhone}
+                  {formData.businessPhone || "(123) 456-7890"}
                 </Typography>
               </Link>
             </div>
@@ -125,18 +145,12 @@ const ProfileCardListingSubmission = ({ formData }) => {
               className="mt-4"
               width={80}
               src={IMAGES.PROFILE_COMPANY_LOGO}
-              alt=""
+              alt="Company Logo"
             />
           </div>
           <div className="d-flex align-items-end flex-wrap flex-sm-nowrap gap-2 mt-2xl-0 mt-3">
             <GenericButton
               borderColor="transparent"
-              // background={
-              //   profile.comment_status === "Close" ? "#23262F" : "#00C1B6"
-              // }
-              // hoverBgColor={
-              //   profile.comment_status === "Close" ? "#23262F" : "#00ADA2"
-              // }
               gap="15px"
               height="46px"
               width="100%"

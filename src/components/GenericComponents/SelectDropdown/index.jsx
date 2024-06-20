@@ -25,6 +25,7 @@ const StyledSelecte = styled(Select)`
     padding-top: 0px !important;
     padding-bottom: 0px !important;
     border-radius: 4px;
+    font-size: 14px;
   }
   .react-select__menu {
     padding-top: 0px !important;
@@ -190,7 +191,7 @@ GenericSelect.defaultProps = {
   width: "",
   isSearchable: false,
   borderRadius: "8px",
-  fontSize: "16px",
+  fontSize: "15px",
   className: "",
   valueColor: "#333333",
   iconColor: "#BBB6B6",

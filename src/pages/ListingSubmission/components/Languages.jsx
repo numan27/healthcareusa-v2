@@ -4,13 +4,13 @@ import { Col, Form, Row } from "react-bootstrap";
 import { Checkbox, Typography } from "../../../components/GenericComponents";
 
 const Languages = ({ formData, setFormData }) => {
-  const { languages = [] } = formData; // Ensure languages is initialized as an array
+  const { languages = [] } = formData;
 
-  const handleChange = (language) => {
-    const isChecked = languages.includes(language);
+  const handleChange = (label) => {
+    const isChecked = languages.includes(label);
     const updatedLanguages = isChecked
-      ? languages.filter((lang) => lang !== language)
-      : [...languages, language];
+      ? languages.filter((lang) => lang !== label)
+      : [...languages, label];
 
     setFormData({ ...formData, languages: updatedLanguages });
   };
@@ -53,8 +53,8 @@ const Languages = ({ formData, setFormData }) => {
           {languageOptions.map((option) => (
             <Col key={option.value} sm={5} className="mb-3 mx-auto">
               <Checkbox
-                checked={languages.includes(option.value)}
-                onChange={() => handleChange(option.value)}
+                checked={languages.includes(option.label)}
+                onChange={() => handleChange(option.label)}
                 label={option.label}
               />
             </Col>

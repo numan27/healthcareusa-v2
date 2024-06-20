@@ -32,8 +32,6 @@ const OperationalHours = ({ formData, setFormData }) => {
     { id: "9", label: "5:00 PM", value: "5:00 PM" },
   ];
 
-  const defaultRows = 3;
-
   const addRow = () => {
     const newSchedule = [
       ...weeklySchedule,
@@ -77,21 +75,10 @@ const OperationalHours = ({ formData, setFormData }) => {
         Provide the details about the property's operational hours
       </Typography>
       <Form className="mt-5">
-        <Row>
-          <Col md={3}>
-            <Form.Label className="fw-bold">Day</Form.Label>
-          </Col>
-          <Col md={3}>
-            <Form.Label className="fw-bold">Opening Time</Form.Label>
-          </Col>
-          <Col md={3}>
-            <Form.Label className="fw-bold">Opening Time</Form.Label>
-          </Col>
-        </Row>
         {weeklySchedule.map((schedule, index) => (
           <Row key={index} className="mb-4 d-flex align-items-end">
-            <Col md={3}>
-              {/* <Form.Label className="fw-bold">Day</Form.Label> */}
+            <Col md={4} className="pe-md-0 mb-md-0 mb-3">
+              {index === 0 && <Form.Label className="fw-bold">Day</Form.Label>}
               <GenericSelect
                 minWidth="120px"
                 minheight="34px"
@@ -102,15 +89,19 @@ const OperationalHours = ({ formData, setFormData }) => {
                 placeholderColor="#333333"
                 iconColor="#06312E"
                 menuPlacement="auto"
-                value={schedule.day}
-                onChange={(e) =>
-                  handleScheduleChange(index, "day", e.target.value)
+                value={days.find((day) => day.value === schedule.day) || null}
+                onChange={(option) =>
+                  handleScheduleChange(index, "day", option.value)
                 }
                 options={days}
+                getOptionLabel={(option) => option.label}
+                getOptionValue={(option) => option.value}
               />
             </Col>
-            <Col md={3}>
-              {/* <Form.Label className="fw-bold">Opening Time</Form.Label> */}
+            <Col md={3} className="pe-md-0 mb-md-0 mb-3">
+              {index === 0 && (
+                <Form.Label className="fw-bold">Opening Time</Form.Label>
+              )}
               <GenericSelect
                 minWidth="120px"
                 minheight="34px"
@@ -121,15 +112,23 @@ const OperationalHours = ({ formData, setFormData }) => {
                 placeholderColor="#333333"
                 iconColor="#06312E"
                 menuPlacement="auto"
-                value={schedule.openingTime}
-                onChange={(e) =>
-                  handleScheduleChange(index, "openingTime", e.target.value)
+                value={
+                  timeSlots.find(
+                    (slot) => slot.value === schedule.openingTime
+                  ) || null
+                }
+                onChange={(option) =>
+                  handleScheduleChange(index, "openingTime", option.value)
                 }
                 options={timeSlots}
+                getOptionLabel={(option) => option.label}
+                getOptionValue={(option) => option.value}
               />
             </Col>
-            <Col md={3}>
-              {/* <Form.Label className="fw-bold">Closing Time</Form.Label> */}
+            <Col md={3} className="pe-md-0 mb-md-0 mb-3">
+              {index === 0 && (
+                <Form.Label className="fw-bold">Closing Time</Form.Label>
+              )}
               <GenericSelect
                 minWidth="120px"
                 minheight="34px"
@@ -140,16 +139,22 @@ const OperationalHours = ({ formData, setFormData }) => {
                 placeholderColor="#333333"
                 iconColor="#06312E"
                 menuPlacement="auto"
-                value={schedule.closingTime}
-                onChange={(e) =>
-                  handleScheduleChange(index, "closingTime", e.target.value)
+                value={
+                  timeSlots.find(
+                    (slot) => slot.value === schedule.closingTime
+                  ) || null
+                }
+                onChange={(option) =>
+                  handleScheduleChange(index, "closingTime", option.value)
                 }
                 options={timeSlots}
+                getOptionLabel={(option) => option.label}
+                getOptionValue={(option) => option.value}
               />
             </Col>
             {index === weeklySchedule.length - 1 && (
               <Col
-                xs={3}
+                xs={2}
                 className="d-flex align-items-center justify-content-start"
               >
                 <CiSquareMinus
@@ -168,6 +173,7 @@ const OperationalHours = ({ formData, setFormData }) => {
             )}
           </Row>
         ))}
+
         {weeklySchedule.length === 0 && (
           <Row className="mb-4 align-items-center">
             <Col md={3} className="text-center">

@@ -1,3 +1,10 @@
+import PropTypes from "prop-types";
+import { Form, Row, Col } from "react-bootstrap";
+import {
+  GenericInput,
+  Typography,
+} from "../../../components/GenericComponents";
+
 const SubmittedBy = ({ formData, setFormData }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -5,24 +12,91 @@ const SubmittedBy = ({ formData, setFormData }) => {
   };
 
   return (
-    <div>
-      <h2>Submitted By</h2>
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-      />
-      <input
-        type="tel"
-        name="phone"
-        placeholder="Phone"
-        value={formData.phone}
-        onChange={handleChange}
-      />
+    <div className="">
+      <Typography
+        weight="600"
+        align="center"
+        color="#070026"
+        size="24px"
+        font="Inter"
+        lineHeight="36px"
+      >
+        Submitted by
+      </Typography>
+      <Typography
+        weight="400"
+        align="center"
+        color="#73777D"
+        size="16px"
+        font="Inter"
+        lineHeight="24px"
+      >
+        Provide the essential details.
+      </Typography>
+      <Form className="mt-5">
+        <Row>
+          <Col md={6} className="mb-2">
+            <GenericInput
+              type="text"
+              background="#F8F9FC"
+              borderColor="#EEF0F5"
+              name="firstName"
+              label="First Name"
+              height="34px"
+              placeholder="Enter First Name"
+              value={formData.submittingPersonFirstName}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md={6} className="mb-2">
+            <GenericInput
+              type="text"
+              background="#F8F9FC"
+              borderColor="#EEF0F5"
+              name="lastName"
+              label="Last Name"
+              height="34px"
+              placeholder="Enter Last Name"
+              value={formData.submittingPersonLastName}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col xs={12} className="mb-2">
+            <GenericInput
+              type="text"
+              background="#F8F9FC"
+              borderColor="#EEF0F5"
+              name="email"
+              label="Email"
+              height="34px"
+              placeholder="Enter Email"
+              value={formData.submittingPersonEmail}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col xs={12} className="mb-2">
+            <GenericInput
+              type="text"
+              background="#F8F9FC"
+              borderColor="#EEF0F5"
+              name="phone"
+              label="Phone"
+              height="34px"
+              placeholder="Enter Phone No"
+              value={formData.submittingPersonPhone}
+              onChange={handleChange}
+            />
+          </Col>
+        </Row>
+      </Form>
     </div>
   );
+};
+
+SubmittedBy.propTypes = {
+  formData: PropTypes.object.isRequired,
+  setFormData: PropTypes.func.isRequired,
+  nextStep: PropTypes.func.isRequired,
 };
 
 export default SubmittedBy;
