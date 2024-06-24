@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import FormHeader from "./FormHeader";
 import FormFooter from "./FormFooter";
@@ -11,10 +11,26 @@ const FormLayout = ({
   loading,
   handleSubmit,
 }) => {
+  const [isProfilePictureSelected, setIsProfilePictureSelected] =
+    useState(false);
+
+  const handleProfilePictureSelection = (selected) => {
+    setIsProfilePictureSelected(selected);
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <FormHeader />
-      <main style={{ flex: "1" }}>{children}</main>
+      <main style={{ flex: "1" }}>
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            return React.cloneElement(child, {
+              handleProfilePictureSelection,
+            });
+          }
+          return child;
+        })}
+      </main>
       {step < 9 && (
         <FormFooter
           nextStep={nextStep}
@@ -22,6 +38,7 @@ const FormLayout = ({
           step={step}
           loading={loading}
           handleSubmit={handleSubmit}
+          isProfilePictureSelected={isProfilePictureSelected}
         />
       )}
     </div>

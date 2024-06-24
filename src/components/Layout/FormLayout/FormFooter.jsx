@@ -3,7 +3,14 @@ import PropTypes from "prop-types";
 import { GenericButton } from "../../GenericComponents";
 import { LoaderCenter } from "../../../assets";
 
-const FormFooter = ({ nextStep, prevStep, step, loading, handleSubmit }) => {
+const FormFooter = ({
+  nextStep,
+  prevStep,
+  step,
+  loading,
+  handleSubmit,
+  isProfilePictureSelected,
+}) => {
   const handleNextClick = () => {
     if (step === 8) {
       handleSubmit();
@@ -59,6 +66,7 @@ FormFooter.propTypes = {
   step: PropTypes.number.isRequired,
   loading: PropTypes.bool.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  isProfilePictureSelected: PropTypes.bool.isRequired,
 };
 
 export default FormFooter;

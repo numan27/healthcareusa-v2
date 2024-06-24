@@ -10,12 +10,18 @@ import { FaCheckCircle, FaTimesCircle, FaUserCircle } from "react-icons/fa";
 
 const UploadMedia = ({ formData, setFormData }) => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isProfilePictureSelected, setIsProfilePictureSelected] =
+    useState(false);
 
   useEffect(() => {
     if (!formData.gallery) {
       setFormData({ ...formData, gallery: [], profilePicture: null });
     }
   }, [formData, setFormData]);
+
+  useEffect(() => {
+    setIsProfilePictureSelected(!!formData.profilePicture);
+  }, [formData.profilePicture]);
 
   const handleGalleryChange = (files) => {
     const fileList = Array.from(files);
@@ -47,6 +53,8 @@ const UploadMedia = ({ formData, setFormData }) => {
       gallery: updatedGallery,
       profilePicture: profilePicture,
     });
+
+    setIsProfilePictureSelected(true);
   };
 
   const handleRemoveImage = (index) => {
@@ -62,7 +70,10 @@ const UploadMedia = ({ formData, setFormData }) => {
 
     if (index === selectedImage) {
       setSelectedImage(null);
+      setIsProfilePictureSelected(false); 
     }
+
+    setIsProfilePictureSelected(false); // Update profile picture selection state
   };
 
   const handleDragOver = (e) => {
@@ -162,6 +173,16 @@ const UploadMedia = ({ formData, setFormData }) => {
             </Col>
           ))}
       </Row>
+      <Typography
+        weight="400"
+        align="center"
+        color="#73777D"
+        size="16px"
+        font="Inter"
+        lineHeight="24px"
+      >
+        Please upload a profile picture to proceed.
+      </Typography>
     </div>
   );
 };
