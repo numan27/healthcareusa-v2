@@ -561,17 +561,50 @@ body {
 
 .live-preview-form {
     background-image: url(../images/live-preview-bg.png);
-    min-height: 84vh;
-    height: 100%;
+    height: calc(100vh - 100px) !important;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    overflow-y: hidden !important;
 }
 
-.form-top-gradient {
-    background: linear-gradient(270deg, rgba(103, 143, 220, 0.85) 0%, rgba(22, 201, 190, 0.85) 100%);
-    height: 12px;
-    /* z-index: -1 !important; */
+.form-top-gradient .progress-bar {
+    background: linear-gradient(270deg, rgba(22, 201, 190, 0.85) 0%, rgba(103, 143, 220, 0.85) 100%);
+    /* background: linear-gradient(270deg, rgba(103, 143, 220, 0.85) 0%, rgba(22, 201, 190, 0.85) 100%); */
+    /* background: linear-gradient(90deg, #5C48FC 0%, #8CD2F9 49.4%, #7DFEA9 119.05%); */
+}
+
+/* .pac-logo */
+.pac-container {
+    background-color: #fff !important;
+    border-radius: 8px !important;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px !important;
+    border-top: 1px solid lightgray !important;
+    /* width: 30% !important; */
+}
+
+.pac-container::after {
+    display: none !important;
+}
+
+.pac-item,
+.pac-item-query {
+    color: #23262f !important;
+    border: 0 !important;
+    padding: 3px 3px 3px 7px !important;
+    /* padding-left: 7px !important; */
+}
+
+.pac-logo {
+    color: #00ADA2 !important;
+}
+
+.pac-item-selected,
+.pac-item:hover,
+.pac-item:focus,
+.pac-item-query:focus,
+.pac-item-query:hover {
+    background-color: #eaffff !important;
 }
 
 @keyframes pulse {

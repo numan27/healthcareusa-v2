@@ -1,31 +1,31 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Row, Col } from "react-bootstrap";
-import { v4 as uuidv4 } from "uuid"; // Import uuidv4 for generating unique IDs
+import { v4 as uuidv4 } from "uuid";
 import {
   GenericInput,
   Typography,
 } from "../../../components/GenericComponents";
-import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaCheckCircle, FaTimesCircle, FaUserCircle } from "react-icons/fa";
 
 const UploadMedia = ({ formData, setFormData }) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
-  if (!formData.gallery) {
-    setFormData({ ...formData, gallery: [] });
-  }
+  useEffect(() => {
+    if (!formData.gallery) {
+      setFormData({ ...formData, gallery: [], profilePicture: null });
+    }
+  }, [formData, setFormData]);
 
   const handleGalleryChange = (files) => {
     const fileList = Array.from(files);
     const updatedGallery = [...formData.gallery];
 
-    // Generate unique IDs and push them to updatedGallery
     fileList.forEach((file) => {
-      const uniqueId = uuidv4(); // Generate unique ID
-      updatedGallery.push({ id: uniqueId, file, isSelected: false }); // Store { id, file, isSelected } object
+      const uniqueId = uuidv4();
+      updatedGallery.push({ id: uniqueId, file, isSelected: false });
     });
 
-    // Limit gallery to 4 items
     if (updatedGallery.length > 4) {
       updatedGallery.splice(4);
     }
@@ -35,24 +35,33 @@ const UploadMedia = ({ formData, setFormData }) => {
 
   const handleImageSelect = (index) => {
     setSelectedImage(index);
-
-    // Update isSelected flag for the selected image
     const updatedGallery = formData.gallery.map((item, idx) => ({
       ...item,
       isSelected: idx === index,
     }));
 
-    setFormData({ ...formData, gallery: updatedGallery });
+    const profilePicture = formData.gallery[index].file;
+
+    setFormData({
+      ...formData,
+      gallery: updatedGallery,
+      profilePicture: profilePicture,
+    });
   };
 
   const handleRemoveImage = (index) => {
     const updatedGallery = formData.gallery.filter((_, i) => i !== index);
-    setFormData({ ...formData, gallery: updatedGallery });
+    const isProfilePicture =
+      formData.gallery[index].file === formData.profilePicture;
 
-    // Reset selectedImage and profileImage if the removed image was selected
+    setFormData({
+      ...formData,
+      gallery: updatedGallery,
+      profilePicture: isProfilePicture ? null : formData.profilePicture,
+    });
+
     if (index === selectedImage) {
       setSelectedImage(null);
-      setFormData({ ...formData, profileImage: null });
     }
   };
 
@@ -99,7 +108,7 @@ const UploadMedia = ({ formData, setFormData }) => {
               label="Gallery"
               multiple
               onFileChange={(e) => handleGalleryChange(e.target.files)}
-              disabled={formData.gallery.length >= 4}
+              // disabled={formData.gallery.length >= 4}
             />
           </Col>
         </Row>
@@ -142,6 +151,13 @@ const UploadMedia = ({ formData, setFormData }) => {
                   }}
                   className="remove-icon"
                 />
+                {formData.profilePicture === item.file && (
+                  <FaUserCircle
+                    size={24}
+                    color="blue"
+                    style={{ position: "absolute", bottom: 10, right: 10 }}
+                  />
+                )}
               </div>
             </Col>
           ))}

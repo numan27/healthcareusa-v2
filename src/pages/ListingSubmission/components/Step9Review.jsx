@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import { Table } from "react-bootstrap";
 
 const Review = ({ formData }) => {
   const {
@@ -18,14 +18,40 @@ const Review = ({ formData }) => {
 
   return (
     <div>
-      <h2>Review & Submit</h2>
-      <h3>Personal Information</h3>
-      <p>First Name: {firstName}</p>
-      <p>Last Name: {lastName}</p>
-      <p>Email: {email}</p>
-      <p>Phone: {phone}</p>
+      <h3 className="text-center fw-bold">Review & Submit</h3>
+      <h5 className="fw-semibold">Basic Information</h5>
+      <Table>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
 
-      {languages && languages.length > 0 && (
+        <tbody>
+          <tr>
+            <td>{firstName}</td>
+            <td>{lastName}</td>
+            <td>{email}</td>
+            <td>{phone}</td>
+          </tr>
+
+          <tr>
+            <th>Languages: </th>
+            {languages && languages.length > 0 && (
+              <>
+                {languages.map((language, index) => (
+                  <td key={index}>{language}</td>
+                ))}
+              </>
+            )}
+          </tr>
+        </tbody>
+      </Table>
+
+      {/* {languages && languages.length > 0 && (
         <div>
           <h3>Languages</h3>
           <ul>
@@ -34,9 +60,8 @@ const Review = ({ formData }) => {
             ))}
           </ul>
         </div>
-      )}
-
-      <h3>Operational Hours</h3>
+      )} */}
+      <h5 className="fw-semibold">Operational Hours</h5>
       <ul>
         {weeklySchedule &&
           weeklySchedule.map((schedule, index) => (

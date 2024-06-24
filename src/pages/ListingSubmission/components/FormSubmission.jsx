@@ -1,13 +1,13 @@
 import PropTypes from "prop-types";
-import BasicInfo from "./BasicInfo";
-import BusinessAddress from "./BusinessAddress";
-import OperationalHours from "./OperationalHours";
-import Languages from "./Languages";
-import SocialMedia from "./SocialMedia";
-import AdditionalDetails from "./AdditionalDetails";
-import UploadMedia from "./UploadMedia";
-import SubmittedBy from "./SubmittedBy";
-import Review from "./Review";
+import BasicInfo from "./Step1BasicInfo";
+import BusinessAddress from "./Step2BusinessAddress";
+import OperationalHours from "./Step3OperationalHours";
+import Languages from "./Step4Languages";
+import SocialMedia from "./Step5SocialMedia";
+import AdditionalDetails from "./Step6AdditionalDetails";
+import SubmittedBy from "./Step7SubmittedBy";
+import UploadMedia from "./Step8UploadMedia";
+import FinalStep from "./FinalStep";
 
 const FormSubmission = ({
   formData,
@@ -85,18 +85,12 @@ const FormSubmission = ({
         <UploadMedia
           formData={formData}
           setFormData={setFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-        />
-      );
-    case 9:
-      return (
-        <Review
-          formData={formData}
           prevStep={prevStep}
           handleSubmit={handleSubmit}
         />
       );
+    case 9:
+      return <FinalStep />;
     default:
       return null;
   }
@@ -108,6 +102,7 @@ FormSubmission.propTypes = {
   nextStep: PropTypes.func.isRequired,
   prevStep: PropTypes.func.isRequired,
   step: PropTypes.number.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 export default FormSubmission;

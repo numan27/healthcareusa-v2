@@ -1,18 +1,15 @@
 /* eslint-disable */
 import PropTypes from "prop-types";
-import Select from "react-select";
+import Select, { components } from "react-select";
 import styled from "styled-components";
 
-const StyledSelecte = styled(Select)`
+const StyledSelect = styled(Select)`
   .react-select__control {
     border-color: ${(props) => props.borderColor};
     background: ${(props) => props.bgcolor};
     min-width: ${(props) => props.minwidth};
-    // width: ${(props) => props.width};
     width: 100%;
     height: 100%;
-    // display: flex;
-    // justify-content: space-between;
     min-height: ${(props) => props.minheight};
     max-height: ${(props) => props.maxheight};
     font-size: ${(props) => props.fontSize};
@@ -38,7 +35,6 @@ const StyledSelecte = styled(Select)`
     background-color: transparent;
     color: #333333;
   }
-  // .react-select__option--is-selected,
   .react-select__option:hover {
     background-color: #00c1b6;
     color: #fff !important;
@@ -67,7 +63,6 @@ const customStyles = {
   }),
   control: (provided, state) => ({
     ...provided,
-
     boxShadow: state.isFocused ? null : null,
     outline: "none",
     borderRadius: "8px",
@@ -81,15 +76,14 @@ const customStyles = {
     padding: "7px 14px!important",
     borderBottom: "1px solid #e5e5e5!important",
   }),
-
-  placeholder: (styles) => ({ ...styles, color: "#969696", fontSize: '12px' }),
-  singleValue: (styles, { data }) => ({ ...styles, color: "#969696" }),
-  indicatorSeparator: (state) => ({
+  placeholder: (styles) => ({ ...styles, color: "#969696", fontSize: "12px" }),
+  singleValue: (styles) => ({ ...styles, color: "#969696" }),
+  indicatorSeparator: () => ({
     display: "none",
   }),
 };
 
-const customComponents = ({ imageComponent }) => ({
+const customComponents = ({ imageComponent, isMulti }) => ({
   SingleValue: ({ children, ...props }) => (
     <div className="d-flex align-items-center gap-1">
       {imageComponent ? <span>{imageComponent}</span> : ""}
@@ -102,17 +96,20 @@ const customComponents = ({ imageComponent }) => ({
       <span className={!imageComponent ? "without-image" : ""}>{children}</span>
     </div>
   ),
+  Option: (props) => (
+    <components.Option {...props}>
+      {isMulti && (
+        <input
+          type="checkbox"
+          checked={props.isSelected}
+          onChange={() => null}
+          className="me-2"
+        />
+      )}{" "}
+      <label>{props.label}</label>
+    </components.Option>
+  ),
 });
-// const Placeholder = ({ children, imageComponent, spaceBeforeChildren, ...props }) => (
-//   <div className="d-flex align-items-center gap-1" {...props}>
-//     {imageComponent ? (
-//       <span>{imageComponent}</span>
-//     ) : null}
-//     <span className={!imageComponent && spaceBeforeChildren ? 'without-image' : ''}>
-//       {children}
-//     </span>
-//   </div>
-// );
 
 const GenericSelect = ({
   imageComponent,
@@ -128,6 +125,7 @@ const GenericSelect = ({
   options,
   className,
   isSearchable,
+  isMulti,
   iconColor,
   fontSize,
   placeholderColor,
@@ -141,10 +139,10 @@ const GenericSelect = ({
   };
 
   return (
-    <StyledSelecte
-      onSelect={handleSelect}
+    <StyledSelect
+      onChange={handleSelect}
       components={{
-        ...customComponents({ imageComponent }),
+        ...customComponents({ imageComponent, isMulti }),
         IndicatorSeparator: () => null,
       }}
       borderColor={borderColor}
@@ -158,27 +156,37 @@ const GenericSelect = ({
       bgcolor={bgcolor}
       fontSize={fontSize}
       borderRadius={borderRadius}
-      className={className + " " + "react-select-container"}
+      className={`${className} react-select-container`}
       classNamePrefix="react-select"
       styles={customStyles}
       placeholder={placeholder}
       options={options}
       isSearchable={isSearchable}
+      isMulti={isMulti}
       {...props}
     />
   );
 };
 
 GenericSelect.propTypes = {
+  imageComponent: PropTypes.node,
   borderColor: PropTypes.string,
+  minwidth: PropTypes.string,
+  width: PropTypes.string,
   minheight: PropTypes.string,
   maxheight: PropTypes.string,
   bgcolor: PropTypes.string,
-  minwidth: PropTypes.string,
-  width: PropTypes.string,
-  fontSize: PropTypes.string,
-  isSearchable: PropTypes.bool,
+  borderRadius: PropTypes.string,
+  placeholder: PropTypes.string,
   onSelect: PropTypes.func,
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
+  className: PropTypes.string,
+  isSearchable: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  iconColor: PropTypes.string,
+  fontSize: PropTypes.string,
+  placeholderColor: PropTypes.string,
+  valueColor: PropTypes.string,
 };
 
 GenericSelect.defaultProps = {
@@ -190,6 +198,7 @@ GenericSelect.defaultProps = {
   minwidth: "",
   width: "",
   isSearchable: false,
+  isMulti: false,
   borderRadius: "8px",
   fontSize: "15px",
   className: "",

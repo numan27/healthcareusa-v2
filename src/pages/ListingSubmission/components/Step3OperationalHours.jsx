@@ -89,9 +89,9 @@ const OperationalHours = ({ formData, setFormData }) => {
                 placeholderColor="#333333"
                 iconColor="#06312E"
                 menuPlacement="auto"
-                value={days.find((day) => day.value === schedule.day) || null}
+                value={days.find((day) => day.label === schedule.day) || null}
                 onChange={(option) =>
-                  handleScheduleChange(index, "day", option.value)
+                  handleScheduleChange(index, "day", option.label)
                 }
                 options={days}
                 getOptionLabel={(option) => option.label}

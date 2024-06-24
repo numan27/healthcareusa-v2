@@ -19,6 +19,7 @@ const PATH = {
   LISTING_SUBMISSION: "/listing-submission",
   NAVIGATE_TO_LISTINGS: "/navigate-to-listings",
   NAVIGATE_TO_EXTERNAL_LINK: "/navigate-to-external-link",
+  // FORM_FINAL_STEP: "/form-submitted",
 };
 
 const TOASTER_STYLING_VALUES = {

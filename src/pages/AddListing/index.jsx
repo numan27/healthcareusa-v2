@@ -172,6 +172,8 @@ const AddListing = () => {
     }
   };
 
+  console.log("Form Data Old: ", formData);
+
   const languagesData = [
     { id: "1", label: "English", value: "english" },
     { id: "2", label: "French", value: "french" },

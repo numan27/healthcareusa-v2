@@ -1,10 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { GenericButton } from "../../GenericComponents";
+import { LoaderCenter } from "../../../assets";
 
-const FormFooter = ({ nextStep, prevStep, step }) => {
+const FormFooter = ({ nextStep, prevStep, step, loading, handleSubmit }) => {
+  const handleNextClick = () => {
+    if (step === 8) {
+      handleSubmit();
+    } else {
+      nextStep();
+    }
+  };
+
   return (
-    <footer fixed="bottom" className="w-100 bg-white p-3 border-top">
+    <footer className="w-100 bg-white p-3 border-top position-absolute bottom-0">
       <div className="form-navigation d-flex justify-content-between">
         <GenericButton
           height="46px"
@@ -18,7 +27,7 @@ const FormFooter = ({ nextStep, prevStep, step }) => {
         >
           Back
         </GenericButton>
-        {step < 9 && (
+        {step < 8 && (
           <GenericButton
             height="46px"
             width="216px"
@@ -28,14 +37,15 @@ const FormFooter = ({ nextStep, prevStep, step }) => {
             Next
           </GenericButton>
         )}
-        {step === 9 && (
+        {step === 8 && (
           <GenericButton
             height="46px"
             width="216px"
             className=""
-            onClick={nextStep}
+            onClick={handleNextClick}
+            disabled={loading}
           >
-            Submit
+            {loading ? <LoaderCenter /> : "Submit"}
           </GenericButton>
         )}
       </div>
@@ -47,6 +57,8 @@ FormFooter.propTypes = {
   nextStep: PropTypes.func.isRequired,
   prevStep: PropTypes.func.isRequired,
   step: PropTypes.number.isRequired,
+  loading: PropTypes.bool.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 export default FormFooter;

@@ -1,3 +1,4 @@
+import React from "react";
 import PropTypes from "prop-types";
 import { Form, Row, Col } from "react-bootstrap";
 import {
@@ -5,10 +6,14 @@ import {
   Typography,
 } from "../../../components/GenericComponents";
 
-const SubmittedBy = ({ formData, setFormData }) => {
+const BusinessAddress = ({ formData, setFormData }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const updatedFormData = { ...formData, [name]: value };
+    const completeAddress = `${updatedFormData.streetAddress || ""}, ${
+      updatedFormData.city || ""
+    }, ${updatedFormData.state || ""} ${updatedFormData.zip || ""}`;
+    setFormData({ ...updatedFormData, completeAddress });
   };
 
   return (
@@ -21,7 +26,7 @@ const SubmittedBy = ({ formData, setFormData }) => {
         font="Inter"
         lineHeight="36px"
       >
-        Submitted by
+        What is your Business Address?
       </Typography>
       <Typography
         weight="400"
@@ -31,59 +36,59 @@ const SubmittedBy = ({ formData, setFormData }) => {
         font="Inter"
         lineHeight="24px"
       >
-        Provide the essential details.
+        Provide the details about the location
       </Typography>
       <Form className="mt-5">
         <Row>
-          <Col md={6} className="mb-2">
-            <GenericInput
-              type="text"
-              background="#F8F9FC"
-              borderColor="#EEF0F5"
-              name="firstName"
-              label="First Name"
-              height="34px"
-              placeholder="Enter First Name"
-              value={formData.submittingPersonFirstName}
-              onChange={handleChange}
-            />
-          </Col>
-          <Col md={6} className="mb-2">
-            <GenericInput
-              type="text"
-              background="#F8F9FC"
-              borderColor="#EEF0F5"
-              name="lastName"
-              label="Last Name"
-              height="34px"
-              placeholder="Enter Last Name"
-              value={formData.submittingPersonLastName}
-              onChange={handleChange}
-            />
-          </Col>
           <Col xs={12} className="mb-2">
             <GenericInput
               type="text"
               background="#F8F9FC"
               borderColor="#EEF0F5"
-              name="email"
-              label="Email"
+              name="streetAddress"
+              label="Street address"
               height="34px"
-              placeholder="Enter Email"
-              value={formData.submittingPersonEmail}
+              placeholder="Enter Street Address"
+              value={formData.streetAddress}
               onChange={handleChange}
             />
           </Col>
-          <Col xs={12} className="mb-2">
+          <Col md={4} className="mb-2">
             <GenericInput
               type="text"
               background="#F8F9FC"
               borderColor="#EEF0F5"
-              name="phone"
-              label="Phone"
+              name="city"
+              label="City"
               height="34px"
-              placeholder="Enter Phone No"
-              value={formData.submittingPersonPhone}
+              placeholder="Enter City"
+              value={formData.city}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md={4} className="mb-2">
+            <GenericInput
+              type="text"
+              background="#F8F9FC"
+              borderColor="#EEF0F5"
+              name="state"
+              label="State"
+              height="34px"
+              placeholder="Enter State"
+              value={formData.state}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md={4} className="mb-2">
+            <GenericInput
+              type="text"
+              background="#F8F9FC"
+              borderColor="#EEF0F5"
+              name="zip"
+              label="Zip"
+              height="34px"
+              placeholder="Enter Zip"
+              value={formData.zip}
               onChange={handleChange}
             />
           </Col>
@@ -93,10 +98,10 @@ const SubmittedBy = ({ formData, setFormData }) => {
   );
 };
 
-SubmittedBy.propTypes = {
+BusinessAddress.propTypes = {
   formData: PropTypes.object.isRequired,
   setFormData: PropTypes.func.isRequired,
   nextStep: PropTypes.func.isRequired,
 };
 
-export default SubmittedBy;
+export default BusinessAddress;

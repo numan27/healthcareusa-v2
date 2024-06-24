@@ -20,6 +20,9 @@ const NAVIGATE_TO_LISTINGS = React.lazy(() =>
 const NAVIGATE_TO_EXTERNAL_LINK = React.lazy(() =>
   import("./AdScreens/NavigateToExternalLink")
 );
+// const FORM_FINAL_STEP = React.lazy(() =>
+//   import("./ListingSubmission/components/FinalStep")
+// );
 
 const WEB_PAGES = {
   NOPAGE,
@@ -36,5 +39,6 @@ const WEB_PAGES = {
   LISTING_SUBMISSION,
   NAVIGATE_TO_LISTINGS,
   NAVIGATE_TO_EXTERNAL_LINK,
+  // FORM_FINAL_STEP,
 };
 export default WEB_PAGES;

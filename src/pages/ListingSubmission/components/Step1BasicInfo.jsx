@@ -7,7 +7,7 @@ import {
   Typography,
 } from "../../../components/GenericComponents";
 import { ServicesContext } from "../../../components/api/ServicesContext";
-import { LoaderPageWithoutBG } from "../../../assets";
+import { LoaderCenter } from "../../../assets";
 
 const BasicInfo = ({ formData, setFormData }) => {
   const { groupedServices, loading } = useContext(ServicesContext);
@@ -44,14 +44,18 @@ const BasicInfo = ({ formData, setFormData }) => {
   if (loading) {
     return (
       <div>
-        <LoaderPageWithoutBG />
+        <LoaderCenter />
       </div>
     );
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const updatedFormData = { ...formData, [name]: value };
+    const fullName = `${updatedFormData.firstName || ""} ${
+      updatedFormData.lastName || ""
+    }`;
+    setFormData({ ...updatedFormData, fullName });
   };
 
   const handlePrimaryCategoryChange = (selectedOption) => {
