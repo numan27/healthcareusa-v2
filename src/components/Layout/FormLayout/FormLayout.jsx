@@ -19,9 +19,12 @@ const FormLayout = ({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div
+      className="position-relative"
+      style={{ display: "flex", flexDirection: "column" }}
+    >
       <FormHeader />
-      <main style={{ flex: "1" }}>
+      <main className="mt-2" style={{ flex: "1" }}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
             return React.cloneElement(child, {
@@ -32,14 +35,16 @@ const FormLayout = ({
         })}
       </main>
       {step < 9 && (
-        <FormFooter
-          nextStep={nextStep}
-          prevStep={prevStep}
-          step={step}
-          loading={loading}
-          handleSubmit={handleSubmit}
-          isProfilePictureSelected={isProfilePictureSelected}
-        />
+        <div className="position-fixed bottom-0 start-0 end-0">
+          <FormFooter
+            nextStep={nextStep}
+            prevStep={prevStep}
+            step={step}
+            loading={loading}
+            handleSubmit={handleSubmit}
+            isProfilePictureSelected={isProfilePictureSelected}
+          />
+        </div>
       )}
     </div>
   );

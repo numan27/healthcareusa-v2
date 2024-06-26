@@ -212,6 +212,8 @@ const ListingDetailsPage = () => {
       });
   };
 
+  const profileTitle = jsonData.title?.rendered || "No Title";
+
   const popover = (
     <StyledPopover className="border-0 me-2" id="popover-basic">
       <Popover.Body>
@@ -718,7 +720,10 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative">
-              <ClaimListingSection />
+              <ClaimListingSection
+                profileTitle={profileTitle}
+                googleAddress={googleAddress}
+              />
               <img
                 width={120}
                 src={IMAGES.CLAIM_LISTING_IMG}

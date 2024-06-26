@@ -130,7 +130,11 @@ const Blogs = ({
                   className="custom-shadow border-0 cursor-pointer blog-card"
                   key={post.id}
                 >
-                  <Card.Img className="" variant="top" src={post.blogImg} />
+                  <Card.Img
+                    className="max-h-75 h-50"
+                    variant="top"
+                    src={post.blogImg}
+                  />
                   <Box
                     className="d-flex flex-column justify-content-between w-100 h-100"
                     padding="30px 35px"

@@ -7,6 +7,7 @@ const ERROR = {
 const PATH = {
   NOPAGE: "*",
   HOME: "/",
+  DASHBOARD: "/dashboard",
   ABOUT: "/about",
   BLOGS: "/blogs",
   DETAIL_BLOG: "/blogs/:id",

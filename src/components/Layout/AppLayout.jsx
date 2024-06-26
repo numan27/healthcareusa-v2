@@ -2,18 +2,20 @@ import PropTypes from "prop-types";
 import Header from "./Header";
 import Footer from "./Footer";
 
-const AppLayout = ({ children }) => {
+const AppLayout = ({ children, showHeader = true, showFooter = true }) => {
   return (
     <div>
-      <Header />
+      {showHeader && <Header />}
       <main>{children}</main>
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 };
 
 AppLayout.propTypes = {
   children: PropTypes.node.isRequired,
+  showHeader: PropTypes.bool,
+  showFooter: PropTypes.bool,
 };
 
 export default AppLayout;

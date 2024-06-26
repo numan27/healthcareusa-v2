@@ -20,12 +20,14 @@ const NAVIGATE_TO_LISTINGS = React.lazy(() =>
 const NAVIGATE_TO_EXTERNAL_LINK = React.lazy(() =>
   import("./AdScreens/NavigateToExternalLink")
 );
+const DASHBOARD = React.lazy(() => import("./Dashboard"));
 // const FORM_FINAL_STEP = React.lazy(() =>
 //   import("./ListingSubmission/components/FinalStep")
 // );
 
 const WEB_PAGES = {
   NOPAGE,
+  DASHBOARD,
   HOME,
   ABOUT,
   BLOGS,

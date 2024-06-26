@@ -20,8 +20,8 @@ const FormFooter = ({
   };
 
   return (
-    <footer className="w-100 bg-white p-3 border-top position-absolute bottom-0">
-      <div className="form-navigation d-flex justify-content-between">
+    <footer className="w-100 bg-white p-3 border-top">
+      <div className="form-navigation d-flex justify-content-between w-100">
         <GenericButton
           height="46px"
           width="216px"

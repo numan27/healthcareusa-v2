@@ -34,6 +34,7 @@ const AddListing = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profilePictureUploaded, setProfilePictureUploaded] = useState(false);
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -195,14 +196,6 @@ const AddListing = () => {
     { id: "5", label: "Cardiologist", value: "cardiologist" },
   ];
 
-  // const taxonomiesData = [
-  //   { id: "1", label: "Neurology", value: "neurology" },
-  //   { id: "2", label: "Pediatrics", value: "pediatrics" },
-  //   { id: "3", label: "Orthopedics", value: "orthopedics" },
-  //   { id: "4", label: "Ophthalmology", value: "ophthalmology" },
-  //   { id: "5", label: "ENT (Otorhinolaryngology)", value: "ent" },
-  // ];
-
   console.log("formData", formData);
 
   return (
@@ -335,27 +328,6 @@ const AddListing = () => {
             />
           </Col>
 
-          {/* <Col md={6}>
-            <CheckboxDropdown
-              key={`${formKey}-taxonomies`}
-              title="Specialties"
-              height="44px"
-              width="100%"
-              background="#F4F5F7"
-              items={taxonomiesData}
-              haveLabel
-              labelValue="Choose Specialty(s)"
-              border
-              onChange={(selectedTaxonomies) => {
-                const taxonomyValues = selectedTaxonomies;
-                setFormData({
-                  // ...formData,
-                  taxonomies: taxonomyValues,
-                });
-              }}
-            />
-          </Col> */}
-
           <Col className="mt-2 pt-1" md={6}>
             <Form.Label className="form_label">
               Choose Doctor Package
@@ -389,42 +361,6 @@ const AddListing = () => {
               }}
             />
           </Col>
-          {/* <Col md={6} className="mt-2 pt-1">
-            <Form.Label className="form_label">Choose Gender</Form.Label>
-            <GenericSelect
-              key={`${formKey}-gender`}
-              minWidth="120px"
-              minheight="44px"
-              borderColor="#B2BAC0"
-              borderRadius="4px"
-              bgcolor="#F4F5F7"
-              placeholder="Select Gender"
-              placeholderColor="#333333"
-              iconColor="#06312E"
-              menuPlacement="auto"
-              options={[
-                {
-                  id: "1",
-                  label: "Male",
-                  value: "male",
-                },
-                { id: "2", label: "Female", value: "female" },
-                {
-                  id: "3",
-                  label: "Other",
-                  value: "other",
-                },
-                {
-                  id: "4",
-                  label: "Not to say",
-                  value: "not to say",
-                },
-              ]}
-              onChange={(selectedGender) => {
-                setFormData({ ...formData, gender: [selectedGender.value] });
-              }}
-            />
-          </Col> */}
           <Col className="my-2 pt-1" md={6}>
             <GenericInput
               type="file"

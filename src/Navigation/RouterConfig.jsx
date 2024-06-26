@@ -10,6 +10,7 @@ import ProtectedRoute from "../components/ProtectedRoute.jsx";
 function RouterConfig() {
   return (
     <Routes>
+      {/* Protect Routes */}
       <Route element={<ProtectedRoute />}>
         <Route
           path={PATH.ADD_LISTING}
@@ -23,7 +24,13 @@ function RouterConfig() {
           path={PATH.LISTING_SUBMISSION}
           element={<PublicRoute element={<WEB_PAGES.LISTING_SUBMISSION />} />}
         />
+        <Route
+          path={PATH.DASHBOARD}
+          element={<PublicRoute element={<WEB_PAGES.DASHBOARD />} />}
+        />
       </Route>
+
+      {/* Public Routes */}
       <Route
         path={PATH.LOGIN}
         element={<PublicRoute element={<WEB_PAGES.LOGIN />} />}

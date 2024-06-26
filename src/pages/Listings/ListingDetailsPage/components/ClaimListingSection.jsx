@@ -1,14 +1,26 @@
-import React from "react";
+import { useState } from "react";
+// import { useNavigate } from "react-router-dom";
 import {
   GenericButton,
   LinkButton,
   Typography,
 } from "../../../../components/GenericComponents";
 import { HiOutlineChevronDoubleRight } from "react-icons/hi";
-import { PATH } from "../../../../config";
-import { useNavigate } from "react-router-dom";
+// import { PATH } from "../../../../config";
+import ExploreMoreModal from "./ExploreMoreModal";
 
-const ClaimListingSection = () => {
+const ClaimListingSection = ({ profileTitle, googleAddress }) => {
+  const [exploreModalState, setExploreModalState] = useState(false);
+
+  const OpenModal = () => {
+    setExploreModalState(true);
+    // setExploreModalItems({ heading, items });
+  };
+
+  const CloseModal = () => {
+    setExploreModalState(false);
+  };
+
   const claimListingData = [
     { title: "Get Verified Badge" },
     { title: "Access to Dashboard" },
@@ -16,11 +28,11 @@ const ClaimListingSection = () => {
     { title: "Promote your Lisitng" },
   ];
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleNavigate = () => {
-    navigate(PATH.CLAIM_LISTING);
-  };
+  // const handleNavigate = () => {
+  //   navigate(PATH.CLAIM_LISTING);
+  // };
 
   return (
     <div>
@@ -56,11 +68,22 @@ const ClaimListingSection = () => {
       </div>
 
       <div className="d-flex flex-column align-items-center gap-2">
-        <GenericButton onClick={handleNavigate} width="100%" height="44px">
+        <GenericButton onClick={OpenModal} width="100%" height="44px">
           Claim this Listing
         </GenericButton>
         <LinkButton text="Find another listing" />
       </div>
+
+      {exploreModalState && (
+        <ExploreMoreModal
+          show={exploreModalState}
+          onHide={CloseModal}
+          title="All Doctors"
+          profileTitle={profileTitle}
+          googleAddress={googleAddress}
+          // exploreModalItems={exploreModalItems}
+        />
+      )}
     </div>
   );
 };

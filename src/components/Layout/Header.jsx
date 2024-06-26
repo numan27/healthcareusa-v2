@@ -78,9 +78,9 @@ const Header = () => {
     }
   };
 
-  const handleNavigateAddListing = () => {
+  const handleNavigateDashboard = () => {
     if (auth) {
-      navigate(PATH.ADD_LISTING);
+      navigate(PATH.DASHBOARD);
     } else {
       openSignInModal();
     }
@@ -212,14 +212,12 @@ const Header = () => {
                       className="my-sm-0 my-2"
                     >
                       <HiOutlinePlusCircle className="" size={20} /> Add Listing
-                      (New)
                     </GenericButton>
                     <GenericButton
-                      onClick={handleNavigateAddListing}
+                      onClick={handleNavigateDashboard}
                       className="my-sm-0 my-2"
                     >
-                      <HiOutlinePlusCircle className="" size={20} /> Add Listing
-                      (Existing)
+                      <HiOutlinePlusCircle className="" size={20} /> Dashboard
                     </GenericButton>
                   </div>
                 </Nav>

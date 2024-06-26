@@ -18,7 +18,7 @@ const SignInModal = ({
   show,
   onHide,
   title,
-  moveToForgetPassword,
+  // moveToForgetPassword,
   moveToFSignUp,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -83,7 +83,7 @@ const SignInModal = ({
         const tokenData = await tokenResponse.json();
         localStorage.setItem("token", tokenData.token);
         console.log("JWT Token:", tokenData.token);
-        navigate(PATH.ADD_LISTING);
+        navigate(PATH.DASHBOARD);
       } else {
         const errorData = await tokenResponse.json();
         setFieldError("general", `${errorData.message}`);

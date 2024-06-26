@@ -215,9 +215,12 @@ const ListingSubmission = () => {
       handleSubmit={handleSubmit}
     >
       <div style={{ flex: "1" }} className="">
-        <Row className="h-100">
+        <Row className="h-100 mt-5">
           <Col className="px-0 d-flex flex-column">
-            <div className="form-top-gradient">
+            <div
+              className="form-top-gradient position-sticky"
+              style={{ top: "50px", zIndex: "999" }}
+            >
               {step > 1 && step < 9 && (
                 <ProgressBar
                   className="rounded-0 fw-bold"
@@ -228,7 +231,7 @@ const ListingSubmission = () => {
             </div>
             <div className="flex-grow-1 d-flex align-items-start mt-5 pt-5 justify-content-center">
               <Row className="w-100">
-                <Col md={8} className="mx-auto">
+                <Col md={8} className="mx-auto px-md-0 px-4">
                   <FormSubmission
                     step={step}
                     formData={formData}
@@ -244,7 +247,7 @@ const ListingSubmission = () => {
           {step < 9 && (
             <Col
               lg={6}
-              className="live-preview-form d-flex align-items-center justify-content-center"
+              className="live-preview-form d-flex align-items-center justify-content-center pb-md-0 pb-5 h-100"
             >
               <Row className="">
                 <Col md={10} className="mx-auto">

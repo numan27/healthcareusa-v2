@@ -18,6 +18,10 @@ const StyledSelect = styled(Select)`
     cursor: pointer;
     border-radius: ${(props) => props.borderRadius};
   }
+  .react-select__control:hover {
+    border-color: #b2bac0 !important;
+  }
+
   .react-select__menu-list {
     padding-top: 0px !important;
     padding-bottom: 0px !important;
