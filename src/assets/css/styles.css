@@ -545,6 +545,17 @@ body {
     font-family: Plus Jakarta Sans !important;
 }
 
+.pricing-top-bar {
+    background: linear-gradient(270deg, rgba(103, 143, 220, 0.85) 0%, rgba(22, 201, 190, 0.85) 100%) !important;
+
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
 
 /* Listing Submission Form */
 

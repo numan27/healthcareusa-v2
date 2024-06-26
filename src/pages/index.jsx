@@ -21,6 +21,7 @@ const NAVIGATE_TO_EXTERNAL_LINK = React.lazy(() =>
   import("./AdScreens/NavigateToExternalLink")
 );
 const DASHBOARD = React.lazy(() => import("./Dashboard"));
+const PRICING_PLANS = React.lazy(() => import("./PricingPlans"));
 // const FORM_FINAL_STEP = React.lazy(() =>
 //   import("./ListingSubmission/components/FinalStep")
 // );
@@ -41,6 +42,7 @@ const WEB_PAGES = {
   LISTING_SUBMISSION,
   NAVIGATE_TO_LISTINGS,
   NAVIGATE_TO_EXTERNAL_LINK,
+  PRICING_PLANS,
   // FORM_FINAL_STEP,
 };
 export default WEB_PAGES;

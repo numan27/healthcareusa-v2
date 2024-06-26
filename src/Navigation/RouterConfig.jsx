@@ -77,6 +77,10 @@ function RouterConfig() {
           <PublicRoute element={<WEB_PAGES.NAVIGATE_TO_EXTERNAL_LINK />} />
         }
       />
+      <Route
+        path={PATH.PRICING_PLANS}
+        element={<PublicRoute element={<WEB_PAGES.PRICING_PLANS />} />}
+      />
       {/* <Route
         path={PATH.FORM_FINAL_STEP}
         element={<PublicRoute element={<WEB_PAGES.FORM_FINAL_STEP />} />}
