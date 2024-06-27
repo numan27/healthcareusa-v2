@@ -35,11 +35,8 @@ const SearchForm = () => {
   };
 
   const handleNavigateListingDetail = () => {
-    if (searchKeywords || place) {
-      navigate("/listings", { state: { searchKeywords, place } });
-    } else {
-      navigate("/listings");
-    }
+    const stateData = searchKeywords || place ? { searchKeywords, place } : {};
+    navigate("/navigate-to-listings", { state: stateData });
   };
 
   const handleFormSubmit = (e) => {
@@ -109,7 +106,6 @@ const SearchForm = () => {
                 width="138px"
                 height="48px"
                 className="d-flex align-items-center justify-content-center gap-2"
-                disabled={!searchKeywords || !place}
               >
                 <IoSearch className="" size={20} /> Search
               </GenericButton>

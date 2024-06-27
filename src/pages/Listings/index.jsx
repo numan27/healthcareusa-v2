@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
 import {
   Box,
-  CheckboxDropdown,
+  // CheckboxDropdown,
   GenericButton,
+  GenericSelect,
   Typography,
 } from "../../components/GenericComponents";
 import AppLayout from "../../components/Layout/AppLayout";
@@ -16,7 +17,7 @@ import { useLocation } from "react-router-dom";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import axios from "axios";
 import IMAGES from "../../assets/images";
-import { LoaderPageWithoutBG } from "../../assets";
+import NavigateToListings from "../AdScreens/NavigateToListings";
 
 const Listings = () => {
   const [listingProfiles, setListingProfiles] = useState([]);
@@ -29,7 +30,10 @@ const Listings = () => {
   const [listingsState, setListingsState] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  // const [place, setPlace] = useState(null);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const profilesPerPage = 10;
 
   const location = useLocation();
   const { searchKeywords, place } = location.state || {};
@@ -52,7 +56,6 @@ const Listings = () => {
             "Languages",
             "Qualifications",
             "Specialization",
-            "Doctor Package",
           ];
 
           dropdownLabels.forEach((label) => {
@@ -78,7 +81,7 @@ const Listings = () => {
     fetchDropdownOptions();
   }, []);
 
-  // Fetch listings based on search criteria
+  // Fetch listings based on search criteria and pagination
   useEffect(() => {
     const fetchListings = async () => {
       const query = new URLSearchParams({
@@ -89,27 +92,39 @@ const Listings = () => {
         "cwp_query[fc-google-address]": place?.address || "",
         "cwp_query[fc-google-address_lat]": place?.lat || "",
         "cwp_query[fc-google-address_lng]": place?.lng || "",
+        "cwp_query[posts_per_page]": profilesPerPage,
+        "cwp_query[paged]": currentPage,
       }).toString();
-
-      console.log(
-        `Query: https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-      );
 
       try {
         const response = await axios.get(
           `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
         );
-        console.log("Response data:", response.data);
-        setListingsState(response.data);
+
+        const { data } = response;
+        setListingProfiles(data);
+
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching listings:", error);
       }
     };
 
-    fetchListings();
-  }, [searchKeywordsState, areaRange, place]);
+    if (searchKeywordsState || areaRange || place) {
+      setLoading(true);
+      fetchListings();
+    }
+  }, [searchKeywordsState, areaRange, place, currentPage]);
 
-  // Fetch posts and media
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+  };
+
+  // Fetch listing and media
   useEffect(() => {
     const fetchPosts = async () => {
       const url = "https://jsappone.demowp.io/wp-json/wp/v2/listing";
@@ -237,9 +252,6 @@ const Listings = () => {
               case "Gender":
                 profileField = [profile.gender];
                 break;
-              case "Doctor Package":
-                profileField = profile.doctorPackage || [];
-                break;
               default:
                 return true;
             }
@@ -267,21 +279,18 @@ const Listings = () => {
     setFilteredProfiles(filteredProfiles);
   }, [listingProfiles, searchKeywordsState, place, selectedOptions]);
 
-  const handleDropdownOptions = useCallback((label, items) => {
+  const handleDropdownOptions = useCallback((label, selectedOption) => {
     setSelectedOptions((prevSelectedOptions) => {
       const updatedOptions = [...prevSelectedOptions];
       const optionIndex = updatedOptions.findIndex(
         (option) => option.label === label
       );
 
-      const values = items
-        .filter((item) => item.checked)
-        .map((item) => ({
-          id: item.id,
-          label: item.label,
-          value: item.value.toLowerCase(),
-          checked: item.checked,
-        }));
+      const values = selectedOption.map((item) => ({
+        id: item.id,
+        label: item.label,
+        value: item.value.toLowerCase(),
+      }));
 
       if (optionIndex >= 0) {
         if (values.length > 0) {
@@ -367,7 +376,7 @@ const Listings = () => {
   if (loading) {
     return (
       <div>
-        <LoaderPageWithoutBG />
+        <NavigateToListings />
       </div>
     );
   }
@@ -493,16 +502,29 @@ const Listings = () => {
             {/* Filters */}
             <div className="my-3 d-flex flex-wrap gap-2">
               {Object.keys(dropdownOptions).map((label) => (
-                <CheckboxDropdown
+                <GenericSelect
                   key={label}
-                  title={label}
-                  items={dropdownOptions[label]}
-                  selected={
+                  isMulti
+                  name={label}
+                  minWidth="120px"
+                  minHeight="34px"
+                  height="34px"
+                  borderColor="#EEF0F5"
+                  borderRadius="4px"
+                  bgcolor="#F8F9FC"
+                  placeholder={`Choose ${label}`}
+                  placeholderColor="#333333"
+                  iconColor="#06312E"
+                  menuPlacement="auto"
+                  options={dropdownOptions[label]}
+                  onSelect={(selectedOption) =>
+                    handleDropdownOptions(label, selectedOption)
+                  }
+                  value={
                     selectedOptions.find((option) => option.label === label)
                       ?.values || []
                   }
-                  onChange={(values) => handleDropdownOptions(label, values)}
-                  singleSelect={label === "Doctor Package"}
+                  // singleSelect={label === "Doctor Package"}
                 />
               ))}
             </div>
@@ -616,9 +638,54 @@ const Listings = () => {
             </div>
           </Col>
         </Row>
+
+        <Row className="justify-content-center mt-4">
+          <Col xs="auto">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="btn btn-primary me-2"
+            >
+              Previous
+            </button>
+          </Col>
+          <Col xs="auto">
+            <button
+              onClick={handleNextPage}
+              disabled={listingProfiles.length < profilesPerPage}
+              className="btn btn-primary"
+            >
+              Next
+            </button>
+          </Col>
+        </Row>
       </Container>
     </AppLayout>
   );
 };
 
 export default Listings;
+
+const handlePageChange = (pageNumber) => {
+  setPage(pageNumber);
+};
+
+// Assuming you have a function to render pagination controls
+// Replace with your own pagination UI component
+const renderPagination = () => {
+  const totalPages = Math.ceil(filteredProfiles.length / perPage);
+
+  return (
+    <Pagination>
+      {Array.from({ length: totalPages }).map((_, index) => (
+        <Pagination.Item
+          key={index}
+          active={index + 1 === page}
+          onClick={() => handlePageChange(index + 1)}
+        >
+          {index + 1}
+        </Pagination.Item>
+      ))}
+    </Pagination>
+  );
+};

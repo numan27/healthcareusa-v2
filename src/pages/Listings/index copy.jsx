@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
 import {
   Box,
-  CheckboxDropdown,
+  // CheckboxDropdown,
   GenericButton,
+  GenericSelect,
   Typography,
 } from "../../components/GenericComponents";
 import AppLayout from "../../components/Layout/AppLayout";
@@ -17,6 +18,7 @@ import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import axios from "axios";
 import IMAGES from "../../assets/images";
 import { LoaderPageWithoutBG } from "../../assets";
+import NavigateToListings from "../AdScreens/NavigateToListings copy";
 
 const Listings = () => {
   const [listingProfiles, setListingProfiles] = useState([]);
@@ -52,7 +54,7 @@ const Listings = () => {
             "Languages",
             "Qualifications",
             "Specialization",
-            "Doctor Package",
+            // "Doctor Package",
           ];
 
           dropdownLabels.forEach((label) => {
@@ -101,15 +103,23 @@ const Listings = () => {
         );
         console.log("Response data:", response.data);
         setListingsState(response.data);
+
+        // Filter profiles based on fetched listings
+        const filteredProfiles = listingProfiles.filter((profile) =>
+          response.data.includes(profile.id)
+        );
+        setFilteredProfiles(filteredProfiles);
       } catch (error) {
         console.error("Error fetching listings:", error);
       }
     };
 
-    fetchListings();
+    if (searchKeywordsState || areaRange || place) {
+      fetchListings();
+    }
   }, [searchKeywordsState, areaRange, place]);
 
-  // Fetch posts and media
+  // Fetch listing and media
   useEffect(() => {
     const fetchPosts = async () => {
       const url = "https://jsappone.demowp.io/wp-json/wp/v2/listing";
@@ -237,9 +247,9 @@ const Listings = () => {
               case "Gender":
                 profileField = [profile.gender];
                 break;
-              case "Doctor Package":
-                profileField = profile.doctorPackage || [];
-                break;
+              // case "Doctor Package":
+              //   profileField = profile.doctorPackage || [];
+              //   break;
               default:
                 return true;
             }
@@ -267,21 +277,18 @@ const Listings = () => {
     setFilteredProfiles(filteredProfiles);
   }, [listingProfiles, searchKeywordsState, place, selectedOptions]);
 
-  const handleDropdownOptions = useCallback((label, items) => {
+  const handleDropdownOptions = useCallback((label, selectedOption) => {
     setSelectedOptions((prevSelectedOptions) => {
       const updatedOptions = [...prevSelectedOptions];
       const optionIndex = updatedOptions.findIndex(
         (option) => option.label === label
       );
 
-      const values = items
-        .filter((item) => item.checked)
-        .map((item) => ({
-          id: item.id,
-          label: item.label,
-          value: item.value.toLowerCase(),
-          checked: item.checked,
-        }));
+      const values = selectedOption.map((item) => ({
+        id: item.id,
+        label: item.label,
+        value: item.value.toLowerCase(),
+      }));
 
       if (optionIndex >= 0) {
         if (values.length > 0) {
@@ -367,7 +374,7 @@ const Listings = () => {
   if (loading) {
     return (
       <div>
-        <LoaderPageWithoutBG />
+        <NavigateToListings />
       </div>
     );
   }
@@ -493,16 +500,29 @@ const Listings = () => {
             {/* Filters */}
             <div className="my-3 d-flex flex-wrap gap-2">
               {Object.keys(dropdownOptions).map((label) => (
-                <CheckboxDropdown
+                <GenericSelect
                   key={label}
-                  title={label}
-                  items={dropdownOptions[label]}
-                  selected={
+                  isMulti
+                  name={label}
+                  minWidth="120px"
+                  minHeight="34px"
+                  height="34px"
+                  borderColor="#EEF0F5"
+                  borderRadius="4px"
+                  bgcolor="#F8F9FC"
+                  placeholder={`Choose ${label}`}
+                  placeholderColor="#333333"
+                  iconColor="#06312E"
+                  menuPlacement="auto"
+                  options={dropdownOptions[label]}
+                  onSelect={(selectedOption) =>
+                    handleDropdownOptions(label, selectedOption)
+                  }
+                  value={
                     selectedOptions.find((option) => option.label === label)
                       ?.values || []
                   }
-                  onChange={(values) => handleDropdownOptions(label, values)}
-                  singleSelect={label === "Doctor Package"}
+                  // singleSelect={label === "Doctor Package"}
                 />
               ))}
             </div>

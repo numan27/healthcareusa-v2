@@ -1,31 +1,31 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { Container, ProgressBar } from "react-bootstrap";
-import { useNavigate, useLocation } from "react-router-dom";
+// import { useNavigate, useLocation } from "react-router-dom";
 import IMAGES from "../../assets/images";
 import { Box, Typography } from "../../components/GenericComponents";
 
 const NavigateToListings = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [progress, setProgress] = useState(0);
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  // const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 100) {
-          clearInterval(timer);
-          navigate("/listings", {
-            state: { ...location.state, adShown: true },
-            replace: true,
-          });
-          return 100;
-        }
-        return prevProgress + 1;
-      });
-    }, 60); // milliseconds
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setProgress((prevProgress) => {
+  //       if (prevProgress >= 100) {
+  //         clearInterval(timer);
+  //         navigate("/listings", {
+  //           state: { ...location.state, adShown: true },
+  //           replace: true,
+  //         });
+  //         return 100;
+  //       }
+  //       return prevProgress + 1;
+  //     });
+  //   }, 60); // milliseconds
 
-    return () => clearInterval(timer);
-  }, [navigate, location.state]);
+  //   return () => clearInterval(timer);
+  // }, [navigate, location.state]);
 
   return (
     <div ClassName="w-100" style={{ height: "calc(100vh - 80px)" }}>
@@ -52,8 +52,8 @@ const NavigateToListings = () => {
             you...{" "}
           </Typography>
           <ProgressBar
-            now={progress}
-            label={`${progress}%`}
+            // now={progress}
+            // label={progress}
             // striped
             // variant="success"
             style={{ marginTop: "20px", width: "100%" }}

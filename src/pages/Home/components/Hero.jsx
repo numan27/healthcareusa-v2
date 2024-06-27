@@ -102,7 +102,7 @@ const Hero = () => {
                 </Typography>
               </div>
 
-              {/* Search bar */}
+              {/* Search bar */}  
               <SearchForm />
 
               <Row className="mt-3">

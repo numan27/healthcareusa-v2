@@ -660,6 +660,10 @@ body {
 }
 
 @media screen and (max-width: 1200px) {
+    .pricing-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
     .service-grid {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -679,6 +683,10 @@ body {
 }
 
 @media screen and (max-width: 1024px) {
+    .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .service-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -719,6 +727,14 @@ body {
 }
 
 @media screen and (max-width: 769px) {
+    .search-bar {
+        width: 100% !important;
+    }
+
+    .price-plan-price {
+        font-size: 3rem !important;
+    }
+
     .service-grid {
         grid-template-columns: repeat(1, 1fr);
     }
@@ -789,6 +805,9 @@ body {
 }
 
 @media screen and (max-width: 600px) {
+    .pricing-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
 
     .getStartedBtn-container {
         visibility: hidden;
