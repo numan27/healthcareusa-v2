@@ -422,7 +422,7 @@ const Listings = () => {
                   lineHeight="26px"
                 >
                   <span className="text-dark">{filteredProfiles.length}</span>{" "}
-                  search result for{" "}
+                  search result{" "}
                   <span className="fw-bold">{searchKeywords} </span> in
                   <span className="fw-bold"> {place?.address} </span>
                 </Typography>
@@ -455,16 +455,22 @@ const Listings = () => {
 
             <div>
               {filteredProfiles.length > 0 ? (
-                filteredProfiles.map((profileItem) => (
-                  <ProfileCard
-                    key={profileItem.id}
-                    enableSponsoredProfile
-                    columnPadding
-                    singleProfile={profileItem}
-                  />
-                ))
+                filteredProfiles.slice(0, 2).map(
+                  (
+                    profileItem // Render only first 2 profiles
+                  ) => (
+                    <ProfileCard
+                      key={profileItem.id}
+                      enableSponsoredProfile
+                      columnPadding
+                      singleProfile={profileItem}
+                    />
+                  )
+                )
               ) : (
-                <Typography>No profiles found</Typography>
+                <Typography size="24px" weight="600">
+                  No profiles found
+                </Typography>
               )}
             </div>
 
