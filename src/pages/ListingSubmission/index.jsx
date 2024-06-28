@@ -16,7 +16,7 @@ const ListingSubmission = () => {
     email: "",
     phone: "",
     website: "",
-    completeAddress: "",
+    streetAddress: "",
     // weeklySchedule: [],
     languages: [],
     // socialMediaLinks: [],
@@ -139,10 +139,14 @@ const ListingSubmission = () => {
           cwp_field_930729608352: formData.qualificationValues,
           cwp_field_136461069401: formData.specializationValues,
           "fc-google-address": {
-            address: formData.completeAddress,
-            lat: formData.lat, // added lat
-            lng: formData.lng, // added lng
+            address: formData.streetAddress,
           },
+          // meta_value: formData?.streetAddress,
+          // lat: "",
+          // lng: "",
+
+          "fc-google-address_lat": formData.lat, // ensure lat is included
+          "fc-google-address_lng": formData.lng, // ensure lng is included
           "fc-phone": formData.phone,
           "fc-website": formData.website,
           "fc-languages": formData.languages,
@@ -179,7 +183,7 @@ const ListingSubmission = () => {
         email: "",
         phone: "",
         website: "",
-        completeAddress: "",
+        streetAddress: "",
         languages: [],
         qualificationValues: [],
         specializationValues: [],

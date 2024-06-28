@@ -40,6 +40,17 @@ const useStyles = makeStyles({
   },
 });
 
+function ValueLabelComponent(props) {
+  const { children, value } = props;
+
+  return (
+    <span className={props.className}>
+      {children}
+      <span>{value} km</span>
+    </span>
+  );
+}
+
 export default function RangeSlider({
   defaultValue = 20,
   min = 0,
@@ -64,10 +75,11 @@ export default function RangeSlider({
   return (
     <Box width="100%" className="d-flex align-items-end pt-3 position-relative">
       <Slider
-        getAriaLabel={() => "Range"}
+        getAriaLabel={() => "Radius"}
         value={value}
         onChange={handleChange}
         valueLabelDisplay="auto"
+        ValueLabelComponent={ValueLabelComponent}
         min={min}
         max={max}
         step={step}

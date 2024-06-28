@@ -26,7 +26,7 @@ const Listings = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingType, setLoadingType] = useState("initial"); // New state for loading type
-  const [areaRange, setAreaRange] = useState("");
+  const [areaRange, setAreaRange] = useState(10);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,7 +42,7 @@ const Listings = () => {
       setSearchKeywordsState(searchKeywords);
     }
     if (place) {
-      setAreaRange([place.lat, place.lng]);
+      setAreaRange(10); // Set default radius value
     }
   }, [searchKeywords, place]);
 
@@ -361,19 +361,10 @@ const Listings = () => {
                       defaultValue={areaRange}
                       min={0}
                       max={500}
-                      step={0.1}
+                      step={1}
                       value={areaRange}
-                      onChange={(value) => {
-                        setAreaRange(value);
-                        debounceFetchData({
-                          searchKeywordsState,
-                          areaRange: value,
-                          place,
-                          currentPage: 1,
-                        });
-                      }}
+                      onChange={(value) => setAreaRange(value)}
                     />
-                    {loadingType === "areaRange" && loading && <LoaderCenter />}
                   </Col>
 
                   <Col md={6} className="d-flex align-items-center">
