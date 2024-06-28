@@ -28,6 +28,8 @@ const BusinessAddress = ({ formData, setFormData }) => {
         const updatedFormData = {
           ...formData,
           streetAddress: place.formatted_address,
+          lat: place.geometry.location.lat().toString(), // convert lat to string
+          lng: place.geometry.location.lng().toString(), // convert lng to string
         };
 
         addressComponents.forEach((component) => {
@@ -64,7 +66,12 @@ const BusinessAddress = ({ formData, setFormData }) => {
           setLocation(address);
           const place = data.results[0];
           const addressComponents = place.address_components;
-          const updatedFormData = { ...formData, streetAddress: address };
+          const updatedFormData = {
+            ...formData,
+            streetAddress: address,
+            lat: latitude.toString(), // convert lat to string
+            lng: longitude.toString(), // convert lng to string
+          };
 
           addressComponents.forEach((component) => {
             if (component.types.includes("locality")) {
@@ -97,6 +104,8 @@ const BusinessAddress = ({ formData, setFormData }) => {
       state: "",
       zip: "",
       completeAddress: "",
+      lat: null,
+      lng: null,
     });
   };
 

@@ -29,8 +29,8 @@ const ListingSubmission = () => {
     qualificationValues: [],
     specializationValues: [],
     package: [],
-    // lat: "",
-    // lng: "",
+    lat: "",
+    lng: "",
     // taxonomies: [],
   });
 
@@ -140,8 +140,8 @@ const ListingSubmission = () => {
           cwp_field_136461069401: formData.specializationValues,
           "fc-google-address": {
             address: formData.completeAddress,
-            lat: "",
-            lng: "",
+            lat: formData.lat, // added lat
+            lng: formData.lng, // added lng
           },
           "fc-phone": formData.phone,
           "fc-website": formData.website,
@@ -175,7 +175,6 @@ const ListingSubmission = () => {
       }
 
       setFormData({
-        // primaryCategory: [],
         fullName: "",
         email: "",
         phone: "",
@@ -187,6 +186,8 @@ const ListingSubmission = () => {
         descDetail: "",
         updatedGallery: null,
         profilePicture: null,
+        lat: "", // reset lat
+        lng: "", // reset lng
       });
 
       toast.success("Doctor added successfully!", {
