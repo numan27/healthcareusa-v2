@@ -8,7 +8,16 @@ import {
 } from "../../../components/GenericComponents";
 
 const OperationalHours = ({ formData, setFormData }) => {
-  const { weeklySchedule = [] } = formData;
+  const defaultWeeklySchedule = [
+    { day: "Monday", openingTime: "", closingTime: "" },
+    { day: "Tuesday", openingTime: "", closingTime: "" },
+    { day: "Wednesday", openingTime: "", closingTime: "" },
+    { day: "Thursday", openingTime: "", closingTime: "" },
+    { day: "Friday", openingTime: "", closingTime: "" },
+    { day: "Saturday", openingTime: "", closingTime: "" },
+  ];
+
+  const { weeklySchedule = defaultWeeklySchedule } = formData;
 
   const days = [
     { id: "1", label: "Monday", value: "monday" },

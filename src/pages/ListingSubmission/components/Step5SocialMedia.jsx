@@ -9,7 +9,16 @@ import {
 } from "../../../components/GenericComponents";
 
 const SocialMedia = ({ formData, setFormData }) => {
-  const { socialMediaLinks = [] } = formData;
+  const defaultSocialMediaLinks = [
+    { platform: "Facebook", url: "" },
+    { platform: "LinkedIn", url: "" },
+    { platform: "X (Twitter)", url: "" },
+    { platform: "Instagram", url: "" },
+    { platform: "YouTube", url: "" },
+    { platform: "Google Business Profile", url: "" },
+  ];
+
+  const { socialMediaLinks = defaultSocialMediaLinks } = formData;
 
   const platforms = [
     { id: "1", label: "Facebook", value: "facebook" },

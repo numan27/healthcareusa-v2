@@ -1,10 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import debounce from "lodash.debounce";
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
 import {
   Box,
-  // CheckboxDropdown,
   GenericButton,
-  GenericSelect,
   Typography,
 } from "../../components/GenericComponents";
 import AppLayout from "../../components/Layout/AppLayout";
@@ -14,183 +13,30 @@ import ProfileCard from "./components/ProfileCard";
 import { FaCircleInfo } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
 import { useLocation } from "react-router-dom";
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { GoogleMap, LoadScriptNext, Marker } from "@react-google-maps/api";
 import axios from "axios";
 import IMAGES from "../../assets/images";
-import { LoaderPageWithoutBG } from "../../assets";
-import NavigateToListings from "../AdScreens/NavigateToListings copy";
+import NavigateToListings from "../AdScreens/NavigateToListings";
+import DropdownFilter from "./components/DropdownFilters";
+import PaginationComponent from "../../components/PaginationComponent";
+import { LoaderCenter } from "../../assets/Loader";
+import { FaTimes } from "react-icons/fa";
 
 const Listings = () => {
-  const [listingProfiles, setListingProfiles] = useState([]);
-  const [mediaUrls, setMediaUrls] = useState({});
+  const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingType, setLoadingType] = useState("initial"); // New state for loading type
   const [areaRange, setAreaRange] = useState("");
-  const [profileLength, setProfileLength] = useState(0);
-  const [dropdownOptions, setDropdownOptions] = useState({});
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [listingsState, setListingsState] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  // const [place, setPlace] = useState(null);
+  const profilesPerPage = 10;
 
   const location = useLocation();
   const { searchKeywords, place } = location.state || {};
+  const fetchRequestRef = useRef(null);
 
-  // Fetch dropdown options
-  useEffect(() => {
-    const fetchDropdownOptions = async () => {
-      try {
-        const response = await fetch(
-          "https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?post_type=listing&form_type=post_type"
-        );
-        const data = await response.json();
-
-        if (data && data.groups) {
-          const fields = data.groups["112156535"].fields;
-          const optionsMap = {};
-
-          const dropdownLabels = [
-            "Gender",
-            "Languages",
-            "Qualifications",
-            "Specialization",
-            // "Doctor Package",
-          ];
-
-          dropdownLabels.forEach((label) => {
-            const field = fields.find((field) => field.label === label);
-            if (field && field.label.trim()) {
-              const options = JSON.parse(field.options);
-              const parsedOptions = options.label.map((label, index) => ({
-                id: index,
-                label: label,
-                value: options.value[index],
-              }));
-              optionsMap[label] = parsedOptions;
-            }
-          });
-
-          setDropdownOptions(optionsMap);
-        }
-      } catch (error) {
-        console.error("Error fetching dropdown options:", error);
-      }
-    };
-
-    fetchDropdownOptions();
-  }, []);
-
-  // Fetch listings based on search criteria
-  useEffect(() => {
-    const fetchListings = async () => {
-      const query = new URLSearchParams({
-        "cwp_query[post_type]": "listing",
-        "cwp_query[orderby]": "ASC",
-        "cwp_query[s]": searchKeywordsState,
-        "cwp_query[fc-google-address_range]": areaRange.toString(),
-        "cwp_query[fc-google-address]": place?.address || "",
-        "cwp_query[fc-google-address_lat]": place?.lat || "",
-        "cwp_query[fc-google-address_lng]": place?.lng || "",
-      }).toString();
-
-      console.log(
-        `Query: https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-      );
-
-      try {
-        const response = await axios.get(
-          `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-        );
-        console.log("Response data:", response.data);
-        setListingsState(response.data);
-
-        // Filter profiles based on fetched listings
-        const filteredProfiles = listingProfiles.filter((profile) =>
-          response.data.includes(profile.id)
-        );
-        setFilteredProfiles(filteredProfiles);
-      } catch (error) {
-        console.error("Error fetching listings:", error);
-      }
-    };
-
-    if (searchKeywordsState || areaRange || place) {
-      fetchListings();
-    }
-  }, [searchKeywordsState, areaRange, place]);
-
-  // Fetch listing and media
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const url = "https://jsappone.demowp.io/wp-json/wp/v2/listing";
-      try {
-        const response = await axios.get(url);
-        const profileData = response.data;
-
-        // Fetch media URLs
-        const mediaIds = profileData
-          .map((post) => post.featured_media)
-          .filter((id) => id);
-        const mediaResponses = await Promise.all(
-          mediaIds.map((id) =>
-            axios.get(`https://jsappone.demowp.io/wp-json/wp/v2/media/${id}`)
-          )
-        );
-        const mediaData = mediaResponses.reduce((acc, media) => {
-          acc[media.data.id] = media.data.source_url;
-          return acc;
-        }, {});
-        setMediaUrls(mediaData);
-
-        // Transform profile data to match the expected structure
-        const transformedProfileData = profileData.map((profile) => ({
-          id: profile.id,
-          profileImg:
-            mediaData[profile.featured_media] || IMAGES.DOCTOR_LIST_PROFILE,
-          title: profile.title.rendered,
-          designation:
-            profile.cubewp_post_meta["cwp_field_40228862441"]?.meta_value ||
-            "N/A",
-          languages:
-            profile.cubewp_post_meta["fc-languages"]?.meta_value.split(", ") ||
-            [],
-          specialization:
-            profile.cubewp_post_meta[
-              "cwp_field_136461069401"
-            ]?.meta_value.split(", ") || [],
-          qualifications:
-            profile.cubewp_post_meta[
-              "cwp_field_930729608352"
-            ]?.meta_value.split(", ") || [],
-          gender:
-            profile.cubewp_post_meta["cwp_field_224925973684"]?.meta_value ||
-            "N/A",
-          doctorPackage:
-            profile.cubewp_post_meta[
-              "cwp_field_631649982329"
-            ]?.meta_value.split(", ") || [],
-          address:
-            profile.cubewp_post_meta["fc-google-address"]?.meta_value.address ||
-            "N/A",
-          phone: profile.cubewp_post_meta["fc-phone"]?.meta_value || "N/A",
-          comment_status: profile.comment_status || "N/A",
-          status: profile.status || "N/A",
-        }));
-
-        setListingProfiles(transformedProfileData);
-        setFilteredProfiles(transformedProfileData);
-        setProfileLength(transformedProfileData.length);
-      } catch (error) {
-        console.error("Error fetching posts or media:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-  // Synchronize search keywords and place
   useEffect(() => {
     if (searchKeywords) {
       setSearchKeywordsState(searchKeywords);
@@ -200,130 +46,200 @@ const Listings = () => {
     }
   }, [searchKeywords, place]);
 
-  // Filter profiles based on searchKeywordsState, place, and selectedOptions
-  useEffect(() => {
-    const filterProfiles = () => {
-      let filtered = [...listingProfiles];
+  const fetchData = useCallback(
+    debounce(async (params) => {
+      if (fetchRequestRef.current) {
+        fetchRequestRef.current.cancel();
+      }
 
-      // Keyword search
-      if (searchKeywordsState.trim() !== "") {
-        filtered = filtered.filter((profile) =>
-          profile.title
-            .toLowerCase()
-            .includes(searchKeywordsState.toLowerCase())
+      const source = axios.CancelToken.source();
+      fetchRequestRef.current = source;
+
+      const query = new URLSearchParams({
+        "cwp_query[post_type]": "listing",
+        "cwp_query[orderby]": "ASC",
+        "cwp_query[s]": params.searchKeywordsState,
+        "cwp_query[fc-google-address_range]": params.areaRange.toString(),
+        "cwp_query[fc-google-address]": params.place?.address || "",
+        "cwp_query[fc-google-address_lat]": params.place?.lat || "",
+        "cwp_query[fc-google-address_lng]": params.place?.lng || "",
+        "cwp_query[posts_per_page]": profilesPerPage,
+        "cwp_query[paged]": params.currentPage,
+      }).toString();
+
+      try {
+        const response = await axios.get(
+          `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`,
+          { cancelToken: source.token }
         );
-      }
 
-      // Address filter
-      if (place && place.address.trim() !== "") {
-        const addressFilter = place.address.toLowerCase();
-        filtered = filtered.filter((profile) =>
-          profile.address.toLowerCase().includes(addressFilter)
-        );
-      }
+        const basicProfiles = response.data;
 
-      // Location filter
-      if (place && place.lat && place.lng) {
-        filtered = filtered.filter((profile) => {
-          // Perform distance calculation if necessary
-          return true; // Modify this line based on your distance calculation logic
-        });
-      }
-
-      if (selectedOptions.length > 0) {
-        selectedOptions.forEach((selectedOption) => {
-          filtered = filtered.filter((profile) => {
-            let profileField = [];
-            switch (selectedOption.label) {
-              case "Languages":
-                profileField = profile.languages || [];
-                break;
-              case "Qualifications":
-                profileField = profile.qualifications || [];
-                break;
-              case "Specialization":
-                profileField = profile.specialization || [];
-                break;
-              case "Gender":
-                profileField = [profile.gender];
-                break;
-              // case "Doctor Package":
-              //   profileField = profile.doctorPackage || [];
-              //   break;
-              default:
-                return true;
-            }
-
-            profileField = profileField.map((item) =>
-              item.toString().trim().toLowerCase()
-            );
-            const selectedValues = selectedOption.values.map((item) =>
-              item.value.toString().trim().toLowerCase()
-            );
-
-            const matches = selectedValues.some((value) =>
-              profileField.includes(value)
-            );
-
-            return matches;
-          });
-        });
-      }
-
-      return filtered;
-    };
-
-    const filteredProfiles = filterProfiles();
-    setFilteredProfiles(filteredProfiles);
-  }, [listingProfiles, searchKeywordsState, place, selectedOptions]);
-
-  const handleDropdownOptions = useCallback((label, selectedOption) => {
-    setSelectedOptions((prevSelectedOptions) => {
-      const updatedOptions = [...prevSelectedOptions];
-      const optionIndex = updatedOptions.findIndex(
-        (option) => option.label === label
-      );
-
-      const values = selectedOption.map((item) => ({
-        id: item.id,
-        label: item.label,
-        value: item.value.toLowerCase(),
-      }));
-
-      if (optionIndex >= 0) {
-        if (values.length > 0) {
-          updatedOptions[optionIndex] = { label, values };
-        } else {
-          updatedOptions.splice(optionIndex, 1); // Remove the option if no values are selected
+        if (!Array.isArray(basicProfiles)) {
+          throw new Error("API response is not an array");
         }
-      } else if (values.length > 0) {
-        updatedOptions.push({ label, values });
+
+        const detailedProfilesPromises = basicProfiles.map(async (profile) => {
+          const detailedResponse = await axios.get(
+            `https://jsappone.demowp.io/wp-json/wp/v2/listing/${profile.ID}`
+          );
+          const detailedProfile = detailedResponse.data;
+
+          // Fetch featured media if available
+          if (detailedProfile.featured_media) {
+            try {
+              const mediaResponse = await axios.get(
+                `https://jsappone.demowp.io/wp-json/wp/v2/media/${detailedProfile.featured_media}`
+              );
+              detailedProfile.featured_media_url =
+                mediaResponse.data.source_url;
+            } catch (error) {
+              console.error("Error fetching media:", error);
+              detailedProfile.featured_media_url = null;
+            }
+          }
+
+          return detailedProfile;
+        });
+
+        const detailedProfiles = await Promise.all(detailedProfilesPromises);
+
+        const transformedProfileData = detailedProfiles.map((profile) => {
+          const addressMeta =
+            profile?.cubewp_post_meta?.["fc-google-address"]?.meta_value || {};
+          const address = addressMeta?.address || "N/A";
+          const lat = addressMeta?.lat || null;
+          const lng = addressMeta?.lng || null;
+
+          return {
+            id: profile.id,
+            profileImg:
+              profile.featured_media_url || IMAGES.DOCTOR_LIST_PROFILE, // Use the fetched media URL
+            title: profile.title.rendered,
+            designation:
+              profile?.cubewp_post_meta?.["cwp_field_40228862441"]
+                ?.meta_value || "N/A",
+            languages:
+              profile?.cubewp_post_meta?.["fc-languages"]?.meta_value?.split(
+                ", "
+              ) || [],
+            specialization:
+              profile?.cubewp_post_meta?.[
+                "cwp_field_136461069401"
+              ]?.meta_value?.split(", ") || [],
+            qualifications:
+              profile?.cubewp_post_meta?.[
+                "cwp_field_930729608352"
+              ]?.meta_value?.split(", ") || [],
+            gender:
+              profile?.cubewp_post_meta?.["cwp_field_224925973684"]
+                ?.meta_value || "N/A",
+            doctorPackage:
+              profile?.cubewp_post_meta?.[
+                "cwp_field_631649982329"
+              ]?.meta_value?.split(", ") || [],
+            address: address,
+            lat: lat ? parseFloat(lat) : null,
+            lng: lng ? parseFloat(lng) : null,
+            phone: profile?.cubewp_post_meta?.["fc-phone"]?.meta_value || "N/A",
+            comment_status: profile.comment_status || "N/A",
+            status: profile.status || "N/A",
+          };
+        });
+
+        setProfiles(transformedProfileData);
+        setFilteredProfiles(transformedProfileData);
+        setLoading(false);
+      } catch (error) {
+        if (!axios.isCancel(error)) {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        }
       }
+    }, 300),
+    [profilesPerPage]
+  );
 
-      return updatedOptions;
-    });
-  }, []);
+  // Ensure fetchData is called on initial render
+  useEffect(() => {
+    setLoadingType("initial");
+    setLoading(true);
+    fetchData({ searchKeywordsState, areaRange, place, currentPage });
+  }, []); // Empty dependency array to run only once on initial render
 
-  // Function to calculate the distance between two coordinates
-  const calculateDistance = (lat1, lng1, lat2, lng2) => {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // Radius of the Earth in km
-    const dLat = toRad(lat2 - lat1);
-    const dLng = toRad(lng2 - lng1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in km
-    return distance;
+  // Ensure fetchData is called whenever place, areaRange, or currentPage changes
+  useEffect(() => {
+    setLoadingType("initial");
+    setLoading(true);
+    fetchData({ searchKeywordsState, areaRange, place, currentPage });
+  }, [areaRange, place, currentPage, fetchData]);
+
+  // Adjust the center variable to handle the case where place is not defined
+  const center = {
+    lat: place?.lat || 0,
+    lng: place?.lng || 0,
   };
 
-  // console.log("selectedOptions", selectedOptions);
+  useEffect(() => {
+    const applyFilters = () => {
+      let filtered = profiles;
 
-  // console.log("filteredProfiles", filteredProfiles);
+      selectedOptions.forEach((filter) => {
+        filtered = filtered.filter((profile) => {
+          const filterValues = filter.values.map((selected) =>
+            selected.value.toLowerCase()
+          );
+
+          switch (filter.label.toLowerCase()) {
+            case "languages":
+              return profile.languages.some((language) =>
+                filterValues.includes(language.toLowerCase())
+              );
+            case "qualifications":
+              return profile.qualifications.some((qualification) =>
+                filterValues.includes(qualification.toLowerCase())
+              );
+            case "gender":
+              return filterValues.includes(profile.gender.toLowerCase());
+            case "specialization":
+              return profile.specialization.some((specialty) =>
+                filterValues.includes(specialty.toLowerCase())
+              );
+            default:
+              return true;
+          }
+        });
+      });
+
+      setFilteredProfiles(filtered);
+    };
+
+    applyFilters();
+  }, [profiles, selectedOptions]);
+
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+    setLoadingType("pagination");
+    setLoading(true);
+    fetchData({
+      searchKeywordsState,
+      areaRange,
+      place,
+      currentPage: currentPage + 1,
+    });
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+    setLoadingType("pagination");
+    setLoading(true);
+    fetchData({
+      searchKeywordsState,
+      areaRange,
+      place,
+      currentPage: currentPage - 1,
+    });
+  };
 
   const containerStyle = {
     width: "100%",
@@ -331,47 +247,34 @@ const Listings = () => {
     borderRadius: "8px",
   };
 
-  const center = {
-    lat: place?.lat || 0,
-    lng: place?.lng || 0,
-  };
-
   const handleSearchKeywordsChange = (e) => {
     setSearchKeywordsState(e.target.value);
   };
 
-  const handleTemperatureRangeChange = (newRange) => {
-    setAreaRange(newRange);
-  };
-
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    handleSearchButton();
+    setCurrentPage(1);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({ searchKeywordsState, areaRange, place, currentPage: 1 });
   };
 
-  const handleSearchButton = async () => {
-    try {
-      const query = new URLSearchParams({
-        "cwp_query[post_type]": "listing",
-        "cwp_query[orderby]": "ASC",
-        "cwp_query[s]": searchKeywordsState,
-        "cwp_query[fc-google-address_range]": areaRange,
-        "cwp_query[fc-google-address]": place?.address || "",
-        "cwp_query[fc-google-address_lat]": place?.lat || "",
-        "cwp_query[fc-google-address_lng]": place?.lng || "",
-      }).toString();
-
-      const response = await axios.get(
-        `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
-      );
-
-      setListingsState(response.data);
-    } catch (error) {
-      console.error("Error fetching listings:", error);
-    }
+  const handleSearchButton = () => {
+    setCurrentPage(1);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({ searchKeywordsState, areaRange, place, currentPage: 1 });
   };
 
-  if (loading) {
+  const handleResetSearch = () => {
+    setSearchKeywordsState("");
+    setCurrentPage(1);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({ searchKeywordsState: "", areaRange, place, currentPage: 1 });
+  };
+
+  if (loading && (loadingType === "initial" || loadingType === "pagination")) {
     return (
       <div>
         <NavigateToListings />
@@ -381,7 +284,7 @@ const Listings = () => {
 
   return (
     <AppLayout>
-      <Container className="min-vh-100 ">
+      <Container className="min-vh-100">
         <div className="mt-5">
           {place && (
             <>
@@ -412,9 +315,7 @@ const Listings = () => {
         </div>
 
         <Row>
-          {/* Left Content */}
           <Col lg={9}>
-            {/* Public Announcement */}
             <Box
               radius="4px"
               border="1px solid #EF2929"
@@ -437,7 +338,6 @@ const Listings = () => {
               </Typography>
             </Box>
 
-            {/* Search */}
             <Box
               border="1px solid #E4E4E4"
               radius="8px"
@@ -458,7 +358,6 @@ const Listings = () => {
                     >
                       Near Me
                     </Typography>
-
                     <RangeSlider
                       className="mt-3"
                       defaultValue={areaRange}
@@ -466,8 +365,17 @@ const Listings = () => {
                       max={500}
                       step={0.1}
                       value={areaRange}
-                      onChange={handleTemperatureRangeChange}
+                      onChange={(value) => {
+                        setAreaRange(value);
+                        debounceFetchData({
+                          searchKeywordsState,
+                          areaRange: value,
+                          place,
+                          currentPage: 1,
+                        });
+                      }}
                     />
+                    {loadingType === "areaRange" && loading && <LoaderCenter />}
                   </Col>
 
                   <Col md={6} className="d-flex align-items-center">
@@ -480,6 +388,19 @@ const Listings = () => {
                         value={searchKeywordsState}
                         onChange={handleSearchKeywordsChange}
                       />
+                      {searchKeywordsState && (
+                        <InputGroup.Text
+                          onClick={handleResetSearch}
+                          style={{
+                            cursor: "pointer",
+                            background: "transparent",
+                            border: "none",
+                          }}
+                        >
+                          <FaTimes />
+                        </InputGroup.Text>
+                      )}
+                      {loadingType === "search" && loading && <LoaderCenter />}
                     </InputGroup>
 
                     <div className="ms-1">
@@ -497,35 +418,10 @@ const Listings = () => {
               </Form>
             </Box>
 
-            {/* Filters */}
-            <div className="my-3 d-flex flex-wrap gap-2">
-              {Object.keys(dropdownOptions).map((label) => (
-                <GenericSelect
-                  key={label}
-                  isMulti
-                  name={label}
-                  minWidth="120px"
-                  minHeight="34px"
-                  height="34px"
-                  borderColor="#EEF0F5"
-                  borderRadius="4px"
-                  bgcolor="#F8F9FC"
-                  placeholder={`Choose ${label}`}
-                  placeholderColor="#333333"
-                  iconColor="#06312E"
-                  menuPlacement="auto"
-                  options={dropdownOptions[label]}
-                  onSelect={(selectedOption) =>
-                    handleDropdownOptions(label, selectedOption)
-                  }
-                  value={
-                    selectedOptions.find((option) => option.label === label)
-                      ?.values || []
-                  }
-                  // singleSelect={label === "Doctor Package"}
-                />
-              ))}
-            </div>
+            <DropdownFilter
+              setSelectedOptions={setSelectedOptions}
+              selectedOptions={selectedOptions}
+            />
 
             <div className="pt-3 mb-3">
               {place ? (
@@ -569,14 +465,18 @@ const Listings = () => {
             </div>
 
             <div>
-              {filteredProfiles.map((profileItem) => (
-                <ProfileCard
-                  key={profileItem.id}
-                  enableSponsoredProfile
-                  columnPadding
-                  singleProfile={profileItem}
-                />
-              ))}
+              {filteredProfiles.length > 0 ? (
+                filteredProfiles.map((profileItem) => (
+                  <ProfileCard
+                    key={profileItem.id}
+                    enableSponsoredProfile
+                    columnPadding
+                    singleProfile={profileItem}
+                  />
+                ))
+              ) : (
+                <Typography>No profiles found</Typography>
+              )}
             </div>
 
             <AdsSection margin={3} padding={0} />
@@ -604,7 +504,6 @@ const Listings = () => {
             </div>
           </Col>
 
-          {/* Sidebar */}
           <Col
             style={{
               position: "sticky",
@@ -616,15 +515,29 @@ const Listings = () => {
             className="pb-4"
           >
             <Box className="w-100 mb-3">
-              {place && (
-                <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
+              {!loading && (
+                <LoadScriptNext googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
                   <GoogleMap
                     className="rounded-3"
                     mapContainerStyle={containerStyle}
                     center={center}
-                    zoom={10}
-                  ></GoogleMap>
-                </LoadScript>
+                    zoom={place ? 10 : 2}
+                  >
+                    {filteredProfiles.map(
+                      (profile) =>
+                        profile.lat &&
+                        profile.lng && (
+                          <Marker
+                            key={profile.id}
+                            position={{
+                              lat: profile.lat,
+                              lng: profile.lng,
+                            }}
+                          />
+                        )
+                    )}
+                  </GoogleMap>
+                </LoadScriptNext>
               )}
             </Box>
             <div>
@@ -636,6 +549,16 @@ const Listings = () => {
             </div>
           </Col>
         </Row>
+
+        <div className="d-flex justify-content-end mb-4">
+          <PaginationComponent
+            currentPage={currentPage}
+            handleNextPage={handleNextPage}
+            handlePrevPage={handlePrevPage}
+            listingProfiles={profiles}
+            profilesPerPage={profilesPerPage}
+          />
+        </div>
       </Container>
     </AppLayout>
   );

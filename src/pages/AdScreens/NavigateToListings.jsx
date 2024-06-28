@@ -1,34 +1,28 @@
-// import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, ProgressBar } from "react-bootstrap";
-// import { useNavigate, useLocation } from "react-router-dom";
 import IMAGES from "../../assets/images";
 import { Box, Typography } from "../../components/GenericComponents";
 
 const NavigateToListings = () => {
-  // const navigate = useNavigate();
-  // const location = useLocation();
-  // const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(0);
 
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setProgress((prevProgress) => {
-  //       if (prevProgress >= 100) {
-  //         clearInterval(timer);
-  //         navigate("/listings", {
-  //           state: { ...location.state, adShown: true },
-  //           replace: true,
-  //         });
-  //         return 100;
-  //       }
-  //       return prevProgress + 1;
-  //     });
-  //   }, 60); // milliseconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress < 100) {
+          return prevProgress + 10;
+        } else {
+          clearInterval(interval);
+          return prevProgress;
+        }
+      });
+    }, 500);
 
-  //   return () => clearInterval(timer);
-  // }, [navigate, location.state]);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div ClassName="w-100" style={{ height: "calc(100vh - 80px)" }}>
+    <div className="w-100" style={{ height: "calc(100vh - 80px)" }}>
       <Container className="d-flex flex-column justify-content-center align-items-center pt-5">
         <img
           className="ads-loading-icon"
@@ -48,14 +42,12 @@ const NavigateToListings = () => {
             lineHeight="27px"
             font="Plus Jakarta Sans"
           >
-            One moment please while we find you the right service provider
-            you...{" "}
+            One moment please while we find you the right service provider for
+            you...
           </Typography>
           <ProgressBar
-            // now={progress}
-            // label={progress}
-            // striped
-            // variant="success"
+            now={progress}
+            label={`${progress}%`}
             style={{ marginTop: "20px", width: "100%" }}
             className="ad-progress-bar"
           />

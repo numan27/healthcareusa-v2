@@ -1,10 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { LoadScript, Autocomplete } from "@react-google-maps/api";
+import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
 import { IoSearch } from "react-icons/io5";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-// import { GrLocation } from "react-icons/gr";
 import { Form, InputGroup } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import SquareMenu from "../../../assets/SVGs/SquareMenu";
 import { Box, GenericButton } from "../../../components/GenericComponents";
 import { LoaderCenter } from "../../../assets/Loader";
@@ -17,8 +16,8 @@ const SearchForm = () => {
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [location, setLocation] = useState("");
   const navigate = useNavigate();
+  const locationPath = useLocation();
   const autocompleteRef = useRef(null);
-  const [loadScriptKey, setLoadScriptKey] = useState(0);
 
   const onLoad = useCallback((autocomplete) => {
     autocompleteRef.current = autocomplete;
@@ -51,10 +50,9 @@ const SearchForm = () => {
   };
 
   useEffect(() => {
-    if (location.pathname === "/") {
+    if (locationPath.pathname === "/") {
       setPlace(null);
       setSearchKeywords("");
-      setLoadScriptKey((prevKey) => prevKey + 1);
     }
 
     // Fetch current location
@@ -76,78 +74,74 @@ const SearchForm = () => {
         setIsLoadingLocation(false);
       });
     }
-  }, []);
+  }, [locationPath.pathname]);
 
   return (
-    <LoadScript
-      key={loadScriptKey}
+    <LoadScriptNext
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
       libraries={libraries}
     >
       <Box width="100" padding="18px" className="bg-white rounded-3 mt-3 pb-3">
-        <>
-          <Form
-            className="h-100 d-flex flex-md-row flex-column align-items-center justify-content-between w-100"
-            onSubmit={handleFormSubmit}
-          >
-            <InputGroup className="search-bar border-search-md w-50 w-100-md">
-              <InputGroup.Text
-                className="bg-white border-0 p-2"
-                id="basic-addon1"
-              >
-                <SquareMenu />
-              </InputGroup.Text>
-              <Form.Control
-                placeholder="Key words or company"
-                aria-label="Username"
-                aria-describedby="basic-addon1"
-                className="py-2"
-                value={searchKeywords}
-                onChange={(e) => setSearchKeywords(e.target.value)}
-              />
-            </InputGroup>
+        <Form
+          className="h-100 d-flex flex-md-row flex-column align-items-center justify-content-between w-100"
+          onSubmit={handleFormSubmit}
+        >
+          <InputGroup className="search-bar border-search-md w-50 w-100-md">
+            <InputGroup.Text
+              className="bg-white border-0 p-2"
+              id="basic-addon1"
+            >
+              <SquareMenu />
+            </InputGroup.Text>
+            <Form.Control
+              placeholder="Key words or company"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+              className="py-2"
+              value={searchKeywords}
+              onChange={(e) => setSearchKeywords(e.target.value)}
+            />
+          </InputGroup>
 
-            <div className="d-flex align-items-center ps-md-4 w-100-md w-50 my-md-0 my-3 border-start-lg">
-              <Autocomplete
-                className="w-100"
-                onLoad={onLoad}
-                onPlaceChanged={onPlaceChanged}
-              >
-                <InputGroup className="search-bar border-search-md w-100">
-                  <InputGroup.Text
-                    className="bg-white border-0 p-2"
-                    id="basic-addon1"
-                  >
-                    <FaLocationCrosshairs color="#06312E" size={20} />
-                  </InputGroup.Text>
-                  <Form.Control
-                    placeholder="city, state or zip"
-                    aria-label="Location"
-                    aria-describedby="basic-addon1"
-                    className="py-2"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
-                  {isLoadingLocation && <LoaderCenter />}
-                </InputGroup>
-              </Autocomplete>
-            </div>
-            <div className="ms-1">
-              <GenericButton
-                onClick={handleNavigateListingDetail}
-                width="138px"
-                height="48px"
-                className="d-flex align-items-center justify-content-center gap-2"
-              >
-                {" "}
-                <IoSearch size={20} />
-                Search
-              </GenericButton>
-            </div>
-          </Form>
-        </>
+          <div className="d-flex align-items-center ps-md-4 w-100-md w-50 my-md-0 my-3 border-start-lg">
+            <Autocomplete
+              className="w-100"
+              onLoad={onLoad}
+              onPlaceChanged={onPlaceChanged}
+            >
+              <InputGroup className="search-bar border-search-md w-100">
+                <InputGroup.Text
+                  className="bg-white border-0 p-2"
+                  id="basic-addon1"
+                >
+                  <FaLocationCrosshairs color="#06312E" size={20} />
+                </InputGroup.Text>
+                <Form.Control
+                  placeholder="city, state or zip"
+                  aria-label="Location"
+                  aria-describedby="basic-addon1"
+                  className="py-2"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+                {isLoadingLocation && <LoaderCenter />}
+              </InputGroup>
+            </Autocomplete>
+          </div>
+          <div className="ms-1">
+            <GenericButton
+              onClick={handleNavigateListingDetail}
+              width="138px"
+              height="48px"
+              className="d-flex align-items-center justify-content-center gap-2"
+            >
+              <IoSearch size={20} />
+              Search
+            </GenericButton>
+          </div>
+        </Form>
       </Box>
-    </LoadScript>
+    </LoadScriptNext>
   );
 };
 

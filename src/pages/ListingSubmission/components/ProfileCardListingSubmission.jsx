@@ -137,7 +137,8 @@ const ProfileCardListingSubmission = ({ formData = {} }) => {
                       size="14px"
                       lineHeight="18px"
                     >
-                      {businessAddress}
+                      {/* {businessAddress} */}
+                      {formData.streetAddress}
                     </Typography>
                   </Box>
                 </div>
