@@ -23,30 +23,24 @@ const Header = () => {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-
   const auth = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        // const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144', {
-        //   headers: {
-        //     'Authorization': 'Basic ' + btoa('username:password')
-        //   }
-        // });
-
         const response = await axios.get(
-          "https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144",
+          "https://jsappone.demowp.io/wp-json/wp/v2/menu-items",
           {
             auth: {
               username: "numankhalil27@gmail.com",
               password: "findhealthcareusa",
-              // password: '4fNF0pEpIz6wmXPlwmbbmwvP' new
-              // password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
             },
           }
         );
-        setMenus(response.data);
+        const headerMenus = response.data.filter((menu) =>
+          menu.taxonomies.includes("Header")
+        );
+        setMenus(headerMenus);
       } catch (error) {
         console.error("Error fetching menu items:", error);
       } finally {
@@ -56,6 +50,8 @@ const Header = () => {
 
     fetchMenuItems();
   }, []);
+
+  console.log("menus", menus);
 
   const CloseModal = () => {
     setSignInModalShow(false);
@@ -67,8 +63,6 @@ const Header = () => {
     setSignUpModalShow(false);
     setSignInModalShow(true);
   };
-
-  const SITE_DOMAIN = "https://jsappone.demowp.io";
 
   const handleNavigateListingSubmission = () => {
     if (auth) {
@@ -92,6 +86,14 @@ const Header = () => {
     toast.success("User Logged Out!", {
       autoClose: 2000,
     });
+  };
+
+  const customPaths = {
+    Home: PATH.HOME,
+    About: PATH.ABOUT,
+    Blog: PATH.BLOGS,
+    Resources: PATH.RESOURCES,
+    Contact: PATH.CONTACT,
   };
 
   return (
@@ -144,24 +146,21 @@ const Header = () => {
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ms-auto">
-                  {/* {menus.map((menu, index) => {
-                    const isActive = location.pathname === '/' && menu.title.rendered === 'Home' || (menu.url && location.pathname === `/${menu.slug}`);
-                    return (
-                      <Link key={index} to={menu.title.rendered === "Home" ? '/' : `/${menu.url}`} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
-                        {menu.title.rendered}
-                      </Link>
-                    );
-                  })} */}
-
                   {menus.map((menu, index) => {
-                    const linkTo =
-                      menu.title.rendered === "Home"
-                        ? PATH.HOME
-                        : `${SITE_DOMAIN}${menu.url}`;
-                    const isActive =
-                      (location.pathname === "/" &&
-                        menu.title.rendered === "Home") ||
-                      (menu.url && location.pathname === `/${menu.slug}`);
+                    const customPaths = {
+                      home: PATH.HOME,
+                      aboutus: PATH.ABOUT,
+                      blog: PATH.BLOGS,
+                      resources: PATH.RESOURCES,
+                      contactus: PATH.CONTACT,
+                    };
+
+                    const titleKey = menu.title.rendered
+                      .toLowerCase()
+                      .replace(/\s+/g, "");
+                    const linkTo = customPaths[titleKey] || "#";
+
+                    const isActive = location.pathname === linkTo;
                     return (
                       <Link
                         key={index}

@@ -1,8 +1,7 @@
-/* global google */
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Container, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
 import { LuChevronDown, LuChevronUp } from "react-icons/lu";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import {
   FaFacebookF,
   FaLinkedin,
@@ -32,6 +31,7 @@ import ClaimListingSection from "./components/ClaimListingSection";
 import axios from "axios";
 import styled from "styled-components";
 import { LoaderCenter } from "../../../assets/Loader";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 const StyledPopover = styled(Popover)`
   max-width: 200px;
@@ -51,8 +51,8 @@ const StyledPopover = styled(Popover)`
 `;
 
 const ListingDetailsPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
-  const mapRef = useRef(null);
   const location = useLocation();
   // const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
   const [jsonData, setJsonData] = useState({});
@@ -75,23 +75,12 @@ const ListingDetailsPage = () => {
           listingData.mediaUrl = mediaResponse.data.source_url;
         }
 
-        if (listingData.cubewp_post_meta?.["fc-google-address"]?.meta_value) {
-          const { lat, lng } =
-            listingData.cubewp_post_meta["fc-google-address"].meta_value;
-          const geocoder = new google.maps.Geocoder();
-          geocoder.geocode(
-            { location: { lat: parseFloat(lat), lng: parseFloat(lng) } },
-            (results, status) => {
-              if (status === "OK" && results[0]) {
-                listingData.addressFromLatLng = results[0].formatted_address;
-                setJsonData(listingData);
-              }
-            }
-          );
-        } else {
+        // Check if jsonData is empty or listing ID differs
+        if (!jsonData.id || jsonData.id !== listingData.id) {
           setJsonData(listingData);
         }
 
+        // Fetch gallery images
         const galleryMeta =
           listingData.cubewp_post_meta?.["cwp_field_310681993623"]?.meta_value;
         if (galleryMeta && Array.isArray(galleryMeta)) {
@@ -158,18 +147,22 @@ const ListingDetailsPage = () => {
   const listingDetailSocial = [
     {
       icon: <FaFacebookF size={18} color="#23262F" />,
+      // link: "https://facebook.com/numan27",
       link: jsonData.cubewp_post_meta?.["fc-facebook"]?.meta_value || "#",
     },
     {
       icon: <FaTwitter size={18} color="#23262F" />,
+      // link: "https://twitter.com/abc",
       link: jsonData.cubewp_post_meta?.["fc-x"]?.meta_value || "#",
     },
     {
       icon: <RiInstagramFill size={18} color="#23262F" />,
+      // link: "https://instagram.com/media",
       link: jsonData.cubewp_post_meta?.["fc-instagram"]?.meta_value || "#",
     },
     {
       icon: <FaYoutube size={18} color="#23262F" />,
+      // link: "https://youtube.com/ayc",
       link: jsonData.cubewp_post_meta?.["fc-youtube"]?.meta_value || "#",
     },
   ];
@@ -197,20 +190,9 @@ const ListingDetailsPage = () => {
     },
   ];
 
-  useEffect(() => {
-    if (jsonData.cubewp_post_meta?.["fc-google-address"]?.meta_value) {
-      const { lat, lng } =
-        jsonData.cubewp_post_meta["fc-google-address"].meta_value;
-      const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: parseFloat(lat), lng: parseFloat(lng) },
-        zoom: 15,
-      });
-      new google.maps.Marker({
-        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
-        map,
-      });
-    }
-  }, [jsonData]);
+  const handleLinkClick = (externalLink) => {
+    navigate("/navigate-to-external-link", { state: { externalLink } });
+  };
 
   const cubewpPostMeta = jsonData.cubewp_post_meta || [];
   const googleAddress = cubewpPostMeta["fc-google-address"]?.meta_value || [];
@@ -231,19 +213,26 @@ const ListingDetailsPage = () => {
       });
   };
 
+  const profileTitle = jsonData.title?.rendered || "No Title";
+
   const popover = (
     <StyledPopover className="border-0 me-2" id="popover-basic">
       <Popover.Body>
         <Box className="w-100 d-flex justify-content-evenly gap-1">
-          {listingDetailSocialShare.map((items) => (
+          {listingDetailSocialShare.map((items, index) => (
             <Box
+              key={index}
               width="30px"
               height="30px"
               className="border rounded-2 listing-detail-social"
             >
               <a
                 className="w-100 h-100 d-flex align-items-center justify-content-center"
-                href={items.link}
+                // href={items.link}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLinkClick(items.link);
+                }}
               >
                 {items.icon}
               </a>
@@ -257,16 +246,51 @@ const ListingDetailsPage = () => {
   console.log("jsonData", jsonData);
   console.log("doctorLanguages", doctorLanguages);
 
+  const handleBackToListings = () => {
+    navigate("/listings", {
+      state: {
+        fromListingsPage: true,
+        searchKeywordsState: location.state.searchKeywordsState,
+        areaRange: location.state.areaRange,
+        place: location.state.place,
+        currentPage: location.state.currentPage,
+        selectedOptions: location.state.selectedOptions,
+        profiles: location.state.profiles, // Preserve profiles
+        filteredProfiles: location.state.filteredProfiles, // Preserve filtered profiles
+      },
+    });
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <AppLayout>
       <Container className="min-vh-100 pt-4 pb-5">
+        {jsonData && (
+          <GenericButton
+            background="transparent"
+            color="#000"
+            hoverBgColor="transparent"
+            hoverColor="#000"
+            border="0"
+            padding="0"
+            height="fit-content"
+            onClick={handleBackToListings}
+            className="mb-4"
+          >
+            <FaArrowLeftLong size={28} /> Back to Listings
+          </GenericButton>
+        )}
+
         <Row>
           {/* Left Content */}
           <Col lg={9}>
             {/* Profile Media */}
             <Row className="profile-gallery px-2">
               {galleryImages.map((imgSrc, index) => (
-                <Suspense fallback={<LoaderCenter />}>
+                <Suspense key={index} fallback={<LoaderCenter />}>
                   {loading ? (
                     <LoaderCenter />
                   ) : (
@@ -542,14 +566,10 @@ const ListingDetailsPage = () => {
             className="pb-4"
           >
             {/* Google Map */}
-
-            <Box
-              id="map"
-              className="w-100 rounded-top-3 border border-bottom-0"
-              style={{ height: "300px" }}
-            ></Box>
-
-            <Box className="border border-top-0 py-3 rounded-bottom-3 w-100 mb-4">
+            <Box className="w-100 rounded-3">
+              <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
+            </Box>
+            <Box className="border py-3 rounded-bottom-3 w-100 mb-4">
               <div
                 className="px-3 border-bottom pb-3"
                 onMouseEnter={() => setCopyIconVisible(true)}
@@ -568,7 +588,7 @@ const ListingDetailsPage = () => {
                           lineHeight="18px"
                           weight="400"
                         >
-                          {jsonData.addressFromLatLng || googleAddress.address}
+                          {googleAddress.address}
                         </Typography>
                       </div>
                       <GenericButton
@@ -705,15 +725,20 @@ const ListingDetailsPage = () => {
               </div>
 
               <Box className="pt-3 px-3 d-flex justify-content-sm-start justify-content-center gap-2 w-100">
-                {listingDetailSocial.map((items) => (
+                {listingDetailSocial.map((items, index) => (
                   <Box
+                    key={index}
                     width="44px"
                     height="44px"
                     className="border rounded-5 listing-detail-social"
                   >
                     <a
                       className="w-100 h-100 rounded-5 d-flex align-items-center justify-content-center"
-                      href={items.link}
+                      // href={items.link}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLinkClick(items.link);
+                      }}
                     >
                       {items.icon}
                     </a>
@@ -731,7 +756,10 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative">
-              <ClaimListingSection />
+              <ClaimListingSection
+                profileTitle={profileTitle}
+                googleAddress={googleAddress}
+              />
               <img
                 width={120}
                 src={IMAGES.CLAIM_LISTING_IMG}

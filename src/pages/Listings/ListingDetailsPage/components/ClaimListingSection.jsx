@@ -71,7 +71,7 @@ const ClaimListingSection = ({ profileTitle, googleAddress }) => {
         <GenericButton onClick={OpenModal} width="100%" height="44px">
           Claim this Listing
         </GenericButton>
-        <LinkButton text="Find another listing" />
+        {/* <LinkButton text="Find another listing" /> */}
       </div>
 
       {exploreModalState && (

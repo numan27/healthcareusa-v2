@@ -26,7 +26,7 @@ const Listings = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingType, setLoadingType] = useState("initial"); // New state for loading type
-  const [areaRange, setAreaRange] = useState("");
+  const [areaRange, setAreaRange] = useState(10);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,11 +38,28 @@ const Listings = () => {
   const fetchRequestRef = useRef(null);
 
   useEffect(() => {
+    if (location.state?.fromListingsPage) {
+      setSearchKeywordsState(location.state.searchKeywordsState);
+      setAreaRange(location.state.areaRange);
+      setSelectedOptions(location.state.selectedOptions);
+      setCurrentPage(location.state.currentPage);
+      setProfiles(location.state.profiles); // Set profiles from state
+      setFilteredProfiles(location.state.filteredProfiles); // Set filtered profiles from state
+      setLoading(false); // Skip loading
+    } else {
+      // Perform the initial fetch if not navigating back from listing details
+      setLoadingType("initial");
+      setLoading(true);
+      fetchData({ searchKeywordsState, areaRange, place, currentPage });
+    }
+  }, [location.state]);
+
+  useEffect(() => {
     if (searchKeywords) {
       setSearchKeywordsState(searchKeywords);
     }
     if (place) {
-      setAreaRange([place.lat, place.lng]);
+      setAreaRange(10); // Set default radius value
     }
   }, [searchKeywords, place]);
 
@@ -114,7 +131,7 @@ const Listings = () => {
           return {
             id: profile.id,
             profileImg:
-              profile.featured_media_url || IMAGES.DOCTOR_LIST_PROFILE, // Use the fetched media URL
+              profile.featured_media_url || IMAGES.DOCTOR_LIST_PROFILE,
             title: profile.title.rendered,
             designation:
               profile?.cubewp_post_meta?.["cwp_field_40228862441"]
@@ -127,10 +144,10 @@ const Listings = () => {
               profile?.cubewp_post_meta?.[
                 "cwp_field_136461069401"
               ]?.meta_value?.split(", ") || [],
-            qualifications:
-              profile?.cubewp_post_meta?.[
-                "cwp_field_930729608352"
-              ]?.meta_value?.split(", ") || [],
+            // qualifications:
+            //   profile?.cubewp_post_meta?.[
+            //     "cwp_field_930729608352"
+            //   ]?.meta_value?.split(", ") || [],
             gender:
               profile?.cubewp_post_meta?.["cwp_field_224925973684"]
                 ?.meta_value || "N/A",
@@ -160,17 +177,15 @@ const Listings = () => {
     [profilesPerPage]
   );
 
-  // Ensure fetchData is called on initial render
   useEffect(() => {
     setLoadingType("initial");
     setLoading(true);
-    fetchData({ searchKeywordsState, areaRange, place, currentPage });
+    fetchData({ searchKeywordsState, place, currentPage });
   }, []); // Empty dependency array to run only once on initial render
 
   // Ensure fetchData is called whenever place, areaRange, or currentPage changes
   useEffect(() => {
     setLoadingType("initial");
-    setLoading(true);
     fetchData({ searchKeywordsState, areaRange, place, currentPage });
   }, [areaRange, place, currentPage, fetchData]);
 
@@ -195,10 +210,10 @@ const Listings = () => {
               return profile.languages.some((language) =>
                 filterValues.includes(language.toLowerCase())
               );
-            case "qualifications":
-              return profile.qualifications.some((qualification) =>
-                filterValues.includes(qualification.toLowerCase())
-              );
+            // case "qualifications":
+            //   return profile.qualifications.some((qualification) =>
+            //     filterValues.includes(qualification.toLowerCase())
+            //   );
             case "gender":
               return filterValues.includes(profile.gender.toLowerCase());
             case "specialization":
@@ -251,15 +266,15 @@ const Listings = () => {
     setSearchKeywordsState(e.target.value);
   };
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
+  const handleSearchButton = () => {
     setCurrentPage(1);
     setLoadingType("search");
     setLoading(true);
     fetchData({ searchKeywordsState, areaRange, place, currentPage: 1 });
   };
 
-  const handleSearchButton = () => {
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
     setCurrentPage(1);
     setLoadingType("search");
     setLoading(true);
@@ -285,7 +300,7 @@ const Listings = () => {
   return (
     <AppLayout>
       <Container className="min-vh-100">
-        <div className="mt-5">
+        {/* <div className="mt-5">
           {place && (
             <>
               <p>
@@ -309,7 +324,7 @@ const Listings = () => {
               </p>
             </>
           )}
-        </div>
+        </div> */}
         <div>
           <AdsSection margin={4} />
         </div>
@@ -363,19 +378,10 @@ const Listings = () => {
                       defaultValue={areaRange}
                       min={0}
                       max={500}
-                      step={0.1}
+                      step={1}
                       value={areaRange}
-                      onChange={(value) => {
-                        setAreaRange(value);
-                        debounceFetchData({
-                          searchKeywordsState,
-                          areaRange: value,
-                          place,
-                          currentPage: 1,
-                        });
-                      }}
+                      onChange={(value) => setAreaRange(value)}
                     />
-                    {loadingType === "areaRange" && loading && <LoaderCenter />}
                   </Col>
 
                   <Col md={6} className="d-flex align-items-center">
@@ -433,7 +439,7 @@ const Listings = () => {
                   lineHeight="26px"
                 >
                   <span className="text-dark">{filteredProfiles.length}</span>{" "}
-                  search result for{" "}
+                  search result{" "}
                   <span className="fw-bold">{searchKeywords} </span> in
                   <span className="fw-bold"> {place?.address} </span>
                 </Typography>
@@ -466,16 +472,27 @@ const Listings = () => {
 
             <div>
               {filteredProfiles.length > 0 ? (
-                filteredProfiles.map((profileItem) => (
-                  <ProfileCard
-                    key={profileItem.id}
-                    enableSponsoredProfile
-                    columnPadding
-                    singleProfile={profileItem}
-                  />
-                ))
+                filteredProfiles.slice(0, 2).map(
+                  (
+                    profileItem // Render only first 2 profiles
+                  ) => (
+                    <ProfileCard
+                      key={profileItem.id}
+                      enableSponsoredProfile
+                      columnPadding
+                      singleProfile={profileItem}
+                      searchKeywordsState={searchKeywordsState}
+                      areaRange={areaRange}
+                      place={place}
+                      currentPage={currentPage}
+                      selectedOptions={selectedOptions}
+                    />
+                  )
+                )
               ) : (
-                <Typography>No profiles found</Typography>
+                <Typography size="24px" weight="600">
+                  No profiles found
+                </Typography>
               )}
             </div>
 
@@ -498,6 +515,11 @@ const Listings = () => {
                   <ProfileCard
                     key={profileItem.id}
                     singleProfile={profileItem}
+                    searchKeywordsState={searchKeywordsState}
+                    areaRange={areaRange}
+                    place={place}
+                    currentPage={currentPage}
+                    selectedOptions={selectedOptions}
                   />
                 ))}
               </div>

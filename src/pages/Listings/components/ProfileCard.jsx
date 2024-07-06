@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   GenericBadge,
@@ -6,7 +6,7 @@ import {
   Typography,
 } from "../../../components/GenericComponents";
 import { Col, Row } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import PhoneCircleIcon from "../../../assets/SVGs/PhoneCircle";
 import MapIcon from "../../../assets/SVGs/Map";
 import CallIcon from "../../../assets/SVGs/Call";
@@ -20,8 +20,16 @@ const ProfileCard = ({
   enableSponsoredProfile,
   columnPadding,
   singleProfile,
+  searchKeywordsState,
+  areaRange,
+  place,
+  currentPage,
+  selectedOptions,
+  profiles,
+  filteredProfiles,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   if (!singleProfile) {
     return null;
@@ -41,7 +49,30 @@ const ProfileCard = ({
 
   const handleNavigate = (event, id) => {
     event.preventDefault();
-    navigate(`/listing-details/${id}`);
+    const { search } = location;
+    navigate(`/listing-details/${id}${search}`, {
+      state: {
+        fromListingsPage: true,
+        searchParams: search,
+        searchKeywordsState,
+        areaRange,
+        place,
+        currentPage,
+        selectedOptions,
+        profiles,
+        filteredProfiles,
+      },
+    });
+  };
+
+  const formatAddress = (address) => {
+    if (!address) return "";
+    const parts = address.split(", ");
+    if (parts.length === 3) {
+      const [street, city, stateZip] = parts;
+      return `${street}\n${city}, ${stateZip}`;
+    }
+    return address;
   };
 
   return (
@@ -95,7 +126,11 @@ const ProfileCard = ({
                       borderColor="transparent"
                     />
                     <GenericBadge
-                      text={Array.isArray(languages) ? languages.join(', ') : languages}
+                      text={
+                        Array.isArray(languages)
+                          ? languages.join(", ")
+                          : languages
+                      }
                       fontSize="12px"
                       weight="500"
                       color="#64666C"
@@ -125,7 +160,9 @@ const ProfileCard = ({
                       size="14px"
                       lineHeight="16px"
                     >
-                      {Array.isArray(languages) ? languages.join(', ') : languages}
+                      {Array.isArray(languages)
+                        ? languages.join(", ")
+                        : languages}
                     </Typography>
                   </div>
                 )}
@@ -156,7 +193,7 @@ const ProfileCard = ({
                       size="14px"
                       lineHeight="18px"
                     >
-                      {address}
+                      {formatAddress(address)}
                     </Typography>
                   </Box>
                 </div>

@@ -2,6 +2,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Container, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
 import { LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import {
   FaFacebookF,
   FaLinkedin,
@@ -31,6 +32,7 @@ import ClaimListingSection from "./components/ClaimListingSection";
 import axios from "axios";
 import styled from "styled-components";
 import { LoaderCenter } from "../../../assets/Loader";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 const StyledPopover = styled(Popover)`
   max-width: 200px;
@@ -121,6 +123,30 @@ const ListingDetailsPage = () => {
     return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
+  const ProfileMap = ({ coordinates }) => {
+    const mapContainerStyle = {
+      height: "300px",
+      width: "100%",
+    };
+
+    const center = {
+      lat: coordinates[0],
+      lng: coordinates[1],
+    };
+
+    return (
+      <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          center={center}
+          zoom={13}
+        >
+          <Marker position={center} />
+        </GoogleMap>
+      </LoadScript>
+    );
+  };
+
   const description =
     jsonData.cubewp_post_meta?.["cwp_field_288766456392"]?.meta_value ||
     "Description not available";
@@ -194,7 +220,11 @@ const ListingDetailsPage = () => {
   };
 
   const cubewpPostMeta = jsonData.cubewp_post_meta || [];
-  const googleAddress = cubewpPostMeta["fc-google-address"]?.meta_value || [];
+  const googleAddress = cubewpPostMeta["fc-google-address"]?.meta_value || {};
+  const latitude = parseFloat(googleAddress.lat);
+  const longitude = parseFloat(googleAddress.lng);
+
+  const isValidCoordinates = !isNaN(latitude) && !isNaN(longitude);
 
   const copyToClipboard = () => {
     navigator.clipboard
@@ -245,9 +275,44 @@ const ListingDetailsPage = () => {
   console.log("jsonData", jsonData);
   console.log("doctorLanguages", doctorLanguages);
 
+  const handleBackToListings = () => {
+    navigate("/listings", {
+      state: {
+        fromListingsPage: true,
+        searchKeywordsState: location.state.searchKeywordsState,
+        areaRange: location.state.areaRange,
+        place: location.state.place,
+        currentPage: location.state.currentPage,
+        selectedOptions: location.state.selectedOptions,
+        profiles: location.state.profiles, // Preserve profiles
+        filteredProfiles: location.state.filteredProfiles, // Preserve filtered profiles
+      },
+    });
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <AppLayout>
       <Container className="min-vh-100 pt-4 pb-5">
+        {jsonData && (
+          <GenericButton
+            background="transparent"
+            color="#000"
+            hoverBgColor="transparent"
+            hoverColor="#000"
+            border="0"
+            padding="0"
+            height="fit-content"
+            onClick={handleBackToListings}
+            className="mb-4"
+          >
+            <FaArrowLeftLong size={28} /> Back to Listings
+          </GenericButton>
+        )}
+
         <Row>
           {/* Left Content */}
           <Col lg={9}>
@@ -530,9 +595,17 @@ const ListingDetailsPage = () => {
             className="pb-4"
           >
             {/* Google Map */}
-            <Box className="w-100 rounded-3">
-              <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
+            <Box className="w-100 rounded-3" style={{ height: "300px" }}>
+              {isValidCoordinates ? (
+                <ProfileMap coordinates={[latitude, longitude]} />
+              ) : (
+                <LoaderCenter />
+              )}
             </Box>
+
+            {/* <Box className="w-100 rounded-3">
+              <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
+            </Box> */}
             <Box className="border py-3 rounded-bottom-3 w-100 mb-4">
               <div
                 className="px-3 border-bottom pb-3"
@@ -716,7 +789,7 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border py-4 px-3">
-              <ContactForm />
+              <ContactForm profileTitle={profileTitle} />
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative">

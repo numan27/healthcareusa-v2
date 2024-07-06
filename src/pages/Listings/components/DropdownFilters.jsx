@@ -21,7 +21,7 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
           const dropdownLabels = [
             "Gender",
             "Languages",
-            "Qualifications",
+            // "Qualifications",
             "Specialization",
           ];
 
