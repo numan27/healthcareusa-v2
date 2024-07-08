@@ -55,12 +55,20 @@ const ListingDetailsPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
-  // const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
-  const [jsonData, setJsonData] = useState({});
+  const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const jsonDataString = params.get("profile");
+    if (jsonDataString) {
+      const parsedData = JSON.parse(decodeURIComponent(jsonDataString));
+      setJsonData(parsedData);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const fetchListingData = async () => {
@@ -284,15 +292,15 @@ const ListingDetailsPage = () => {
         place: location.state.place,
         currentPage: location.state.currentPage,
         selectedOptions: location.state.selectedOptions,
-        profiles: location.state.profiles, // Preserve profiles
-        filteredProfiles: location.state.filteredProfiles, // Preserve filtered profiles
+        profiles: location.state.profiles,
+        filteredProfiles: location.state.filteredProfiles,
       },
     });
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  // }, []);
 
   return (
     <AppLayout>

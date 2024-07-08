@@ -18,20 +18,21 @@ import axios from "axios";
 import IMAGES from "../../assets/images";
 import NavigateToListings from "../AdScreens/NavigateToListings";
 import DropdownFilter from "./components/DropdownFilters";
-import PaginationComponent from "../../components/PaginationComponent";
 import { LoaderCenter } from "../../assets/Loader";
 import { FaTimes } from "react-icons/fa";
+import Pagination from "../../components/PaginationComponent";
 
 const Listings = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingType, setLoadingType] = useState("initial"); // New state for loading type
+  const [loadingType, setLoadingType] = useState("initial");
   const [areaRange, setAreaRange] = useState(10);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0); // Changed to 0-based index for ReactPaginate
+  const [totalPages, setTotalPages] = useState(1);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  const profilesPerPage = 10;
+  const profilesPerPage = 10; // Displaying 10 profiles per page
 
   const location = useLocation();
   const { searchKeywords, place } = location.state || {};
@@ -43,11 +44,10 @@ const Listings = () => {
       setAreaRange(location.state.areaRange);
       setSelectedOptions(location.state.selectedOptions);
       setCurrentPage(location.state.currentPage);
-      setProfiles(location.state.profiles); // Set profiles from state
-      setFilteredProfiles(location.state.filteredProfiles); // Set filtered profiles from state
-      setLoading(false); // Skip loading
+      setProfiles(location.state.profiles);
+      setFilteredProfiles(location.state.filteredProfiles);
+      setLoading(false);
     } else {
-      // Perform the initial fetch if not navigating back from listing details
       setLoadingType("initial");
       setLoading(true);
       fetchData({ searchKeywordsState, areaRange, place, currentPage });
@@ -59,7 +59,7 @@ const Listings = () => {
       setSearchKeywordsState(searchKeywords);
     }
     if (place) {
-      setAreaRange(10); // Set default radius value
+      setAreaRange(10);
     }
   }, [searchKeywords, place]);
 
@@ -80,8 +80,8 @@ const Listings = () => {
         "cwp_query[fc-google-address]": params.place?.address || "",
         "cwp_query[fc-google-address_lat]": params.place?.lat || "",
         "cwp_query[fc-google-address_lng]": params.place?.lng || "",
-        "cwp_query[posts_per_page]": profilesPerPage,
-        "cwp_query[paged]": params.currentPage,
+        "cwp_query[posts_per_page]": 100, // Fetch 100 profiles per request
+        "cwp_query[paged]": params.currentPage + 1, // Adjust for 1-based page index in API
       }).toString();
 
       try {
@@ -102,7 +102,6 @@ const Listings = () => {
           );
           const detailedProfile = detailedResponse.data;
 
-          // Fetch featured media if available
           if (detailedProfile.featured_media) {
             try {
               const mediaResponse = await axios.get(
@@ -144,10 +143,6 @@ const Listings = () => {
               profile?.cubewp_post_meta?.[
                 "cwp_field_136461069401"
               ]?.meta_value?.split(", ") || [],
-            // qualifications:
-            //   profile?.cubewp_post_meta?.[
-            //     "cwp_field_930729608352"
-            //   ]?.meta_value?.split(", ") || [],
             gender:
               profile?.cubewp_post_meta?.["cwp_field_224925973684"]
                 ?.meta_value || "N/A",
@@ -164,6 +159,9 @@ const Listings = () => {
           };
         });
 
+        const totalProfiles = parseInt(response.headers["x-wp-total"], 10);
+        setTotalPages(Math.ceil(totalProfiles / profilesPerPage)); // Total pages based on 10 profiles per page
+
         setProfiles(transformedProfileData);
         setFilteredProfiles(transformedProfileData);
         setLoading(false);
@@ -174,22 +172,20 @@ const Listings = () => {
         }
       }
     }, 300),
-    [profilesPerPage]
+    []
   );
 
   useEffect(() => {
     setLoadingType("initial");
     setLoading(true);
     fetchData({ searchKeywordsState, place, currentPage });
-  }, []); // Empty dependency array to run only once on initial render
+  }, []);
 
-  // Ensure fetchData is called whenever place, areaRange, or currentPage changes
   useEffect(() => {
     setLoadingType("initial");
     fetchData({ searchKeywordsState, areaRange, place, currentPage });
   }, [areaRange, place, currentPage, fetchData]);
 
-  // Adjust the center variable to handle the case where place is not defined
   const center = {
     lat: place?.lat || 0,
     lng: place?.lng || 0,
@@ -210,10 +206,6 @@ const Listings = () => {
               return profile.languages.some((language) =>
                 filterValues.includes(language.toLowerCase())
               );
-            // case "qualifications":
-            //   return profile.qualifications.some((qualification) =>
-            //     filterValues.includes(qualification.toLowerCase())
-            //   );
             case "gender":
               return filterValues.includes(profile.gender.toLowerCase());
             case "specialization":
@@ -232,64 +224,47 @@ const Listings = () => {
     applyFilters();
   }, [profiles, selectedOptions]);
 
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-    setLoadingType("pagination");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState,
-      areaRange,
-      place,
-      currentPage: currentPage + 1,
-    });
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => prevPage - 1);
-    setLoadingType("pagination");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState,
-      areaRange,
-      place,
-      currentPage: currentPage - 1,
-    });
-  };
-
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-    borderRadius: "8px",
-  };
-
   const handleSearchKeywordsChange = (e) => {
     setSearchKeywordsState(e.target.value);
   };
 
   const handleSearchButton = () => {
-    setCurrentPage(1);
+    setCurrentPage(0);
     setLoadingType("search");
     setLoading(true);
-    fetchData({ searchKeywordsState, areaRange, place, currentPage: 1 });
+    fetchData({ searchKeywordsState, areaRange, place, currentPage: 0 });
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    setCurrentPage(1);
+    setCurrentPage(0);
     setLoadingType("search");
     setLoading(true);
-    fetchData({ searchKeywordsState, areaRange, place, currentPage: 1 });
+    fetchData({ searchKeywordsState, areaRange, place, currentPage: 0 });
   };
 
   const handleResetSearch = () => {
     setSearchKeywordsState("");
-    setCurrentPage(1);
+    setCurrentPage(0);
     setLoadingType("search");
     setLoading(true);
-    fetchData({ searchKeywordsState: "", areaRange, place, currentPage: 1 });
+    fetchData({ searchKeywordsState: "", areaRange, place, currentPage: 0 });
   };
 
-  if (loading && (loadingType === "initial" || loadingType === "pagination")) {
+  const topRef = useRef(null);
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+    setLoading(false);
+    fetchData({ searchKeywordsState, areaRange, place, currentPage: selected });
+
+    // Scroll smoothly to the top of the container on page change
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  if (loading && loadingType === "initial") {
     return (
       <div>
         <NavigateToListings />
@@ -297,34 +272,17 @@ const Listings = () => {
     );
   }
 
+  const containerStyle = {
+    width: "100%",
+    height: "400px",
+    borderRadius: "8px",
+  };
+
+  const pageCount = Math.ceil(filteredProfiles.length / profilesPerPage);
+
   return (
     <AppLayout>
-      <Container className="min-vh-100">
-        {/* <div className="mt-5">
-          {place && (
-            <>
-              <p>
-                Search Keywords:
-                <span className="fw-bold ms-2">{searchKeywords}</span>
-              </p>
-              <p>
-                <span>{place.title}</span>
-                <div>
-                  <span className="">Address:</span>
-                  <span className="fw-bold ms-2">{place.address}</span>
-                </div>
-                <div>
-                  <span className="">Latitude:</span>
-                  <span className="fw-bold ms-2">{place.lat}</span>
-                </div>
-                <div>
-                  <span className="">Longitude:</span>
-                  <span className="fw-bold ms-2"> {place.lng}</span>
-                </div>
-              </p>
-            </>
-          )}
-        </div> */}
+      <Container ref={topRef} className="min-vh-100">
         <div>
           <AdsSection margin={4} />
         </div>
@@ -511,17 +469,22 @@ const Listings = () => {
               </Typography>
 
               <div className="mt-3">
-                {filteredProfiles.map((profileItem) => (
-                  <ProfileCard
-                    key={profileItem.id}
-                    singleProfile={profileItem}
-                    searchKeywordsState={searchKeywordsState}
-                    areaRange={areaRange}
-                    place={place}
-                    currentPage={currentPage}
-                    selectedOptions={selectedOptions}
-                  />
-                ))}
+                {filteredProfiles
+                  .slice(
+                    currentPage * profilesPerPage,
+                    (currentPage + 1) * profilesPerPage
+                  )
+                  .map((profileItem) => (
+                    <ProfileCard
+                      key={profileItem.id}
+                      singleProfile={profileItem}
+                      searchKeywordsState={searchKeywordsState}
+                      areaRange={areaRange}
+                      place={place}
+                      currentPage={currentPage}
+                      selectedOptions={selectedOptions}
+                    />
+                  ))}
               </div>
             </div>
           </Col>
@@ -572,13 +535,12 @@ const Listings = () => {
           </Col>
         </Row>
 
-        <div className="d-flex justify-content-end mb-4">
-          <PaginationComponent
+        <div className="d-flex justify-content-end mt-5">
+          <Pagination
+            pageCount={pageCount}
+            onPageChange={handlePageClick}
             currentPage={currentPage}
-            handleNextPage={handleNextPage}
-            handlePrevPage={handlePrevPage}
-            listingProfiles={profiles}
-            profilesPerPage={profilesPerPage}
+            filteredProfiles={filteredProfiles}
           />
         </div>
       </Container>

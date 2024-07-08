@@ -49,11 +49,9 @@ const ProfileCard = ({
 
   const handleNavigate = (event, id) => {
     event.preventDefault();
-    const { search } = location;
-    navigate(`/listing-details/${id}${search}`, {
+    navigate(`/listing-details/${id}`, {
       state: {
         fromListingsPage: true,
-        searchParams: search,
         searchKeywordsState,
         areaRange,
         place,

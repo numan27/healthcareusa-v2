@@ -10,7 +10,7 @@ const PaginatedListings = () => {
   useEffect(() => {
     const fetchListings = async () => {
       const url =
-        "https://jsappone.demowp.io/wp-json/wp/v2/listing?per_page=100";
+        "https://jsappone.demowp.io/wp-json/wp/v2/listing";
       try {
         const response = await axios.get(url);
         const profileData = response.data;

@@ -20,7 +20,6 @@ import NavigateToListings from "../AdScreens/NavigateToListings";
 import DropdownFilter from "./components/DropdownFilters";
 import { LoaderCenter } from "../../assets/Loader";
 import { FaTimes } from "react-icons/fa";
-// import ReactPaginate from "react-paginate";
 import Pagination from "../../components/PaginationComponent";
 
 const Listings = () => {
@@ -279,7 +278,7 @@ const Listings = () => {
     borderRadius: "8px",
   };
 
-  const pageCount = Math.ceil(filteredProfiles.length / profilesPerPage);
+  const pageCount = Math.ceil(filteredProfiles?.length / profilesPerPage);
 
   return (
     <AppLayout>
@@ -397,7 +396,7 @@ const Listings = () => {
                   size="16px"
                   lineHeight="26px"
                 >
-                  <span className="text-dark">{filteredProfiles.length}</span>{" "}
+                  <span className="text-dark">{filteredProfiles?.length}</span>{" "}
                   search result{" "}
                   <span className="fw-bold">{searchKeywords} </span> in
                   <span className="fw-bold"> {place?.address} </span>
@@ -430,8 +429,8 @@ const Listings = () => {
             </div>
 
             <div>
-              {filteredProfiles.length > 0 ? (
-                filteredProfiles.slice(0, 2).map(
+              {filteredProfiles?.length > 0 ? (
+                filteredProfiles?.slice(0, 2).map(
                   (
                     profileItem // Render only first 2 profiles
                   ) => (
@@ -471,7 +470,7 @@ const Listings = () => {
 
               <div className="mt-3">
                 {filteredProfiles
-                  .slice(
+                  ?.slice(
                     currentPage * profilesPerPage,
                     (currentPage + 1) * profilesPerPage
                   )
@@ -509,7 +508,7 @@ const Listings = () => {
                     center={center}
                     zoom={place ? 10 : 2}
                   >
-                    {filteredProfiles.map(
+                    {filteredProfiles?.map(
                       (profile) =>
                         profile.lat &&
                         profile.lng && (

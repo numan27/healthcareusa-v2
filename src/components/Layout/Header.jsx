@@ -26,23 +26,23 @@ const Header = () => {
 
   const auth = localStorage.getItem("token");
 
+  const menuPaths = {
+    Home: PATH.HOME,
+    "About Us": PATH.ABOUT,
+    Blog: PATH.BLOGS,
+    "Contact Us": PATH.CONTACT,
+    Resources: PATH.RESOURCES,
+  };
+
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        // const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144', {
-        //   headers: {
-        //     'Authorization': 'Basic ' + btoa('username:password')
-        //   }
-        // });
-
         const response = await axios.get(
           "https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144",
           {
             auth: {
               username: "numankhalil27@gmail.com",
               password: "findhealthcareusa",
-              // password: '4fNF0pEpIz6wmXPlwmbbmwvP' new
-              // password: 'ugyzaq3R2uODAxA8B0NQ2Q18'
             },
           }
         );
@@ -67,8 +67,6 @@ const Header = () => {
     setSignUpModalShow(false);
     setSignInModalShow(true);
   };
-
-  const SITE_DOMAIN = "https://jsappone.demowp.io";
 
   const handleNavigateListingSubmission = () => {
     if (auth) {
@@ -144,24 +142,10 @@ const Header = () => {
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ms-auto">
-                  {/* {menus.map((menu, index) => {
-                    const isActive = location.pathname === '/' && menu.title.rendered === 'Home' || (menu.url && location.pathname === `/${menu.slug}`);
-                    return (
-                      <Link key={index} to={menu.title.rendered === "Home" ? '/' : `/${menu.url}`} className={`nav-link navLink ${isActive ? 'active' : ''}`}>
-                        {menu.title.rendered}
-                      </Link>
-                    );
-                  })} */}
-
                   {menus.map((menu, index) => {
-                    const linkTo =
-                      menu.title.rendered === "Home"
-                        ? PATH.HOME
-                        : `${SITE_DOMAIN}${menu.url}`;
+                    const linkTo = menuPaths[menu.title.rendered];
                     const isActive =
-                      (location.pathname === "/" &&
-                        menu.title.rendered === "Home") ||
-                      (menu.url && location.pathname === `/${menu.slug}`);
+                      location.pathname === menuPaths[menu.title.rendered];
                     return (
                       <Link
                         key={index}

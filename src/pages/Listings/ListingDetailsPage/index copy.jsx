@@ -2,6 +2,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Container, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
 import { LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import {
   FaFacebookF,
   FaLinkedin,
@@ -54,12 +55,21 @@ const ListingDetailsPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
-  // const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
-  const [jsonData, setJsonData] = useState({});
+  const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
+  // const [jsonData, setJsonData] = useState({});
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const jsonDataString = params.get("profile");
+    if (jsonDataString) {
+      const parsedData = JSON.parse(decodeURIComponent(jsonDataString));
+      setJsonData(parsedData);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const fetchListingData = async () => {
@@ -120,6 +130,30 @@ const ListingDetailsPage = () => {
 
   const truncateText = (text, length) => {
     return text.length > length ? text.substring(0, length) + "..." : text;
+  };
+
+  const ProfileMap = ({ coordinates }) => {
+    const mapContainerStyle = {
+      height: "300px",
+      width: "100%",
+    };
+
+    const center = {
+      lat: coordinates[0],
+      lng: coordinates[1],
+    };
+
+    return (
+      <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          center={center}
+          zoom={13}
+        >
+          <Marker position={center} />
+        </GoogleMap>
+      </LoadScript>
+    );
   };
 
   const description =
@@ -195,7 +229,11 @@ const ListingDetailsPage = () => {
   };
 
   const cubewpPostMeta = jsonData.cubewp_post_meta || [];
-  const googleAddress = cubewpPostMeta["fc-google-address"]?.meta_value || [];
+  const googleAddress = cubewpPostMeta["fc-google-address"]?.meta_value || {};
+  const latitude = parseFloat(googleAddress.lat);
+  const longitude = parseFloat(googleAddress.lng);
+
+  const isValidCoordinates = !isNaN(latitude) && !isNaN(longitude);
 
   const copyToClipboard = () => {
     navigator.clipboard
@@ -566,9 +604,17 @@ const ListingDetailsPage = () => {
             className="pb-4"
           >
             {/* Google Map */}
-            <Box className="w-100 rounded-3">
-              <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
+            <Box className="w-100 rounded-3" style={{ height: "300px" }}>
+              {isValidCoordinates ? (
+                <ProfileMap coordinates={[latitude, longitude]} />
+              ) : (
+                <LoaderCenter />
+              )}
             </Box>
+
+            {/* <Box className="w-100 rounded-3">
+              <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
+            </Box> */}
             <Box className="border py-3 rounded-bottom-3 w-100 mb-4">
               <div
                 className="px-3 border-bottom pb-3"
@@ -752,7 +798,7 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border py-4 px-3">
-              <ContactForm />
+              <ContactForm profileTitle={profileTitle} />
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative">
