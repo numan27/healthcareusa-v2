@@ -173,7 +173,7 @@ const Header = () => {
                         color="#fff"
                         hoverColor="#fff"
                         hoverBgColor="#B22234"
-                        className=""
+                        className="me-1"
                       >
                         Logout
                         <LoginIcon color="#fff" flipHorizontal />
@@ -186,7 +186,7 @@ const Header = () => {
                         color="#06312E"
                         hoverColor="#06312E"
                         hoverBgColor="#dbdbdb"
-                        className=""
+                        className="me-1"
                       >
                         <LoginIcon /> Sign In
                       </GenericButton>
