@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ReactPaginate from "react-paginate";
+import { Link } from "react-router-dom";
 
-const PaginatedListings = () => {
+const PaginatedListings = ({ selectedCategory }) => {
   const [fetchedListings, setFetchedListings] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchListings = async () => {
-      const url =
-        "https://jsappone.demowp.io/wp-json/wp/v2/listing";
+      if (!selectedCategory) return;
+
+      const url = `https://jsappone.demowp.io/wp-json/wp/v2/listing?taxonomies=${selectedCategory}&per_page=100`; // Adjust the URL to filter by taxonomy
       try {
         const response = await axios.get(url);
         const profileData = response.data;
@@ -61,6 +63,8 @@ const PaginatedListings = () => {
           phone: profile.cubewp_post_meta["fc-phone"]?.meta_value || "N/A",
           comment_status: profile.comment_status || "N/A",
           status: profile.status || "N/A",
+          taxonomies: profile.taxonomies || [],
+          slug: profile.slug,
         }));
 
         setFetchedListings(transformedProfileData);
@@ -70,7 +74,7 @@ const PaginatedListings = () => {
     };
 
     fetchListings();
-  }, []);
+  }, [selectedCategory]);
 
   // Calculate the data to be displayed on the current page
   const offset = currentPage * itemsPerPage;
@@ -88,19 +92,20 @@ const PaginatedListings = () => {
       <ul>
         {currentPageData.map((item) => (
           <li key={item.id}>
-            <img
-              src={item.profileImg}
-              alt={item.title}
-              width={50}
-              height={50}
-            />
-            <div>
-              <h2>{item.title}</h2>
-              <p>{item.designation}</p>
-              <p>{item.address}</p>
-              <p>{item.phone}</p>
-              {/* Add more fields as needed */}
-            </div>
+            <Link to={`/add-listing/${item.slug}`}>
+              <img
+                src={item.profileImg}
+                alt={item.title}
+                width={50}
+                height={50}
+              />
+              <div>
+                <h2>{item.title}</h2>
+                <p>{item.designation}</p>
+                <p>{item.address}</p>
+                <p>{item.phone}</p>
+              </div>
+            </Link>
           </li>
         ))}
       </ul>

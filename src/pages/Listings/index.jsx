@@ -29,10 +29,11 @@ const Listings = () => {
   const [areaRange, setAreaRange] = useState(10);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [searchKeywordsState, setSearchKeywordsState] = useState("");
+  const [totalPosts, setTotalPosts] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Changed to 0-based index for ReactPaginate
   const [totalPages, setTotalPages] = useState(1);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  const profilesPerPage = 10; // Displaying 10 profiles per page
+  const profilesPerPage = 10;
 
   const location = useLocation();
   const { searchKeywords, place } = location.state || {};
@@ -80,8 +81,9 @@ const Listings = () => {
         "cwp_query[fc-google-address]": params.place?.address || "",
         "cwp_query[fc-google-address_lat]": params.place?.lat || "",
         "cwp_query[fc-google-address_lng]": params.place?.lng || "",
-        "cwp_query[posts_per_page]": 100, // Fetch 100 profiles per request
+        "cwp_query[posts_per_page]": profilesPerPage, // Fetch 10 profiles per request
         "cwp_query[paged]": params.currentPage + 1, // Adjust for 1-based page index in API
+        "cwp_query[page_num]": params.currentPage + 1, // Add page_num to query
       }).toString();
 
       try {
@@ -90,7 +92,7 @@ const Listings = () => {
           { cancelToken: source.token }
         );
 
-        const basicProfiles = response.data;
+        const basicProfiles = response.data.posts;
 
         if (!Array.isArray(basicProfiles)) {
           throw new Error("API response is not an array");
@@ -159,8 +161,9 @@ const Listings = () => {
           };
         });
 
-        const totalProfiles = parseInt(response.headers["x-wp-total"], 10);
-        setTotalPages(Math.ceil(totalProfiles / profilesPerPage)); // Total pages based on 10 profiles per page
+        const totalProfiles = response.data.total_posts;
+        setTotalPages(Math.ceil(totalProfiles / profilesPerPage)); // Total pages based on total posts
+        setTotalPosts(totalProfiles); // Set total posts
 
         setProfiles(transformedProfileData);
         setFilteredProfiles(transformedProfileData);
@@ -255,7 +258,7 @@ const Listings = () => {
 
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
-    setLoading(false);
+    setLoading(true); // Set loading to true to show a loader during the fetch
     fetchData({ searchKeywordsState, areaRange, place, currentPage: selected });
 
     // Scroll smoothly to the top of the container on page change
@@ -396,9 +399,8 @@ const Listings = () => {
                   size="16px"
                   lineHeight="26px"
                 >
-                  <span className="text-dark">{filteredProfiles?.length}</span>{" "}
-                  search result{" "}
-                  <span className="fw-bold">{searchKeywords} </span> in
+                  <span className="text-dark">{totalPosts}</span> search
+                  result(s) <span className="fw-bold">{searchKeywords} </span>in
                   <span className="fw-bold"> {place?.address} </span>
                 </Typography>
               ) : (
@@ -469,22 +471,17 @@ const Listings = () => {
               </Typography>
 
               <div className="mt-3">
-                {filteredProfiles
-                  ?.slice(
-                    currentPage * profilesPerPage,
-                    (currentPage + 1) * profilesPerPage
-                  )
-                  .map((profileItem) => (
-                    <ProfileCard
-                      key={profileItem.id}
-                      singleProfile={profileItem}
-                      searchKeywordsState={searchKeywordsState}
-                      areaRange={areaRange}
-                      place={place}
-                      currentPage={currentPage}
-                      selectedOptions={selectedOptions}
-                    />
-                  ))}
+                {profiles.map((profileItem) => (
+                  <ProfileCard
+                    key={profileItem.id}
+                    singleProfile={profileItem}
+                    searchKeywordsState={searchKeywordsState}
+                    areaRange={areaRange}
+                    place={place}
+                    currentPage={currentPage}
+                    selectedOptions={selectedOptions}
+                  />
+                ))}
               </div>
             </div>
           </Col>
@@ -537,10 +534,9 @@ const Listings = () => {
 
         <div className="d-flex justify-content-end mt-5">
           <Pagination
-            pageCount={pageCount}
+            pageCount={totalPages}
             onPageChange={handlePageClick}
             currentPage={currentPage}
-            filteredProfiles={filteredProfiles}
           />
         </div>
       </Container>

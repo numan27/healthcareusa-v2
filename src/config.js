@@ -14,6 +14,7 @@ const PATH = {
   CONTACT: "/contact",
   RESOURCES: "/resources",
   LISTINGS: "/listings",
+  // LISTINGS: "/listings/:categorySlug",
   LISTING_DETAILS: "/listing-details/:id",
   ADD_LISTING: "/add-listing",
   CLAIM_LISTING: "/claim-listing",
