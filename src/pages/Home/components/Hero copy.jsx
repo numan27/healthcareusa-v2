@@ -16,7 +16,6 @@ const Hero = () => {
   const [groupedListings, setGroupedListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [exploreModalItems, setExploreModalItems] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(""); // State for selected category
 
   const OpenModal = (heading, items) => {
     setExploreModalState(true);
@@ -171,8 +170,7 @@ const Hero = () => {
                               <li className="mb-2" key={itemIndex}>
                                 <Link
                                   className="text-decoration-none service-item transition-2"
-                                  to={PATH.ADD_LISTING}
-                                  onClick={() => setSelectedCategory(item.name)} // Set selected category on click
+                                  to={PATH.LISTINGS}
                                 >
                                   {item.name}
                                 </Link>

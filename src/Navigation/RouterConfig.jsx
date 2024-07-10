@@ -13,8 +13,8 @@ function RouterConfig() {
       {/* Protect Routes */}
       <Route element={<ProtectedRoute />}>
         <Route
-          path={PATH.ADD_LISTING}
-          element={<PublicRoute element={<WEB_PAGES.ADD_LISTING />} />}
+          path={PATH.ARCHIVE}
+          element={<PublicRoute element={<WEB_PAGES.ARCHIVE />} />}
         />
         <Route
           path={PATH.CLAIM_LISTING}

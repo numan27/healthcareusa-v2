@@ -11,7 +11,7 @@ const LISTINGS = React.lazy(() => import("./Listings"));
 const LISTING_DETAILS = React.lazy(() =>
   import("./Listings/ListingDetailsPage")
 );
-const ADD_LISTING = React.lazy(() => import("./AddListing"));
+const ARCHIVE = React.lazy(() => import("./Archive"));
 const CLAIM_LISTING = React.lazy(() => import("./ClaimListingSubmission"));
 const LISTING_SUBMISSION = React.lazy(() => import("./ListingSubmission"));
 const NAVIGATE_TO_LISTINGS = React.lazy(() =>
@@ -37,7 +37,7 @@ const WEB_PAGES = {
   CONTACT,
   LISTINGS,
   LISTING_DETAILS,
-  ADD_LISTING,
+  ARCHIVE,
   CLAIM_LISTING,
   LISTING_SUBMISSION,
   NAVIGATE_TO_LISTINGS,

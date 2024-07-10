@@ -1,7 +1,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { Col, Row } from "react-bootstrap";
 import { FiChevronRight } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Box, Typography } from "../../../components/GenericComponents";
 import ExploreMoreModal from "./ExploreMoreModal";
@@ -16,6 +16,12 @@ const Hero = () => {
   const [groupedListings, setGroupedListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [exploreModalItems, setExploreModalItems] = useState([]);
+
+  const navigate = useNavigate();
+
+  const handleNavigate = (item) => {
+    navigate(`/archive/${item.slug}`, { state: { selectedItem: item } });
+  };
 
   const OpenModal = (heading, items) => {
     setExploreModalState(true);
@@ -168,12 +174,13 @@ const Hero = () => {
                           <ul className="list-unstyled" key={columnIndex}>
                             {column.map((item, itemIndex) => (
                               <li className="mb-2" key={itemIndex}>
-                                <Link
+                                <span
                                   className="text-decoration-none service-item transition-2"
-                                  to={PATH.LISTINGS}
+                                  onClick={() => handleNavigate(item)}
+                                  style={{ cursor: "pointer" }}
                                 >
                                   {item.name}
-                                </Link>
+                                </span>
                               </li>
                             ))}
                           </ul>

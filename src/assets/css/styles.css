@@ -345,7 +345,7 @@ body {
 }
 
 .service-box h3,
-.service-box a,
+.service-box span,
 .service-box svg,
 .service-box img,
 .service-box .service-link,
@@ -354,13 +354,14 @@ body {
 }
 
 .service-box:hover h3,
-.service-box:hover a,
+.service-box:hover span,
 .service-box:hover .service-link,
 .service-box:hover svg {
     color: #fff !important;
 }
 
-.service-box a:hover {
+.service-box a:hover,
+.service-box span:hover {
     text-decoration: underline !important;
 }
 

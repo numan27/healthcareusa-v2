@@ -27,7 +27,7 @@ import { LoaderCenter } from "../../assets/Loader";
 import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
 
-const Listings = () => {
+const Archive = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingType, setLoadingType] = useState("initial");
@@ -38,20 +38,28 @@ const Listings = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  const [locationState, setLocationState] = useState("");
-  const [placeState, setPlaceState] = useState(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [placeState, setPlaceState] = useState(null);
+  const [locationState, setLocationState] = useState("");
+  const [latestQueryParams, setLatestQueryParams] = useState({});
+  const [showMap, setShowMap] = useState(false);
 
-  const autocompleteRef = useRef(null);
   const profilesPerPage = 10;
 
   const location = useLocation();
-  const { searchKeywords, place } = location.state || {};
+  const { selectedItem, searchKeywords, place } = location.state || {};
   const fetchRequestRef = useRef(null);
+  const locationPath = useLocation();
 
   const onLoad = useCallback((autocomplete) => {
-    autocompleteRef.current = autocomplete;
+    if (window.google) {
+      autocompleteRef.current = autocomplete;
+    } else {
+      console.error("Google Maps JavaScript API not loaded.");
+    }
   }, []);
+
+  const autocompleteRef = useRef(null);
 
   const onPlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -62,71 +70,83 @@ const Listings = () => {
         const address = placeResult.formatted_address;
         setPlaceState({ lat, lng, address });
         setLocationState(address);
-        setCurrentPage(0); // Reset current page to 0
-        setLoadingType("search");
-        setLoading(true);
-        fetchData({
-          searchKeywordsState,
-          areaRange,
-          place: { lat, lng, address },
-          currentPage: 0,
-        });
+        setShowMap(true); // Show map when location is selected
       } else {
         setPlaceState(null);
         setLocationState("");
+        setShowMap(false); // Hide map when no geometry is found
       }
     }
   };
 
+  // useEffect(() => {
+  //   if (location.state?.fromListingsPage) {
+  //     setSearchKeywordsState(location.state.searchKeywordsState);
+  //     setAreaRange(location.state.areaRange);
+  //     setSelectedOptions(location.state.selectedOptions);
+  //     setCurrentPage(location.state.currentPage);
+  //     setProfiles(location.state.profiles);
+  //     setFilteredProfiles(location.state.filteredProfiles);
+  //     setLoading(false);
+  //   } else {
+  //     setLoadingType("initial");
+  //     setLoading(true);
+  //     fetchData({ searchKeywordsState, areaRange, place, currentPage });
+  //   }
+  // }, [location.state]);
   useEffect(() => {
-    if (placeState) {
-      fetchData({
-        searchKeywordsState,
-        areaRange,
-        place: placeState,
-        currentPage,
-      });
-    }
-  }, [placeState]);
-
-  const handleResetLocation = () => {
-    setPlaceState(null);
-    setLocationState("");
-    setCurrentPage(0);
-    setLoadingType("initial");
-    setLoading(true);
-    const initialParams = {
-      searchKeywordsState,
-      areaRange,
-      currentPage: 0,
-    };
-    fetchData(initialParams);
-  };
-
-  useEffect(() => {
-    if (location.state?.fromListingsPage) {
-      setSearchKeywordsState(location.state.searchKeywordsState);
-      setAreaRange(location.state.areaRange);
-      setSelectedOptions(location.state.selectedOptions);
-      setCurrentPage(location.state.currentPage);
-      setProfiles(location.state.profiles);
-      setFilteredProfiles(location.state.filteredProfiles);
+    if (selectedItem) {
+      setLoading(true);
+      const filteredProfiles = profiles.filter((profile) =>
+        profile.taxonomies.some(
+          (taxonomy) =>
+            taxonomy.toLowerCase() === selectedItem.name.toLowerCase()
+        )
+      );
+      setFilteredProfiles(filteredProfiles);
       setLoading(false);
     } else {
-      setLoadingType("initial");
-      setLoading(true);
-      fetchData({ searchKeywordsState, areaRange, place, currentPage });
+      setFilteredProfiles(profiles);
     }
-  }, [location.state]);
+  }, [selectedItem, profiles]);
+
+  console.log("SelectedItem:", selectedItem);
 
   useEffect(() => {
-    if (searchKeywords) {
-      setSearchKeywordsState(searchKeywords);
+    if (locationPath.pathname === "/") {
+      setPlaceState(null);
+      setSearchKeywords("");
     }
-    if (place) {
-      setAreaRange(10);
+
+    // Fetch current location
+    if (navigator.geolocation) {
+      setIsLoadingLocation(true);
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg`
+        );
+        const data = await response.json();
+        if (data.results && data.results.length > 0) {
+          const address = data.results[0].formatted_address;
+          setPlaceState({ lat: latitude, lng: longitude, address });
+          setLocationState(address);
+        } else {
+          setLocationState("Current Location");
+        }
+        setIsLoadingLocation(false);
+      });
     }
-  }, [searchKeywords, place]);
+  }, [locationPath.pathname]);
+
+  // useEffect(() => {
+  //   if (searchKeywords) {
+  //     setSearchKeywordsState(searchKeywords);
+  //   }
+  //   if (place) {
+  //     setAreaRange(10);
+  //   }
+  // }, [searchKeywords, place]);
 
   const fetchData = useCallback(
     debounce(async (params) => {
@@ -136,6 +156,8 @@ const Listings = () => {
 
       const source = axios.CancelToken.source();
       fetchRequestRef.current = source;
+
+      setLatestQueryParams(params); // Store the latest query parameters
 
       const query = new URLSearchParams({
         "cwp_query[post_type]": "listing",
@@ -148,12 +170,12 @@ const Listings = () => {
         "cwp_query[posts_per_page]": profilesPerPage,
         "cwp_query[paged]": params.currentPage + 1,
         "cwp_query[page_num]": params.currentPage + 1,
+        "cwp_query[service]": selectedItem ? selectedItem.name : "",
       }).toString();
 
       try {
         const response = await axios.get(
-          `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`,
-          { cancelToken: source.token }
+          `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
         );
 
         const basicProfiles = response.data.posts;
@@ -222,6 +244,8 @@ const Listings = () => {
             phone: profile?.cubewp_post_meta?.["fc-phone"]?.meta_value || "N/A",
             comment_status: profile.comment_status || "N/A",
             status: profile.status || "N/A",
+            service: profile.service || [],
+            taxonomies: profile.taxonomies || [],
           };
         });
 
@@ -239,8 +263,22 @@ const Listings = () => {
         }
       }
     }, 300),
-    []
+    [selectedItem]
   );
+
+  useEffect(() => {
+    if (placeState) {
+      setLoadingType("location");
+      setLoading(true);
+      fetchData({
+        searchKeywordsState,
+        areaRange,
+        place: placeState,
+        currentPage: 0,
+      });
+      setShowMap(true); // Show map when location is set
+    }
+  }, [placeState, searchKeywordsState, areaRange, fetchData]);
 
   useEffect(() => {
     setLoadingType("initial");
@@ -250,16 +288,20 @@ const Listings = () => {
 
   useEffect(() => {
     setLoadingType("initial");
-    fetchData({ searchKeywordsState, areaRange, place, currentPage });
-  }, [areaRange, place, currentPage, fetchData]);
+    setLoading(true);
+    const initialParams = {
+      searchKeywordsState: searchKeywords || "",
+      areaRange,
+      place: place || null, // Use place if it's passed from the location state
+      currentPage,
+    };
+    setLatestQueryParams(initialParams);
+    fetchData(initialParams);
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const center = {
-    lat:
-      placeState?.lat ||
-      (filteredProfiles.length > 0 ? filteredProfiles[0].lat : 0),
-    lng:
-      placeState?.lng ||
-      (filteredProfiles.length > 0 ? filteredProfiles[0].lng : 0),
+    lat: place?.lat || 0,
+    lng: place?.lng || 0,
   };
 
   useEffect(() => {
@@ -289,11 +331,20 @@ const Listings = () => {
         });
       });
 
+      if (selectedItem) {
+        filtered = filtered.filter((profile) =>
+          profile.taxonomies.some(
+            (taxonomy) =>
+              taxonomy.toLowerCase() === selectedItem.name.toLowerCase()
+          )
+        );
+      }
+
       setFilteredProfiles(filtered);
     };
 
     applyFilters();
-  }, [profiles, selectedOptions]);
+  }, [profiles, selectedOptions, selectedItem]);
 
   const handleSearchKeywordsChange = (e) => {
     setSearchKeywordsState(e.target.value);
@@ -307,14 +358,6 @@ const Listings = () => {
     setCurrentPage(0);
     setLoadingType("search");
     setLoading(true);
-    fetchData({ searchKeywordsState, areaRange, place, currentPage: 0 });
-  };
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
     fetchData({
       searchKeywordsState,
       areaRange,
@@ -323,12 +366,29 @@ const Listings = () => {
     });
   };
 
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const newParams = {
+      searchKeywordsState,
+      areaRange,
+      place: placeState
+        ? placeState
+        : { address: locationState, lat: null, lng: null },
+      currentPage: 0,
+    };
+    setLatestQueryParams(newParams);
+    setCurrentPage(0);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData(newParams);
+  };
+
   const handleResetSearch = () => {
     setSearchKeywordsState("");
     setCurrentPage(0);
     setLoadingType("search");
     setLoading(true);
-    fetchData({ searchKeywordsState: "", areaRange, place, currentPage: 0 });
+    fetchData({ searchKeywordsState: "", areaRange, currentPage: 0 });
   };
 
   const topRef = useRef(null);
@@ -337,9 +397,7 @@ const Listings = () => {
     setCurrentPage(selected);
     setLoading(true);
     fetchData({
-      searchKeywordsState,
-      areaRange,
-      place: placeState,
+      ...latestQueryParams, // Use the latest query parameters
       currentPage: selected,
     });
 
@@ -348,13 +406,30 @@ const Listings = () => {
     }
   };
 
-  if (loading && loadingType === "initial") {
-    return (
-      <div>
-        <NavigateToListings />
-      </div>
-    );
-  }
+  const handleResetLocation = () => {
+    setPlaceState(null);
+    setLocationState("");
+    setCurrentPage(0);
+    setLoadingType("initial");
+    setLoading(true);
+    setShowMap(false); // Hide map when location is reset
+    const initialParams = {
+      searchKeywordsState,
+      areaRange,
+      place: null, // Reset to initial query without location
+      currentPage: 0,
+    };
+    setLatestQueryParams(initialParams);
+    fetchData(initialParams);
+  };
+
+  // if (loading && loadingType === "initial") {
+  //   return (
+  //     <div>
+  //       <NavigateToListings />
+  //     </div>
+  //   );
+  // }
 
   const containerStyle = {
     width: "100%",
@@ -517,7 +592,7 @@ const Listings = () => {
               />
 
               <div className="pt-3 mb-3">
-                {place ? (
+                {place || selectedItem ? (
                   <Typography
                     as="p"
                     color="#7B7B7B"
@@ -526,8 +601,7 @@ const Listings = () => {
                     lineHeight="26px"
                   >
                     <span className="text-dark">{totalPosts}</span> search
-                    result(s) <span className="fw-bold">{searchKeywords} </span>
-                    in
+                    result(s)
                     <span className="fw-bold"> {place?.address} </span>
                   </Typography>
                 ) : (
@@ -559,21 +633,19 @@ const Listings = () => {
 
               <div>
                 {filteredProfiles?.length > 0 ? (
-                  filteredProfiles
-                    ?.slice(0, 2)
-                    .map((profileItem) => (
-                      <ProfileCard
-                        key={profileItem.id}
-                        enableSponsoredProfile
-                        columnPadding
-                        singleProfile={profileItem}
-                        searchKeywordsState={searchKeywordsState}
-                        areaRange={areaRange}
-                        place={place}
-                        currentPage={currentPage}
-                        selectedOptions={selectedOptions}
-                      />
-                    ))
+                  filteredProfiles?.slice(0, 2).map((profileItem) => (
+                    <ProfileCard
+                      key={profileItem.id}
+                      enableSponsoredProfile
+                      columnPadding
+                      singleProfile={profileItem}
+                      searchKeywordsState={searchKeywordsState}
+                      areaRange={areaRange}
+                      // place={place}
+                      currentPage={currentPage}
+                      selectedOptions={selectedOptions}
+                    />
+                  ))
                 ) : (
                   <Typography size="24px" weight="600">
                     No profiles found
@@ -602,7 +674,7 @@ const Listings = () => {
                       singleProfile={profileItem}
                       searchKeywordsState={searchKeywordsState}
                       areaRange={areaRange}
-                      place={place}
+                      // place={place}
                       currentPage={currentPage}
                       selectedOptions={selectedOptions}
                     />
@@ -622,15 +694,15 @@ const Listings = () => {
               className="pb-4"
             >
               <Box className="w-100 mb-3">
-                {!loading && (
+                {!loading && showMap && (
                   <LoadScriptNext googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
                     <GoogleMap
                       className="rounded-3"
                       mapContainerStyle={containerStyle}
-                      center={center}
-                      zoom={placeState ? 12 : 8}
+                      center={placeState || { lat: 0, lng: 0 }}
+                      zoom={placeState ? 10 : 2}
                     >
-                      {filteredProfiles?.slice(0, profilesPerPage).map(
+                      {filteredProfiles?.map(
                         (profile) =>
                           profile.lat &&
                           profile.lng && (
@@ -670,4 +742,4 @@ const Listings = () => {
   );
 };
 
-export default Listings;
+export default Archive;
