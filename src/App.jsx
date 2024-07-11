@@ -4,15 +4,18 @@ import { ToastContainer } from "react-toastify";
 import RouterConfig from "./Navigation/RouterConfig.jsx";
 import { LoaderPageWithoutBG } from "./assets";
 import { ServicesProvider } from "./components/api/ServicesContext";
+import { GroupedListingsProvider } from "./components/api/GroupedListingsContext.jsx";
 
 function App() {
   return (
     <Router>
       <Suspense fallback={<LoaderPageWithoutBG />}>
         <ToastContainer />
-        <ServicesProvider>
-          <RouterConfig />
-        </ServicesProvider>
+        <GroupedListingsProvider>
+          <ServicesProvider>
+            <RouterConfig />
+          </ServicesProvider>
+        </GroupedListingsProvider>
       </Suspense>
     </Router>
   );

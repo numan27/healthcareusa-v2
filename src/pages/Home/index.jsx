@@ -8,13 +8,13 @@ import AdsSectionTop from "./components/AdsSectionTop.jsx";
 const Home = () => {
   return (
     <div>
-      <AppLayout>
+      <>
         <Hero />
         <AdsSectionTop />
         <Blogs />
         <AdsSection />
         <PartnersSection />
-      </AppLayout>
+      </>
     </div>
   );
 };

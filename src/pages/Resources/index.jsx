@@ -1,15 +1,15 @@
-import AppLayout from '../../components/Layout/AppLayout'
+import AppLayout from "../../components/Layout/AppLayout";
 
 const Resources = () => {
   return (
     <div>
-      <AppLayout>
+      <>
         <div className="min-vh-100 d-flex justify-content-center align-items-center">
           <h1>Resources Page Content</h1>
         </div>
-      </AppLayout>
+      </>
     </div>
-  )
-}
+  );
+};
 
-export default Resources
+export default Resources;

@@ -58,8 +58,12 @@ const StyledButton = styled(Button)`
   }
 `;
 
-export default function GenericButton({ children, ...props }) {
-  return <StyledButton {...props}>{children}</StyledButton>;
+export default function GenericButton({ children, type, ...props }) {
+  return (
+    <StyledButton type={type} {...props}>
+      {children}
+    </StyledButton>
+  );
 }
 
 GenericButton.propTypes = {
@@ -79,6 +83,7 @@ GenericButton.propTypes = {
   boxShadow: PropTypes.bool,
   children: PropTypes.node,
   onClick: PropTypes.func,
+  type: PropTypes.string, // Add the type prop here
 };
 
 GenericButton.defaultProps = {
@@ -97,5 +102,6 @@ GenericButton.defaultProps = {
   gap: "10px",
   boxShadow: "",
   children: null,
-  onClick: () => { },
+  onClick: () => {},
+  type: "button", // Set the default type to "button"
 };

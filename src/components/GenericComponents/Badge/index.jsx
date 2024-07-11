@@ -1,4 +1,3 @@
-/* eslint-disable */
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { GoDotFill } from "react-icons/go";
@@ -14,7 +13,6 @@ const StyledBadge = styled.div`
   border-color: ${(props) => props.borderColor || "#E4E4E4"};
   border: ${(props) => props.border} !important;
   font-weight: ${(props) => props.weight};
-  // font-weight: 600 !important;
   display: inline-flex;
   text-transform: uppercase;
   align-items: center;
@@ -45,6 +43,10 @@ function GenericBadge({
       onClickFunction();
     }
   };
+
+  if (!text) {
+    return null;
+  }
 
   return (
     <StyledBadge

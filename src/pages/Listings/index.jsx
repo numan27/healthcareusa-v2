@@ -50,7 +50,10 @@ const Listings = () => {
   const fetchRequestRef = useRef(null);
 
   const onLoad = useCallback((autocomplete) => {
-    autocompleteRef.current = autocomplete;
+    if (!autocompleteRef.current) {
+      autocompleteRef.current = autocomplete;
+      autocomplete.addListener("place_changed", onPlaceChanged);
+    }
   }, []);
 
   const onPlaceChanged = () => {
@@ -104,20 +107,29 @@ const Listings = () => {
   };
 
   useEffect(() => {
-    if (location.state?.fromListingsPage) {
-      setSearchKeywordsState(location.state.searchKeywordsState);
-      setAreaRange(location.state.areaRange);
-      setSelectedOptions(location.state.selectedOptions);
-      setCurrentPage(location.state.currentPage);
-      setProfiles(location.state.profiles);
-      setFilteredProfiles(location.state.filteredProfiles);
-      setLoading(false);
-    } else {
+    if (!location.state?.fromListingsPage) {
       setLoadingType("initial");
       setLoading(true);
       fetchData({ searchKeywordsState, areaRange, place, currentPage });
+    } else {
+      setSearchKeywordsState(location.state.searchKeywordsState || "");
+      setAreaRange(location.state.areaRange || 10);
+      setSelectedOptions(location.state.selectedOptions || []);
+      setCurrentPage(location.state.currentPage || 0);
+      setProfiles(location.state.profiles || []);
+      setFilteredProfiles(location.state.filteredProfiles || []);
+      setLoading(false);
     }
   }, [location.state]);
+
+  useEffect(() => {
+    if (searchKeywords) {
+      setSearchKeywordsState(searchKeywords);
+    }
+    if (place) {
+      setAreaRange(10);
+    }
+  }, [searchKeywords, place]);
 
   useEffect(() => {
     if (searchKeywords) {
@@ -189,7 +201,7 @@ const Listings = () => {
         const transformedProfileData = detailedProfiles.map((profile) => {
           const addressMeta =
             profile?.cubewp_post_meta?.["fc-google-address"]?.meta_value || {};
-          const address = addressMeta?.address || "N/A";
+          const address = addressMeta?.address;
           const lat = addressMeta?.lat || null;
           const lng = addressMeta?.lng || null;
 
@@ -199,8 +211,7 @@ const Listings = () => {
               profile.featured_media_url || IMAGES.DOCTOR_LIST_PROFILE,
             title: profile.title.rendered,
             designation:
-              profile?.cubewp_post_meta?.["cwp_field_40228862441"]
-                ?.meta_value || "N/A",
+              profile?.cubewp_post_meta?.["cwp_field_40228862441"]?.meta_value,
             languages:
               profile?.cubewp_post_meta?.["fc-languages"]?.meta_value?.split(
                 ", "
@@ -210,8 +221,7 @@ const Listings = () => {
                 "cwp_field_136461069401"
               ]?.meta_value?.split(", ") || [],
             gender:
-              profile?.cubewp_post_meta?.["cwp_field_224925973684"]
-                ?.meta_value || "N/A",
+              profile?.cubewp_post_meta?.["cwp_field_224925973684"]?.meta_value,
             doctorPackage:
               profile?.cubewp_post_meta?.[
                 "cwp_field_631649982329"
@@ -219,9 +229,9 @@ const Listings = () => {
             address: address,
             lat: lat ? parseFloat(lat) : null,
             lng: lng ? parseFloat(lng) : null,
-            phone: profile?.cubewp_post_meta?.["fc-phone"]?.meta_value || "N/A",
-            comment_status: profile.comment_status || "N/A",
-            status: profile.status || "N/A",
+            phone: profile?.cubewp_post_meta?.["fc-phone"]?.meta_value,
+            comment_status: profile.comment_status,
+            status: profile.status,
           };
         });
 
@@ -256,12 +266,11 @@ const Listings = () => {
   const center = {
     lat:
       placeState?.lat ||
-      (filteredProfiles.length > 0 ? filteredProfiles[0].lat : 0),
+      (filteredProfiles?.length > 0 ? filteredProfiles[0].lat : 0),
     lng:
       placeState?.lng ||
-      (filteredProfiles.length > 0 ? filteredProfiles[0].lng : 0),
+      (filteredProfiles?.length > 0 ? filteredProfiles[0].lng : 0),
   };
-
   useEffect(() => {
     const applyFilters = () => {
       let filtered = profiles;
@@ -367,7 +376,7 @@ const Listings = () => {
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
       libraries={["places"]}
     >
-      <AppLayout>
+      <>
         <Container ref={topRef} className="min-vh-100">
           <div>
             <AdsSection margin={4} />
@@ -559,9 +568,8 @@ const Listings = () => {
 
               <div>
                 {filteredProfiles?.length > 0 ? (
-                  filteredProfiles
-                    ?.slice(0, 2)
-                    .map((profileItem) => (
+                  <>
+                    {filteredProfiles.slice(0, 2).map((profileItem) => (
                       <ProfileCard
                         key={profileItem.id}
                         enableSponsoredProfile
@@ -573,7 +581,35 @@ const Listings = () => {
                         currentPage={currentPage}
                         selectedOptions={selectedOptions}
                       />
-                    ))
+                    ))}
+
+                    <div className="mb-4">
+                      {filteredProfiles && (
+                        <Typography
+                          as="h2"
+                          className="mb-0"
+                          color="#23262F"
+                          size="24px"
+                          lineHeight="36px"
+                          weight="700"
+                        >
+                          All Results
+                        </Typography>
+                      )}
+                    </div>
+
+                    {filteredProfiles.map((profileItem) => (
+                      <ProfileCard
+                        key={profileItem.id}
+                        singleProfile={profileItem}
+                        searchKeywordsState={searchKeywordsState}
+                        areaRange={areaRange}
+                        place={place}
+                        currentPage={currentPage}
+                        selectedOptions={selectedOptions}
+                      />
+                    ))}
+                  </>
                 ) : (
                   <Typography size="24px" weight="600">
                     No profiles found
@@ -583,32 +619,32 @@ const Listings = () => {
 
               <AdsSection margin={3} padding={0} />
 
-              <div className="my-4 pt-2">
-                <Typography
-                  as="h2"
-                  className="mb-0"
-                  color="#23262F"
-                  size="24px"
-                  lineHeight="36px"
-                  weight="700"
-                >
-                  All Results
-                </Typography>
+              {/* <div className="my-4 pt-2">
+              <Typography
+                as="h2"
+                className="mb-0"
+                color="#23262F"
+                size="24px"
+                lineHeight="36px"
+                weight="700"
+              >
+                All Results
+              </Typography>
 
-                <div className="mt-3">
-                  {profiles.map((profileItem) => (
-                    <ProfileCard
-                      key={profileItem.id}
-                      singleProfile={profileItem}
-                      searchKeywordsState={searchKeywordsState}
-                      areaRange={areaRange}
-                      place={place}
-                      currentPage={currentPage}
-                      selectedOptions={selectedOptions}
-                    />
-                  ))}
-                </div>
+              <div className="mt-3">
+                {profiles.map((profileItem) => (
+                  <ProfileCard
+                    key={profileItem.id}
+                    singleProfile={profileItem}
+                    searchKeywordsState={searchKeywordsState}
+                    areaRange={areaRange}
+                    place={place}
+                    currentPage={currentPage}
+                    selectedOptions={selectedOptions}
+                  />
+                ))}
               </div>
+            </div> */}
             </Col>
 
             <Col
@@ -665,7 +701,7 @@ const Listings = () => {
             />
           </div>
         </Container>
-      </AppLayout>
+      </>
     </LoadScriptNext>
   );
 };

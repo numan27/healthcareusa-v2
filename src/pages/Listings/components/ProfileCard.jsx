@@ -115,53 +115,56 @@ const ProfileCard = ({
                 </Link>
                 {enableSponsoredProfile ? (
                   <div className="d-flex gap-2">
-                    <GenericBadge
-                      text={designation}
-                      fontSize="12px"
-                      weight="700"
-                      color="#64666C"
-                      background="#F0F0F0"
-                      borderColor="transparent"
-                    />
-                    <GenericBadge
-                      text={
-                        Array.isArray(languages)
-                          ? languages.join(", ")
-                          : languages
-                      }
-                      fontSize="12px"
-                      weight="500"
-                      color="#64666C"
-                      borderColor="#E4E4E4"
-                      background="#fff"
-                      className="border"
-                    />
+                    {designation && (
+                      <GenericBadge
+                        text={designation}
+                        fontSize="12px"
+                        weight="700"
+                        color="#64666C"
+                        background="#F0F0F0"
+                        borderColor="transparent"
+                      />
+                    )}
+                    {Array.isArray(languages) && languages.length > 0 && (
+                      <GenericBadge
+                        text={languages.join(", ")}
+                        fontSize="12px"
+                        weight="500"
+                        color="#64666C"
+                        borderColor="#E4E4E4"
+                        background="#fff"
+                        className="border"
+                      />
+                    )}
                   </div>
                 ) : (
                   <div className="d-flex align-items-center gap-2">
-                    <Typography
-                      style={{ borderRight: "1.5px solid #64666C" }}
-                      className="text-uppercase pe-2"
-                      as="label"
-                      color="#64666C"
-                      weight="500"
-                      size="14px"
-                      lineHeight="16px"
-                    >
-                      {designation}
-                    </Typography>
-                    <Typography
-                      className="text-uppercase"
-                      as="label"
-                      color="#64666C"
-                      weight="500"
-                      size="14px"
-                      lineHeight="16px"
-                    >
-                      {Array.isArray(languages)
-                        ? languages.join(", ")
-                        : languages}
-                    </Typography>
+                    {designation && (
+                      <Typography
+                        style={{ borderRight: "1.5px solid #64666C" }}
+                        className="text-uppercase pe-2"
+                        as="label"
+                        color="#64666C"
+                        weight="500"
+                        size="14px"
+                        lineHeight="16px"
+                      >
+                        {designation}
+                      </Typography>
+                    )}
+
+                    {Array.isArray(languages) && languages.length > 0 && (
+                      <Typography
+                        className="text-uppercase"
+                        as="label"
+                        color="#64666C"
+                        weight="500"
+                        size="14px"
+                        lineHeight="16px"
+                      >
+                        {languages.join(", ")}
+                      </Typography>
+                    )}
                   </div>
                 )}
 

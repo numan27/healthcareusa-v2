@@ -118,7 +118,7 @@ const ClaimListingSubmission = () => {
   };
 
   return (
-    <AppLayout>
+    <>
       <Container className="my-5 py-4">
         <Typography
           as="h3"
@@ -217,7 +217,7 @@ const ClaimListingSubmission = () => {
           </Col>
         </Row>
       </Container>
-    </AppLayout>
+    </>
   );
 };
 

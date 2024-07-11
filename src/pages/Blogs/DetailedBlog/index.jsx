@@ -69,7 +69,7 @@ const DetailedBlog = () => {
     console.log("posts", posts)
 
     return (
-        <AppLayout>
+        <>
             <Container className='mt-5 pb-4'>
                 <Row>
                     {/* Left Content */}
@@ -135,7 +135,7 @@ const DetailedBlog = () => {
                     onHomePage={false}
                     centeredTitle />
             </Container>
-        </AppLayout>
+        </>
     );
 };
 

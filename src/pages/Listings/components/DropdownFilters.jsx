@@ -21,7 +21,6 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
           const dropdownLabels = [
             "Gender",
             "Languages",
-            // "Qualifications",
             "Specialization",
           ];
 
@@ -35,12 +34,12 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
                   label: label,
                   value: options.value[index],
                 }))
-                .filter((option) => option.label && option.label.trim() !== ""); // Filter out options without labels or blank labels
+                .filter((option) => option.label && option.label.trim() !== "");
               optionsMap[label] = parsedOptions;
             }
           });
 
-          console.log("Dropdown Options:", optionsMap); // Added log
+          console.log("Dropdown Options:", optionsMap);
           setDropdownOptions(optionsMap);
         } else {
           console.error("No groups found in data");

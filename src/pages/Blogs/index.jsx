@@ -4,7 +4,7 @@ import BlogsSection from "../Home/components/Blogs"
 const Blogs = () => {
   return (
     <div>
-      <AppLayout>
+      <>
         <div className="min-vh-100 d-flex justify-content-center align-items-center">
           <BlogsSection
             postNumber={5}
@@ -12,7 +12,7 @@ const Blogs = () => {
             centeredTitle
           />
         </div>
-      </AppLayout>
+      </>
     </div>
   )
 }

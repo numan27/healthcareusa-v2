@@ -15,6 +15,7 @@ const SearchForm = () => {
   const [searchKeywords, setSearchKeywords] = useState("");
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [location, setLocation] = useState("");
+  const [inputLocation, setInputLocation] = useState(""); // New state for input location
   const navigate = useNavigate();
   const locationPath = useLocation();
   const autocompleteRef = useRef(null);
@@ -32,9 +33,11 @@ const SearchForm = () => {
         const address = placeResult.formatted_address;
         setPlace({ lat, lng, address });
         setLocation(address);
+        setInputLocation(address);
       } else {
         setPlace(null);
         setLocation("");
+        setInputLocation("");
       }
     }
   };
@@ -46,7 +49,18 @@ const SearchForm = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    if (!place && inputLocation) {
+      setPlace({ address: inputLocation });
+    }
     handleNavigateListingDetail();
+  };
+
+  const handleLocationKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      onPlaceChanged();
+      handleFormSubmit(e);
+    }
   };
 
   useEffect(() => {
@@ -68,8 +82,10 @@ const SearchForm = () => {
           const address = data.results[0].formatted_address;
           setPlace({ lat: latitude, lng: longitude, address });
           setLocation(address);
+          setInputLocation(address);
         } else {
           setLocation("Current Location");
+          setInputLocation("Current Location");
         }
         setIsLoadingLocation(false);
       });
@@ -121,8 +137,9 @@ const SearchForm = () => {
                   aria-label="Location"
                   aria-describedby="basic-addon1"
                   className="py-2"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  value={inputLocation}
+                  onChange={(e) => setInputLocation(e.target.value)}
+                  onKeyPress={handleLocationKeyPress} // Attach keypress handler
                 />
                 {isLoadingLocation && <LoaderCenter />}
               </InputGroup>
@@ -130,7 +147,7 @@ const SearchForm = () => {
           </div>
           <div className="ms-1">
             <GenericButton
-              onClick={handleNavigateListingDetail}
+              type="submit"
               width="138px"
               height="48px"
               className="d-flex align-items-center justify-content-center gap-2"

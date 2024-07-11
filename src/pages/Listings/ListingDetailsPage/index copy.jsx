@@ -304,7 +304,7 @@ const ListingDetailsPage = () => {
   }, []);
 
   return (
-    <AppLayout>
+    <>
       <Container className="min-vh-100 pt-4 pb-5">
         {jsonData && (
           <GenericButton
@@ -817,7 +817,7 @@ const ListingDetailsPage = () => {
           </Col>
         </Row>
       </Container>
-    </AppLayout>
+    </>
   );
 };
 

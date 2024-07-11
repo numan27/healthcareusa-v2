@@ -97,7 +97,7 @@ const PricingPlans = () => {
   ];
 
   return (
-    <AppLayout>
+    <>
       <Box className="pricing-top-bar w-100 py-md-5 py-3">
         <div className="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3 pt-md-4">
           <Typography weight="800" color="#fff" size="40px" className="mb-0">
@@ -292,7 +292,7 @@ const PricingPlans = () => {
           </Col>
         </Row>
       </Container>
-    </AppLayout>
+    </>
   );
 };
 

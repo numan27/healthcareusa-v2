@@ -199,7 +199,7 @@ const AddListing = () => {
   console.log("formData", formData);
 
   return (
-    <AppLayout>
+    <>
       <Container className="my-5 py-4">
         <Typography
           as="h3"
@@ -411,7 +411,7 @@ const AddListing = () => {
           </Col>
         </Row>
       </Container>
-    </AppLayout>
+    </>
   );
 };
 

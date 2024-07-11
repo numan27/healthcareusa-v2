@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useContext } from "react";
 import debounce from "lodash.debounce";
 import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
 import {
@@ -9,7 +9,7 @@ import {
 import AppLayout from "../../components/Layout/AppLayout";
 import AdsSection from "../../components/Shared/AdsSection";
 import RangeSlider from "./components/RangeSlider";
-import ProfileCard from "./components/ProfileCard";
+import ProfileCard from "../Listings/components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
 import { useLocation } from "react-router-dom";
@@ -26,8 +26,10 @@ import DropdownFilter from "./components/DropdownFilters";
 import { LoaderCenter } from "../../assets/Loader";
 import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
+import { GroupedListingsContext } from "../../components/api/GroupedListingsContext";
 
 const Archive = () => {
+  const { groupedListings } = useContext(GroupedListingsContext);
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingType, setLoadingType] = useState("initial");
@@ -43,6 +45,11 @@ const Archive = () => {
   const [locationState, setLocationState] = useState("");
   const [latestQueryParams, setLatestQueryParams] = useState({});
   const [showMap, setShowMap] = useState(false);
+  const [specialtyOptions, setSpecialtyOptions] = useState([]);
+  const [selectedSpecialty, setSelectedSpecialty] = useState(null);
+
+  console.log("specialtyOptions", specialtyOptions);
+  console.log("groupedListings", groupedListings);
 
   const profilesPerPage = 10;
 
@@ -79,23 +86,39 @@ const Archive = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (location.state?.fromListingsPage) {
-  //     setSearchKeywordsState(location.state.searchKeywordsState);
-  //     setAreaRange(location.state.areaRange);
-  //     setSelectedOptions(location.state.selectedOptions);
-  //     setCurrentPage(location.state.currentPage);
-  //     setProfiles(location.state.profiles);
-  //     setFilteredProfiles(location.state.filteredProfiles);
-  //     setLoading(false);
-  //   } else {
-  //     setLoadingType("initial");
-  //     setLoading(true);
-  //     fetchData({ searchKeywordsState, areaRange, place, currentPage });
-  //   }
-  // }, [location.state]);
   useEffect(() => {
-    if (selectedItem) {
+    if (selectedSpecialty && selectedSpecialty.length > 0) {
+      setLoading(true);
+      fetchData({
+        searchKeywordsState,
+        areaRange,
+        place: placeState,
+        currentPage: 0,
+        specialty: selectedSpecialty.join(","),
+      });
+    } else {
+      // Trigger initial query when specialty filter is reset
+      setLoading(true);
+      fetchData({
+        searchKeywordsState,
+        areaRange,
+        place: placeState,
+        currentPage: 0,
+      });
+    }
+  }, [selectedSpecialty]);
+
+  const handleSpecialtyChange = (selectedOptions) => {
+    const selectedValues = selectedOptions.map((option) => option.value);
+    if (selectedValues.length === 0) {
+      setSelectedSpecialty(null);
+    } else {
+      setSelectedSpecialty(selectedValues);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedItem && groupedListings.length > 0) {
       setLoading(true);
       const filteredProfiles = profiles.filter((profile) =>
         profile.taxonomies.some(
@@ -105,10 +128,26 @@ const Archive = () => {
       );
       setFilteredProfiles(filteredProfiles);
       setLoading(false);
+
+      // Extract siblings from the fetched categories/items
+      const specialties = groupedListings
+        .flatMap((group) => group.items)
+        .filter(
+          (item) =>
+            item.parent === selectedItem.parent && item.id !== selectedItem.id
+        )
+        .map((item) => ({
+          id: item.id,
+          label: item.name,
+          value: item.name,
+        }));
+
+      setSpecialtyOptions(specialties);
     } else {
       setFilteredProfiles(profiles);
+      setSpecialtyOptions([]);
     }
-  }, [selectedItem, profiles]);
+  }, [selectedItem, profiles, groupedListings]);
 
   console.log("SelectedItem:", selectedItem);
 
@@ -139,15 +178,6 @@ const Archive = () => {
     }
   }, [locationPath.pathname]);
 
-  // useEffect(() => {
-  //   if (searchKeywords) {
-  //     setSearchKeywordsState(searchKeywords);
-  //   }
-  //   if (place) {
-  //     setAreaRange(10);
-  //   }
-  // }, [searchKeywords, place]);
-
   const fetchData = useCallback(
     debounce(async (params) => {
       if (fetchRequestRef.current) {
@@ -170,7 +200,8 @@ const Archive = () => {
         "cwp_query[posts_per_page]": profilesPerPage,
         "cwp_query[paged]": params.currentPage + 1,
         "cwp_query[page_num]": params.currentPage + 1,
-        "cwp_query[service]": selectedItem ? selectedItem.name : "",
+        "cwp_query[service]":
+          params.specialty || (selectedItem ? selectedItem.name : ""),
       }).toString();
 
       try {
@@ -211,7 +242,7 @@ const Archive = () => {
         const transformedProfileData = detailedProfiles.map((profile) => {
           const addressMeta =
             profile?.cubewp_post_meta?.["fc-google-address"]?.meta_value || {};
-          const address = addressMeta?.address || "N/A";
+          const address = addressMeta?.address;
           const lat = addressMeta?.lat || null;
           const lng = addressMeta?.lng || null;
 
@@ -221,8 +252,7 @@ const Archive = () => {
               profile.featured_media_url || IMAGES.DOCTOR_LIST_PROFILE,
             title: profile.title.rendered,
             designation:
-              profile?.cubewp_post_meta?.["cwp_field_40228862441"]
-                ?.meta_value || "N/A",
+              profile?.cubewp_post_meta?.["cwp_field_40228862441"]?.meta_value,
             languages:
               profile?.cubewp_post_meta?.["fc-languages"]?.meta_value?.split(
                 ", "
@@ -232,8 +262,7 @@ const Archive = () => {
                 "cwp_field_136461069401"
               ]?.meta_value?.split(", ") || [],
             gender:
-              profile?.cubewp_post_meta?.["cwp_field_224925973684"]
-                ?.meta_value || "N/A",
+              profile?.cubewp_post_meta?.["cwp_field_224925973684"]?.meta_value,
             doctorPackage:
               profile?.cubewp_post_meta?.[
                 "cwp_field_631649982329"
@@ -241,9 +270,9 @@ const Archive = () => {
             address: address,
             lat: lat ? parseFloat(lat) : null,
             lng: lng ? parseFloat(lng) : null,
-            phone: profile?.cubewp_post_meta?.["fc-phone"]?.meta_value || "N/A",
-            comment_status: profile.comment_status || "N/A",
-            status: profile.status || "N/A",
+            phone: profile?.cubewp_post_meta?.["fc-phone"]?.meta_value,
+            comment_status: profile.comment_status,
+            status: profile.status,
             service: profile.service || [],
             taxonomies: profile.taxonomies || [],
           };
@@ -283,7 +312,7 @@ const Archive = () => {
   useEffect(() => {
     setLoadingType("initial");
     setLoading(true);
-    fetchData({ searchKeywordsState, place, currentPage });
+    fetchData({ searchKeywordsState, currentPage });
   }, []);
 
   useEffect(() => {
@@ -331,20 +360,11 @@ const Archive = () => {
         });
       });
 
-      if (selectedItem) {
-        filtered = filtered.filter((profile) =>
-          profile.taxonomies.some(
-            (taxonomy) =>
-              taxonomy.toLowerCase() === selectedItem.name.toLowerCase()
-          )
-        );
-      }
-
       setFilteredProfiles(filtered);
     };
 
     applyFilters();
-  }, [profiles, selectedOptions, selectedItem]);
+  }, [profiles, selectedOptions]);
 
   const handleSearchKeywordsChange = (e) => {
     setSearchKeywordsState(e.target.value);
@@ -353,6 +373,14 @@ const Archive = () => {
   const handleAreaRangeChange = (value) => {
     setAreaRange(value);
   };
+
+  // const handleLocationKeyPress = (e) => {
+  //   if (e.key === "Enter") {
+  //     e.preventDefault();
+  //     onPlaceChanged();
+  //     handleFormSubmit(e);
+  //   }
+  // };
 
   const handleSearchButton = () => {
     setCurrentPage(0);
@@ -397,7 +425,7 @@ const Archive = () => {
     setCurrentPage(selected);
     setLoading(true);
     fetchData({
-      ...latestQueryParams, // Use the latest query parameters
+      ...latestQueryParams,
       currentPage: selected,
     });
 
@@ -442,7 +470,7 @@ const Archive = () => {
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
       libraries={["places"]}
     >
-      <AppLayout>
+      <>
         <Container ref={topRef} className="min-vh-100">
           <div>
             <AdsSection margin={4} />
@@ -501,6 +529,7 @@ const Archive = () => {
                               value={locationState}
                               onChange={(e) => setLocationState(e.target.value)}
                             />
+
                             {locationState && (
                               <InputGroup.Text
                                 onClick={handleResetLocation}
@@ -589,6 +618,17 @@ const Archive = () => {
               <DropdownFilter
                 setSelectedOptions={setSelectedOptions}
                 selectedOptions={selectedOptions}
+                specialtyOptions={specialtyOptions}
+                onSpecialtyChange={handleSpecialtyChange}
+                onOptionChange={() => {
+                  setLoading(true);
+                  fetchData({
+                    searchKeywordsState,
+                    areaRange,
+                    place: placeState,
+                    currentPage: 0,
+                  });
+                }}
               />
 
               <div className="pt-3 mb-3">
@@ -633,19 +673,20 @@ const Archive = () => {
 
               <div>
                 {filteredProfiles?.length > 0 ? (
-                  filteredProfiles?.slice(0, 2).map((profileItem) => (
-                    <ProfileCard
-                      key={profileItem.id}
-                      enableSponsoredProfile
-                      columnPadding
-                      singleProfile={profileItem}
-                      searchKeywordsState={searchKeywordsState}
-                      areaRange={areaRange}
-                      // place={place}
-                      currentPage={currentPage}
-                      selectedOptions={selectedOptions}
-                    />
-                  ))
+                  filteredProfiles
+                    ?.slice(0, 2)
+                    .map((profileItem) => (
+                      <ProfileCard
+                        key={profileItem.id}
+                        enableSponsoredProfile
+                        columnPadding
+                        singleProfile={profileItem}
+                        searchKeywordsState={searchKeywordsState}
+                        areaRange={areaRange}
+                        currentPage={currentPage}
+                        selectedOptions={selectedOptions}
+                      />
+                    ))
                 ) : (
                   <Typography size="24px" weight="600">
                     No profiles found
@@ -668,13 +709,12 @@ const Archive = () => {
                 </Typography>
 
                 <div className="mt-3">
-                  {profiles.map((profileItem) => (
+                  {filteredProfiles.map((profileItem) => (
                     <ProfileCard
                       key={profileItem.id}
                       singleProfile={profileItem}
                       searchKeywordsState={searchKeywordsState}
                       areaRange={areaRange}
-                      // place={place}
                       currentPage={currentPage}
                       selectedOptions={selectedOptions}
                     />
@@ -737,7 +777,7 @@ const Archive = () => {
             />
           </div>
         </Container>
-      </AppLayout>
+      </>
     </LoadScriptNext>
   );
 };

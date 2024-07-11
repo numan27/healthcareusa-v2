@@ -33,6 +33,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { LoaderCenter } from "../../../assets/Loader";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import BreadCrumb from "../../../components/BreadCrumb";
 
 const StyledPopover = styled(Popover)`
   max-width: 200px;
@@ -283,29 +284,34 @@ const ListingDetailsPage = () => {
   console.log("jsonData", jsonData);
   console.log("doctorLanguages", doctorLanguages);
 
-  const handleBackToListings = () => {
-    navigate("/listings", {
-      state: {
-        fromListingsPage: true,
-        searchKeywordsState: location.state.searchKeywordsState,
-        areaRange: location.state.areaRange,
-        place: location.state.place,
-        currentPage: location.state.currentPage,
-        selectedOptions: location.state.selectedOptions,
-        profiles: location.state.profiles,
-        filteredProfiles: location.state.filteredProfiles,
-      },
-    });
-  };
+  // const handleBackToListings = () => {
+  //   navigate("/listings", {
+  //     state: {
+  //       fromListingsPage: true,
+  //       searchKeywordsState: location.state.searchKeywordsState,
+  //       areaRange: location.state.areaRange,
+  //       place: location.state.place,
+  //       currentPage: location.state.currentPage,
+  //       selectedOptions: location.state.selectedOptions,
+  //       profiles: location.state.profiles,
+  //       filteredProfiles: location.state.filteredProfiles,
+  //     },
+  //   });
+  // };
+
+  // const handleBack = () => {
+  //   navigate(-1);
+  // };
 
   // useEffect(() => {
   //   window.scrollTo(0, 0);
   // }, []);
 
   return (
-    <AppLayout>
+    <>
+      {/* <BreadCrumb /> */}
       <Container className="min-vh-100 pt-4 pb-5">
-        {jsonData && (
+        {/* {jsonData && (
           <GenericButton
             background="transparent"
             color="#000"
@@ -319,7 +325,7 @@ const ListingDetailsPage = () => {
           >
             <FaArrowLeftLong size={28} /> Back to Listings
           </GenericButton>
-        )}
+        )} */}
 
         <Row>
           {/* Left Content */}
@@ -367,7 +373,7 @@ const ListingDetailsPage = () => {
                           width={132}
                           height={132}
                           className="rounded-circle"
-                          src={jsonData.mediaUrl}
+                          src={jsonData.mediaUrl || IMAGES.DOCTOR_LIST_PROFILE}
                           alt=""
                         />
 
@@ -816,7 +822,7 @@ const ListingDetailsPage = () => {
           </Col>
         </Row>
       </Container>
-    </AppLayout>
+    </>
   );
 };
 

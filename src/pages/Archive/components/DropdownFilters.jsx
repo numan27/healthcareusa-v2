@@ -1,7 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { GenericSelect } from "../../../components/GenericComponents";
 
-const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
+const DropdownFilter = ({
+  setSelectedOptions,
+  selectedOptions,
+  specialtyOptions,
+  onSpecialtyChange, // Added prop
+}) => {
   const [dropdownOptions, setDropdownOptions] = useState({});
 
   useEffect(() => {
@@ -21,12 +26,17 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
           const dropdownLabels = [
             "Gender",
             "Languages",
-            // "Qualifications",
-            "Specialization",
+            "Specialty", // Updated label
           ];
 
           dropdownLabels.forEach((label) => {
-            const field = fields.find((field) => field.label === label);
+            const field = fields.find((field) => {
+              if (label === "Specialty" && field.label === "Specialization") {
+                return true;
+              }
+              return field.label === label;
+            });
+
             if (field && field.options) {
               const options = JSON.parse(field.options);
               const parsedOptions = options.label
@@ -35,7 +45,7 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
                   label: label,
                   value: options.value[index],
                 }))
-                .filter((option) => option.label && option.label.trim() !== ""); // Filter out options without labels or blank labels
+                .filter((option) => option.label && option.label.trim() !== "");
               optionsMap[label] = parsedOptions;
             }
           });
@@ -52,6 +62,15 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
 
     fetchDropdownOptions();
   }, []);
+
+  useEffect(() => {
+    if (specialtyOptions) {
+      setDropdownOptions((prevOptions) => ({
+        ...prevOptions,
+        Specialty: specialtyOptions,
+      }));
+    }
+  }, [specialtyOptions]);
 
   const handleDropdownOptions = useCallback(
     (label, selectedOption) => {
@@ -80,8 +99,12 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
         console.log("Updated selected options:", updatedOptions);
         return updatedOptions;
       });
+
+      if (label === "Specialty" && onSpecialtyChange) {
+        onSpecialtyChange(selectedOption);
+      }
     },
-    [setSelectedOptions]
+    [setSelectedOptions, onSpecialtyChange]
   );
 
   return (

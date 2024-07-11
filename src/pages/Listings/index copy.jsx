@@ -284,7 +284,7 @@ const Listings = () => {
   const pageCount = Math.ceil(filteredProfiles?.length / profilesPerPage);
 
   return (
-    <AppLayout>
+    <>
       <Container ref={topRef} className="min-vh-100">
         <div>
           <AdsSection margin={4} />
@@ -540,7 +540,7 @@ const Listings = () => {
           />
         </div>
       </Container>
-    </AppLayout>
+    </>
   );
 };
 
