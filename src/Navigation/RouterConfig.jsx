@@ -13,10 +13,6 @@ function RouterConfig() {
       {/* Protect Routes */}
       <Route element={<ProtectedRoute />}>
         <Route
-          path={PATH.ARCHIVE}
-          element={<PublicRoute element={<WEB_PAGES.ARCHIVE />} />}
-        />
-        <Route
           path={PATH.CLAIM_LISTING}
           element={<PublicRoute element={<WEB_PAGES.CLAIM_LISTING />} />}
         />
@@ -66,6 +62,10 @@ function RouterConfig() {
       <Route
         path={PATH.LISTING_DETAILS}
         element={<PublicRoute element={<WEB_PAGES.LISTING_DETAILS />} />}
+      />
+      <Route
+        path={PATH.ARCHIVE}
+        element={<PublicRoute element={<WEB_PAGES.ARCHIVE />} />}
       />
       <Route
         path={PATH.NAVIGATE_TO_LISTINGS}
