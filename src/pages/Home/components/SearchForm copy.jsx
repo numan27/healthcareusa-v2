@@ -1,15 +1,7 @@
-import React, {
-  useContext,
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-} from "react";
-import { GroupedListingsContext } from "../../../components/api/GroupedListingsContext";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
 import { IoSearch } from "react-icons/io5";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-import { FaTimes } from "react-icons/fa";
 import { Form, InputGroup } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import SquareMenu from "../../../assets/SVGs/SquareMenu";
@@ -19,7 +11,6 @@ import { LoaderCenter } from "../../../assets/Loader";
 const libraries = ["places"];
 
 const SearchForm = () => {
-  const { groupedListings, loading } = useContext(GroupedListingsContext);
   const [place, setPlace] = useState(null);
   const [searchKeywords, setSearchKeywords] = useState("");
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
@@ -52,39 +43,7 @@ const SearchForm = () => {
   };
 
   const handleNavigateListingDetail = () => {
-    let filteredListings = [];
-    let searchItem = null;
-
-    if (groupedListings && searchKeywords) {
-      const keywordsLower = searchKeywords.toLowerCase();
-      groupedListings.forEach((group) => {
-        const matchingItems = group.items.filter(
-          (item) =>
-            item.name.toLowerCase().includes(keywordsLower) ||
-            item.description.toLowerCase().includes(keywordsLower) ||
-            group.heading.name.toLowerCase().includes(keywordsLower) ||
-            (item.taxonomies &&
-              item.taxonomies.some((taxonomy) =>
-                taxonomy.toLowerCase().includes(keywordsLower)
-              ))
-        );
-        if (matchingItems.length > 0) {
-          filteredListings.push({
-            heading: group.heading,
-            items: matchingItems,
-          });
-          searchItem = matchingItems[0];
-        }
-      });
-    }
-
-    console.log("searchItem ::", searchItem);
-
-    const stateData = {
-      searchKeywords,
-      place,
-      filteredListings,
-    };
+    const stateData = searchKeywords || place ? { searchKeywords, place } : {};
     navigate("/listings", { state: stateData });
   };
 
@@ -102,12 +61,6 @@ const SearchForm = () => {
       onPlaceChanged();
       handleFormSubmit(e);
     }
-  };
-
-  const handleResetLocation = () => {
-    setPlace(null);
-    setLocation("");
-    setInputLocation("");
   };
 
   useEffect(() => {
@@ -188,16 +141,6 @@ const SearchForm = () => {
                   onChange={(e) => setInputLocation(e.target.value)}
                   onKeyPress={handleLocationKeyPress}
                 />
-                {inputLocation && (
-                  <InputGroup.Text
-                    className="bg-white border-0 p-2"
-                    id="basic-addon2"
-                    onClick={handleResetLocation}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <FaTimes color="#06312E" size={20} />
-                  </InputGroup.Text>
-                )}
                 {isLoadingLocation && <LoaderCenter />}
               </InputGroup>
             </Autocomplete>

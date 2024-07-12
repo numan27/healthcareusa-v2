@@ -24,7 +24,7 @@ const PATH_LABELS = {
 const StyledBreadcrumbs = styled(Breadcrumbs)`
   margin: 16px 0;
   color: #fff;
-  background-color: #00c1b6;
+  // background-color: #00c1b6;
   transparent: 0.7;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
 `;
@@ -32,12 +32,12 @@ const StyledBreadcrumbs = styled(Breadcrumbs)`
 const StyledLink = styled(MUILink)`
   font-size: 16px;
   text-decoration: none;
-  color: ${(props) => (props.active ? "#fff" : "#fff")};
+  color: #333;
   &:hover {
-    color: #fff;
+    color: #00c1b6;
   }
   &:active {
-    color: #fff;
+    color: #00c1b6;
   }
 `;
 
@@ -51,7 +51,7 @@ export default function BreadCrumb() {
     <div
       role="presentation"
       onClick={handleClick}
-      className="position-absolute mx-auto w-100 mt-2"
+      className="position-absolute mt-2"
     >
       <Container>
         <StyledBreadcrumbs

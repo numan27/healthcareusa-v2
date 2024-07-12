@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   GenericBadge,
@@ -16,6 +16,24 @@ import IMAGES from "../../../assets/images";
 import { GoDotFill } from "react-icons/go";
 import classNames from "classnames";
 
+// Function to calculate distance using the Haversine formula
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const toRad = (value) => (value * Math.PI) / 180;
+
+  const R = 6371; // Radius of the Earth in kilometers
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c;
+  return distance.toFixed(1); // Return distance in kilometers
+};
+
 const ProfileCard = ({
   enableSponsoredProfile,
   columnPadding,
@@ -30,6 +48,19 @@ const ProfileCard = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [distance, setDistance] = useState(null);
+
+  useEffect(() => {
+    if (place && singleProfile.lat && singleProfile.lng) {
+      const dist = calculateDistance(
+        place.lat,
+        place.lng,
+        singleProfile.lat,
+        singleProfile.lng
+      );
+      setDistance(dist);
+    }
+  }, [place, singleProfile.lat, singleProfile.lng]);
 
   if (!singleProfile) {
     return null;
@@ -169,22 +200,24 @@ const ProfileCard = ({
                 )}
 
                 <div className="mt-3 d-flex align-items-center gap-2">
-                  <Box
-                    width="65px"
-                    height="65px"
-                    className="custom-border rounded d-flex flex-column align-items-center justify-content-center"
-                  >
-                    <DoctorLocationIcon />
-                    <Typography
-                      as="span"
-                      color="#23262F"
-                      weight="700"
-                      size="12px"
-                      lineHeight="15px"
+                  {distance && (
+                    <Box
+                      width="65px"
+                      height="65px"
+                      className="custom-border rounded d-flex flex-column align-items-center justify-content-center"
                     >
-                      0.3 ml
-                    </Typography>
-                  </Box>
+                      <DoctorLocationIcon />
+                      <Typography
+                        as="span"
+                        color="#23262F"
+                        weight="700"
+                        size="12px"
+                        lineHeight="15px"
+                      >
+                        {distance} km
+                      </Typography>
+                    </Box>
+                  )}
 
                   <Box width="140px">
                     <Typography

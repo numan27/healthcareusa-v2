@@ -6,7 +6,6 @@ import {
   GenericButton,
   Typography,
 } from "../../components/GenericComponents";
-import AppLayout from "../../components/Layout/AppLayout";
 import AdsSection from "../../components/Shared/AdsSection";
 import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "./components/ProfileCard";
@@ -46,8 +45,10 @@ const Listings = () => {
   const profilesPerPage = 10;
 
   const location = useLocation();
-  const { searchKeywords, place } = location.state || {};
+  const { searchKeywords, place, filteredListings } = location.state || {};
   const fetchRequestRef = useRef(null);
+
+  console.log("searchKeywords", searchKeywords);
 
   const onLoad = useCallback((autocomplete) => {
     if (!autocompleteRef.current) {
@@ -65,7 +66,7 @@ const Listings = () => {
         const address = placeResult.formatted_address;
         setPlaceState({ lat, lng, address });
         setLocationState(address);
-        setCurrentPage(0); // Reset current page to 0
+        setCurrentPage(0);
         setLoadingType("search");
         setLoading(true);
         fetchData({
@@ -81,55 +82,37 @@ const Listings = () => {
     }
   };
 
-  useEffect(() => {
-    if (placeState) {
-      fetchData({
-        searchKeywordsState,
-        areaRange,
-        place: placeState,
-        currentPage,
-      });
-    }
-  }, [placeState]);
-
   const handleResetLocation = () => {
     setPlaceState(null);
     setLocationState("");
     setCurrentPage(0);
     setLoadingType("initial");
     setLoading(true);
-    const initialParams = {
+    fetchData({
       searchKeywordsState,
       areaRange,
       currentPage: 0,
-    };
-    fetchData(initialParams);
+    });
   };
 
   useEffect(() => {
-    if (!location.state?.fromListingsPage) {
+    if (location.state) {
+      const { searchKeywords, place, filteredListings } = location.state;
+      setSearchKeywordsState(searchKeywords || "");
+      setPlaceState(place || null);
+      if (filteredListings && filteredListings.length > 0) {
+        const profilesData = filteredListings.flatMap((group) => group.items);
+        setProfiles(profilesData);
+        setFilteredProfiles(profilesData);
+      } else {
+        fetchData({ searchKeywordsState: searchKeywords || "", place });
+      }
+    } else {
       setLoadingType("initial");
       setLoading(true);
-      fetchData({ searchKeywordsState, areaRange, place, currentPage });
-    } else {
-      setSearchKeywordsState(location.state.searchKeywordsState || "");
-      setAreaRange(location.state.areaRange || 10);
-      setSelectedOptions(location.state.selectedOptions || []);
-      setCurrentPage(location.state.currentPage || 0);
-      setProfiles(location.state.profiles || []);
-      setFilteredProfiles(location.state.filteredProfiles || []);
-      setLoading(false);
+      fetchData({ searchKeywordsState, areaRange, place: null, currentPage });
     }
   }, [location.state]);
-
-  useEffect(() => {
-    if (searchKeywords) {
-      setSearchKeywordsState(searchKeywords);
-    }
-    if (place) {
-      setAreaRange(10);
-    }
-  }, [searchKeywords, place]);
 
   useEffect(() => {
     if (searchKeywords) {
@@ -149,10 +132,13 @@ const Listings = () => {
       const source = axios.CancelToken.source();
       fetchRequestRef.current = source;
 
+      const searchKeywords =
+        params.searchKeywordsState || searchKeywordsState || "";
+
       const query = new URLSearchParams({
         "cwp_query[post_type]": "listing",
         "cwp_query[orderby]": "ASC",
-        "cwp_query[s]": params.searchKeywordsState,
+        "cwp_query[s]": "",
         "cwp_query[fc-google-address_range]": params.areaRange.toString(),
         "cwp_query[fc-google-address]": params.place?.address || "",
         "cwp_query[fc-google-address_lat]": params.place?.lat || "",
@@ -160,6 +146,7 @@ const Listings = () => {
         "cwp_query[posts_per_page]": profilesPerPage,
         "cwp_query[paged]": params.currentPage + 1,
         "cwp_query[page_num]": params.currentPage + 1,
+        ...(searchKeywords && { "cwp_query[service]": searchKeywords }), // Conditionally include the service parameter
       }).toString();
 
       try {
@@ -232,15 +219,34 @@ const Listings = () => {
             phone: profile?.cubewp_post_meta?.["fc-phone"]?.meta_value,
             comment_status: profile.comment_status,
             status: profile.status,
+            taxonomies: profile?.taxonomies || [],
           };
         });
+
+        let filteredProfiles = transformedProfileData;
+
+        if (searchKeywords) {
+          const keywordsLower = searchKeywords.toLowerCase();
+          filteredProfiles = transformedProfileData.filter(
+            (profile) =>
+              (profile.specialization &&
+                profile.specialization.some((spec) =>
+                  spec.toLowerCase().includes(keywordsLower)
+                )) ||
+              (profile.taxonomies &&
+                profile.taxonomies.some((taxonomy) =>
+                  taxonomy.toLowerCase().includes(keywordsLower)
+                ))
+          );
+        }
 
         const totalProfiles = response.data.total_posts;
         setTotalPages(Math.ceil(totalProfiles / profilesPerPage));
         setTotalPosts(totalProfiles);
 
         setProfiles(transformedProfileData);
-        setFilteredProfiles(transformedProfileData);
+        setFilteredProfiles(filteredProfiles);
+
         setLoading(false);
       } catch (error) {
         if (!axios.isCancel(error)) {
@@ -251,6 +257,28 @@ const Listings = () => {
     }, 300),
     []
   );
+
+  useEffect(() => {
+    if (placeState) {
+      setLoading(true);
+      fetchData({
+        searchKeywordsState,
+        areaRange,
+        place: placeState,
+        currentPage,
+      });
+    }
+  }, [currentPage, placeState, fetchData]);
+
+  useEffect(() => {
+    if (filteredListings && filteredListings.length > 0) {
+      const profilesData = filteredListings.flatMap((group) => group.items);
+      setProfiles(profilesData);
+      setFilteredProfiles(profilesData);
+    } else {
+      fetchData({ searchKeywords, place });
+    }
+  }, [filteredListings, searchKeywords, place, fetchData]);
 
   useEffect(() => {
     setLoadingType("initial");
@@ -271,6 +299,7 @@ const Listings = () => {
       placeState?.lng ||
       (filteredProfiles?.length > 0 ? filteredProfiles[0].lng : 0),
   };
+
   useEffect(() => {
     const applyFilters = () => {
       let filtered = profiles;
@@ -304,19 +333,54 @@ const Listings = () => {
     applyFilters();
   }, [profiles, selectedOptions]);
 
-  const handleSearchKeywordsChange = (e) => {
-    setSearchKeywordsState(e.target.value);
+  const handleSearchKeywordsChangeAndFetch = (e) => {
+    handleSearchKeywordsChange(e);
+    setCurrentPage(0);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({
+      searchKeywordsState: e.target.value,
+      areaRange,
+      place: placeState || {
+        lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+        lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+        address: autocompleteRef.current.getPlace().formatted_address,
+      },
+      currentPage: 0,
+    });
   };
 
   const handleAreaRangeChange = (value) => {
     setAreaRange(value);
+    setCurrentPage(0);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({
+      searchKeywordsState,
+      areaRange: value,
+      place: placeState || {
+        lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+        lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+        address: autocompleteRef.current.getPlace().formatted_address,
+      },
+      currentPage: 0,
+    });
   };
 
   const handleSearchButton = () => {
     setCurrentPage(0);
     setLoadingType("search");
     setLoading(true);
-    fetchData({ searchKeywordsState, areaRange, place, currentPage: 0 });
+    fetchData({
+      searchKeywordsState,
+      areaRange,
+      place: placeState || {
+        lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+        lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+        address: autocompleteRef.current.getPlace().formatted_address,
+      },
+      currentPage: 0,
+    });
   };
 
   const handleFormSubmit = (e) => {
@@ -327,9 +391,17 @@ const Listings = () => {
     fetchData({
       searchKeywordsState,
       areaRange,
-      place: placeState,
+      place: placeState || {
+        lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+        lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+        address: autocompleteRef.current.getPlace().formatted_address,
+      },
       currentPage: 0,
     });
+  };
+
+  const handleSearchKeywordsChange = (e) => {
+    setSearchKeywordsState(e.target.value);
   };
 
   const handleResetSearch = () => {
@@ -351,11 +423,23 @@ const Listings = () => {
       place: placeState,
       currentPage: selected,
     });
-
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  // Track the location state
+  useEffect(() => {
+    if (placeState) {
+      setLoading(true);
+      fetchData({
+        searchKeywordsState,
+        areaRange,
+        place: placeState,
+        currentPage,
+      });
+    }
+  }, [placeState, searchKeywordsState, currentPage, fetchData]);
 
   if (loading && loadingType === "initial") {
     return (
@@ -535,9 +619,10 @@ const Listings = () => {
                     lineHeight="26px"
                   >
                     <span className="text-dark">{totalPosts}</span> search
-                    result(s) <span className="fw-bold">{searchKeywords} </span>
+                    result(s){" "}
+                    <span className="fw-bold">{searchKeywordsState} </span>
                     in
-                    <span className="fw-bold"> {place?.address} </span>
+                    <span className="fw-bold"> {placeState?.address} </span>
                   </Typography>
                 ) : (
                   <Typography
