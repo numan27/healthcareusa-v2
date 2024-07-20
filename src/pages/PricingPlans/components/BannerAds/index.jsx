@@ -1,5 +1,5 @@
 import React from "react";
-import { GenericStepper, TabsDashboard } from "../../../../components/GenericComponents";
+import { GenericStepper } from "../../../../components/GenericComponents";
 import Step1 from "./components/steps/Step1";
 import Step2 from "./components/steps/Step2";
 import Step3 from "./components/steps/Step3";
@@ -18,30 +18,6 @@ const BannerAds = () => {
             <GenericStepper steps={defaultSteps} stepContent={stepContent} />
           </Col>
         </Row>
-
-        <TabsDashboard 
-          defaultActiveKey="featured"
-          id="my-tabs"
-          onSelect={(k) => setActiveTab(k)}
-          tabs={[
-            {
-              eventKey: "featured",
-              title: "Featured Listings",
-              content: <FeaturedListings />,
-            },
-            {
-              eventKey: "ads",
-              title: "For Banner Ads",
-              content: <BannerAds />,
-            },
-            {
-              eventKey: "articles",
-              title: "For Articles",
-              content: <Articles />,
-            },
-          ]}
-          className="custom-tabs"
-        />
       </Container>
     </div>
   );
