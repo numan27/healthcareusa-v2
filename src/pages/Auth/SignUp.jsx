@@ -20,7 +20,7 @@ const SignUpModal = ({ show, onHide, title, moveToSignIn }) => {
     const handleRegister = async (values, { setSubmitting, setFieldError }) => {
         const credentials = btoa('numan27:findhealthcareusa');
 
-        const response = await fetch('https://findhealthcare.com//wp-json/custom/v1/register', {
+        const response = await fetch('https://findhealthcare.com/wp-json/custom/v1/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
