@@ -51,6 +51,14 @@ const SearchForm = () => {
     }
   };
 
+  const extractStateAndCity = (address) => {
+    // Assumes address format: "City, State, Country"
+    const parts = address.split(",");
+    const city = parts.length > 0 ? parts[0].trim() : "";
+    const state = parts.length > 1 ? parts[1].trim() : "";
+    return { state, city };
+  };
+
   const handleNavigateListingDetail = () => {
     let filteredListings = [];
     let searchItem = null;
@@ -78,13 +86,13 @@ const SearchForm = () => {
       });
     }
 
-    console.log("searchItem ::", searchItem);
-
     const stateData = {
       searchKeywords,
       place,
       filteredListings,
+      ...extractStateAndCity(place ? place.address : ""),
     };
+
     navigate("/listings", { state: stateData });
   };
 

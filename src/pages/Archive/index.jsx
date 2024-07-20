@@ -6,13 +6,12 @@ import {
   GenericButton,
   Typography,
 } from "../../components/GenericComponents";
-import AppLayout from "../../components/Layout/AppLayout";
 import AdsSection from "../../components/Shared/AdsSection";
 import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "../Listings/components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Autocomplete,
   GoogleMap,
@@ -27,6 +26,7 @@ import { LoaderCenter } from "../../assets/Loader";
 import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
 import { GroupedListingsContext } from "../../components/api/GroupedListingsContext";
+import BreadCrumb from "../../components/BreadCrumb";
 
 const Archive = () => {
   const { groupedListings } = useContext(GroupedListingsContext);
@@ -52,7 +52,7 @@ const Archive = () => {
   console.log("groupedListings", groupedListings);
 
   const profilesPerPage = 10;
-
+  const navigate = useNavigate();
   const location = useLocation();
   const { selectedItem, searchKeywords, place } = location.state || {};
   const fetchRequestRef = useRef(null);
@@ -153,8 +153,19 @@ const Archive = () => {
 
   useEffect(() => {
     if (locationPath.pathname === "/") {
+      sessionStorage.removeItem("latestQueryParams");
       setPlaceState(null);
       setSearchKeywords("");
+    }
+
+    if (location.state?.reload) {
+      const { category, queryParams } = location.state;
+      setLoading(true);
+      fetchData({
+        ...queryParams,
+        specialty: category || queryParams.specialty,
+      });
+      navigate(locationPath.pathname, { replace: true, state: {} });
     }
 
     // Fetch current location
@@ -176,7 +187,7 @@ const Archive = () => {
         setIsLoadingLocation(false);
       });
     }
-  }, [locationPath.pathname]);
+  }, [locationPath.pathname, location.state]);
 
   const fetchData = useCallback(
     debounce(async (params) => {
@@ -187,21 +198,29 @@ const Archive = () => {
       const source = axios.CancelToken.source();
       fetchRequestRef.current = source;
 
+      // Ensure all params are defined
+      const {
+        searchKeywordsState = "",
+        areaRange = 10,
+        place = { address: "", lat: "", lng: "" },
+        currentPage = 0,
+        specialty = selectedItem ? selectedItem.name : "",
+      } = params;
+
       setLatestQueryParams(params); // Store the latest query parameters
 
       const query = new URLSearchParams({
         "cwp_query[post_type]": "listing",
         "cwp_query[orderby]": "ASC",
-        "cwp_query[s]": params.searchKeywordsState,
-        "cwp_query[fc-google-address_range]": params.areaRange.toString(),
-        "cwp_query[fc-google-address]": params.place?.address || "",
-        "cwp_query[fc-google-address_lat]": params.place?.lat || "",
-        "cwp_query[fc-google-address_lng]": params.place?.lng || "",
+        "cwp_query[s]": searchKeywordsState,
+        "cwp_query[fc-google-address_range]": areaRange.toString(),
+        "cwp_query[fc-google-address]": place?.address || "",
+        "cwp_query[fc-google-address_lat]": place?.lat || "",
+        "cwp_query[fc-google-address_lng]": place?.lng || "",
         "cwp_query[posts_per_page]": profilesPerPage,
-        "cwp_query[paged]": params.currentPage + 1,
-        "cwp_query[page_num]": params.currentPage + 1,
-        "cwp_query[service]":
-          params.specialty || (selectedItem ? selectedItem.name : ""),
+        "cwp_query[paged]": currentPage + 1,
+        "cwp_query[page_num]": currentPage + 1,
+        "cwp_query[service]": specialty,
       }).toString();
 
       try {
@@ -305,15 +324,23 @@ const Archive = () => {
         place: placeState,
         currentPage: 0,
       });
-      setShowMap(true); // Show map when location is set
+      setShowMap(true);
     }
   }, [placeState, searchKeywordsState, areaRange, fetchData]);
 
   useEffect(() => {
-    setLoadingType("initial");
-    setLoading(true);
-    fetchData({ searchKeywordsState, currentPage });
-  }, []);
+    const savedQueryParams = sessionStorage.getItem("latestQueryParams");
+    if (savedQueryParams) {
+      const params = JSON.parse(savedQueryParams);
+      setLatestQueryParams(params);
+      fetchData(params);
+      sessionStorage.removeItem("latestQueryParams");
+    } else {
+      setLoadingType("initial");
+      setLoading(true);
+      fetchData({ searchKeywordsState, currentPage });
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   useEffect(() => {
     setLoadingType("initial");
@@ -472,6 +499,12 @@ const Archive = () => {
     >
       <>
         <Container ref={topRef} className="min-vh-100">
+          <div className="mt-4">
+            <BreadCrumb
+              category={selectedItem ? selectedItem.name : ""}
+              listingTitle={searchKeywords}
+            />
+          </div>
           <div>
             <AdsSection margin={4} />
           </div>
@@ -735,28 +768,26 @@ const Archive = () => {
             >
               <Box className="w-100 mb-3">
                 {!loading && showMap && (
-                  <LoadScriptNext googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
-                    <GoogleMap
-                      className="rounded-3"
-                      mapContainerStyle={containerStyle}
-                      center={placeState || { lat: 0, lng: 0 }}
-                      zoom={placeState ? 10 : 2}
-                    >
-                      {filteredProfiles?.map(
-                        (profile) =>
-                          profile.lat &&
-                          profile.lng && (
-                            <Marker
-                              key={profile.id}
-                              position={{
-                                lat: profile.lat,
-                                lng: profile.lng,
-                              }}
-                            />
-                          )
-                      )}
-                    </GoogleMap>
-                  </LoadScriptNext>
+                  <GoogleMap
+                    className="rounded-3"
+                    mapContainerStyle={containerStyle}
+                    center={placeState || { lat: 0, lng: 0 }}
+                    zoom={placeState ? 10 : 2}
+                  >
+                    {filteredProfiles?.map(
+                      (profile) =>
+                        profile.lat &&
+                        profile.lng && (
+                          <Marker
+                            key={profile.id}
+                            position={{
+                              lat: profile.lat,
+                              lng: profile.lng,
+                            }}
+                          />
+                        )
+                    )}
+                  </GoogleMap>
                 )}
               </Box>
               <div>

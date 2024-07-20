@@ -12,6 +12,7 @@ import GenericIconButton from "./IconButton"
 import GenericInput from "./TextField"
 import LinkButton from "./LinkButton"
 import Checkbox from "./Checkbox"
+import GenericTabs from "./Tabs"
 
 export {
     Typography,
@@ -28,4 +29,5 @@ export {
     GenericInput,
     LinkButton,
     Checkbox,
+    GenericTabs,
 };

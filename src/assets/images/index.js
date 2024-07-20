@@ -49,6 +49,7 @@ import adsSquare from "./ads-square.png"
 import adsExternalLink from "./ads-external-link.png"
 import placeholderProfile from "./placeholder-profile.jpg"
 import placeholderProfile2 from "./placeholder-profile-2.png"
+import homeIcon from "../SVGs/HomeIcon.svg"
 
 const IMAGES = {
     LOGO: logo,
@@ -102,6 +103,7 @@ const IMAGES = {
     ADS_EXTERNAL_LINK: adsExternalLink,
     PLACEHOLDER_PROFILE: placeholderProfile,
     PLACEHOLDER_PROFILE_2: placeholderProfile2,
+    HOME_ICON: homeIcon,
 }
 
 export default IMAGES;

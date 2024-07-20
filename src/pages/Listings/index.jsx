@@ -11,7 +11,7 @@ import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "./components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Autocomplete,
   GoogleMap,
@@ -25,6 +25,7 @@ import DropdownFilter from "./components/DropdownFilters";
 import { LoaderCenter } from "../../assets/Loader";
 import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
+import BreadCrumb from "../../components/BreadCrumb";
 
 const Listings = () => {
   const [profiles, setProfiles] = useState([]);
@@ -43,7 +44,7 @@ const Listings = () => {
 
   const autocompleteRef = useRef(null);
   const profilesPerPage = 10;
-
+  const navigate = useNavigate();
   const location = useLocation();
   const { searchKeywords, place, filteredListings } = location.state || {};
   const fetchRequestRef = useRef(null);
@@ -108,11 +109,58 @@ const Listings = () => {
         fetchData({ searchKeywordsState: searchKeywords || "", place });
       }
     } else {
-      setLoadingType("initial");
-      setLoading(true);
-      fetchData({ searchKeywordsState, areaRange, place: null, currentPage });
+      const savedState = sessionStorage.getItem("listingsState");
+      if (savedState) {
+        const {
+          searchKeywords,
+          place,
+          filteredListings,
+          areaRange,
+          currentPage,
+          selectedOptions,
+        } = JSON.parse(savedState);
+        setSearchKeywordsState(searchKeywords || "");
+        setPlaceState(place || null);
+        setAreaRange(areaRange || 10);
+        setCurrentPage(currentPage || 0);
+        setSelectedOptions(selectedOptions || []);
+        if (filteredListings && filteredListings.length > 0) {
+          const profilesData = filteredListings.flatMap((group) => group.items);
+          setProfiles(profilesData);
+          setFilteredProfiles(profilesData);
+        }
+      } else {
+        setLoadingType("initial");
+        setLoading(true);
+        fetchData({ searchKeywordsState, areaRange, place: null, currentPage });
+      }
     }
   }, [location.state]);
+
+  // useEffect(() => {
+  //   if (location.state) {
+  //     const { searchKeywords, place, filteredListings } = location.state;
+  //     setSearchKeywordsState(searchKeywords || "");
+  //     setPlaceState(place || null);
+  //     if (filteredListings && filteredListings.length > 0) {
+  //       const profilesData = filteredListings.flatMap((group) => group.items);
+  //       setProfiles(profilesData);
+  //       setFilteredProfiles(profilesData);
+  //     } else {
+  //       fetchData({ searchKeywordsState: searchKeywords || "", place });
+  //     }
+  //   } else {
+  //     setLoadingType("initial");
+  //     setLoading(true);
+  //     fetchData({ searchKeywordsState, areaRange, place: null, currentPage });
+  //   }
+  // }, [location.state]);
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      sessionStorage.removeItem("listingsState");
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     if (searchKeywords) {
@@ -352,19 +400,6 @@ const Listings = () => {
 
   const handleAreaRangeChange = (value) => {
     setAreaRange(value);
-    setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState,
-      areaRange: value,
-      place: placeState || {
-        lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-        lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-        address: autocompleteRef.current.getPlace().formatted_address,
-      },
-      currentPage: 0,
-    });
   };
 
   const handleSearchButton = () => {
@@ -385,19 +420,7 @@ const Listings = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState,
-      areaRange,
-      place: placeState || {
-        lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-        lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-        address: autocompleteRef.current.getPlace().formatted_address,
-      },
-      currentPage: 0,
-    });
+    handleSearchButton();
   };
 
   const handleSearchKeywordsChange = (e) => {
@@ -455,6 +478,13 @@ const Listings = () => {
     borderRadius: "8px",
   };
 
+  const extractStateAndCity = (address = "") => {
+    const parts = address.split(",");
+    const city = parts.length > 0 ? parts[0].trim() : "";
+    const state = parts.length > 1 ? parts[1].trim() : "";
+    return { state, city };
+  };
+
   return (
     <LoadScriptNext
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
@@ -462,8 +492,14 @@ const Listings = () => {
     >
       <>
         <Container ref={topRef} className="min-vh-100">
+          <div className="mt-4">
+            <BreadCrumb
+              state={extractStateAndCity(placeState?.address).state}
+              city={extractStateAndCity(placeState?.address).city}
+            />
+          </div>
           <div>
-            <AdsSection margin={4} />
+            <AdsSection margin={3} />
           </div>
 
           <Row>

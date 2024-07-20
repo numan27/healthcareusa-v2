@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, Col, Container, Form, Row } from "react-bootstrap";
 import {
   Box,
@@ -8,7 +8,7 @@ import {
   Typography,
 } from "../../components/GenericComponents";
 import AppLayout from "../../components/Layout/AppLayout";
-import FormHeader from "../../components/Layout/FormLayout/FormHeader";
+// import FormHeader from "../../components/Layout/FormLayout/FormHeader";
 import { LoaderCenter } from "../../assets";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -52,7 +52,7 @@ const Dashboard = () => {
     };
 
     fetchCategories();
-    fetchTags(); // Fetch tags on component mount
+    fetchTags();
   }, []);
 
   const handleChange = (e) => {
@@ -66,7 +66,7 @@ const Dashboard = () => {
   };
 
   const handleTagsChange = (tags) => {
-    const availableTags = tags; // Use the `tags` state directly
+    const availableTags = tags;
 
     const tagIds = tags
       .map((tag) => {
@@ -77,7 +77,7 @@ const Dashboard = () => {
 
     setFormData({
       ...formData,
-      tags: tagIds, // Set the tags array to an array of IDs
+      tags: tagIds,
     });
   };
 
@@ -173,6 +173,8 @@ const Dashboard = () => {
   };
 
   console.log("formData post", formData);
+
+  // console.error("Show Errors", errors);
 
   return (
     <div>

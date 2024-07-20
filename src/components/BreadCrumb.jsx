@@ -1,87 +1,140 @@
 import React from "react";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { Link as MUILink } from "@mui/material";
-import { useLocation, Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { HiOutlineChevronRight } from "react-icons/hi2";
+import { FaHome } from "react-icons/fa";
 import { Container } from "react-bootstrap";
-
-const handleClick = (event) => {
-  event.preventDefault();
-  console.info("You clicked a breadcrumb.");
-};
-
-// Paths to exclude from breadcrumbs
-const EXCLUDE_PATHS = ["listing-details", "archive"];
-
-// Mapping of dynamic paths to readable labels
-const PATH_LABELS = {
-  blogs: "Blogs",
-  "detail-blog": "Blog Details",
-  listings: "LISTINGS", // Added listings
-};
 
 // Styled components
 const StyledBreadcrumbs = styled(Breadcrumbs)`
-  margin: 16px 0;
-  color: #fff;
-  // background-color: #00c1b6;
-  transparent: 0.7;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+  height: 24px;
+`;
+
+const HomeLink = styled(MUILink)`
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #667085;
+  &:hover {
+    color: #00c1b6 !important;
+  }
+  &:active {
+    color: #000;
+  }
 `;
 
 const StyledLink = styled(MUILink)`
-  font-size: 16px;
-  text-decoration: none;
-  color: #333;
+  font-size: 14px !important;
+  text-decoration: none !important;
+  color: #667085 !important;
+  text-transform: capitalize !important;
   &:hover {
-    color: #00c1b6;
+    color: #00c1b6 !important;
+    text-decoration: underline !important;
   }
   &:active {
     color: #00c1b6;
   }
+  &[aria-current="page"] {
+    color: #00c1b6 !important;
+    pointer-events: none;
+  }
 `;
 
-export default function BreadCrumb() {
-  const location = useLocation();
-  const pathnames = location.pathname
-    .split("/")
-    .filter((x) => x && !EXCLUDE_PATHS.includes(x));
+const HomeIcon = styled(FaHome)`
+  color: #667085;
+  &:hover {
+    color: #00c1b6;
+  }
+`;
+
+const NonClickableText = styled.span`
+  font-size: 14px;
+  color: #667085;
+`;
+
+export default function BreadCrumb({ state, city, listingTitle, category }) {
+  const navigate = useNavigate();
+
+  const handleStateCityClick = () => {
+    if (state && city) {
+      navigate(`/listings?state=${state}&city=${city}`);
+    }
+  };
+
+  const handleCategoryClick = () => {
+    let categorySlug = category;
+    if (Array.isArray(category) && category.length > 0) {
+      categorySlug = category[0];
+    }
+
+    if (typeof categorySlug === "string") {
+      const slug = categorySlug.toLowerCase().replace(/\s+/g, "-");
+      // Save the latest query parameters to session storage
+      sessionStorage.setItem(
+        "latestQueryParams",
+        JSON.stringify(latestQueryParams)
+      );
+      navigate(`/archive/${slug}`, { state: { reload: true, category: slug } });
+    } else {
+      console.error("Category is not a string:", category);
+    }
+  };
+
+  // Check for undefined props and set default values if necessary
+  const displayState = state || "";
+  const displayCity = city || "";
+  const displayListingTitle = listingTitle || "";
+  const displayCategory = category || "";
 
   return (
-    <div
-      role="presentation"
-      onClick={handleClick}
-      className="position-absolute mt-2"
-    >
+    <div role="presentation">
       <Container>
         <StyledBreadcrumbs
-          className="rounded-pill px-4 py-2 shadow-lg"
+          separator={<HiOutlineChevronRight />}
+          className="rounded-pill py-2 d-flex align-items-center"
           aria-label="breadcrumb"
         >
-          <StyledLink component={RouterLink} to="/" active={false}>
-            Home
-          </StyledLink>
-          {pathnames.map((value, index) => {
-            const last = index === pathnames.length - 1;
-            const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-
-            const label = PATH_LABELS[value] || value;
-
-            return last ? (
-              <StyledLink active={true} aria-current="page" key={to}>
-                {label}
-              </StyledLink>
-            ) : (
+          <HomeLink component={RouterLink} to="/" active={false}>
+            <HomeIcon size="24px" />
+          </HomeLink>
+          {displayState && displayCity ? (
+            displayListingTitle ? (
               <StyledLink
-                component={RouterLink}
-                to={to}
-                key={to}
+                className="cursor-pointer"
+                onClick={handleStateCityClick}
                 active={false}
               >
-                {label}
+                {displayState}, {displayCity}
               </StyledLink>
-            );
-          })}
+            ) : (
+              <NonClickableText>
+                {displayState}, {displayCity}
+              </NonClickableText>
+            )
+          ) : (
+            <div>
+              {displayCategory &&
+                (window.location.pathname.includes("/archive") ? (
+                  <NonClickableText>{displayCategory}</NonClickableText>
+                ) : (
+                  <StyledLink
+                    className="cursor-pointer"
+                    onClick={handleCategoryClick}
+                    active={false}
+                  >
+                    {displayCategory}
+                  </StyledLink>
+                ))}
+            </div>
+          )}
+          {displayListingTitle && (
+            <StyledLink className="text-capitalize" aria-current="page">
+              {displayListingTitle}
+            </StyledLink>
+          )}
         </StyledBreadcrumbs>
       </Container>
     </div>

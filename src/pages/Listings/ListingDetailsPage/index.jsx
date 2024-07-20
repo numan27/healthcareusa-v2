@@ -13,7 +13,7 @@ import {
 import { RiInstagramFill } from "react-icons/ri";
 import { MdShield } from "react-icons/md";
 import { toast } from "react-toastify";
-import AppLayout from "../../../components/Layout/AppLayout";
+import { HiOutlineChevronLeft } from "react-icons/hi2";
 import {
   Box,
   GenericBadge,
@@ -32,7 +32,6 @@ import ClaimListingSection from "./components/ClaimListingSection";
 import axios from "axios";
 import styled from "styled-components";
 import { LoaderCenter } from "../../../assets/Loader";
-import { FaArrowLeftLong } from "react-icons/fa6";
 import BreadCrumb from "../../../components/BreadCrumb";
 
 const StyledPopover = styled(Popover)`
@@ -142,7 +141,6 @@ const ListingDetailsPage = () => {
       lat: coordinates[0],
       lng: coordinates[1],
     };
-
     return (
       <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
         <GoogleMap
@@ -284,50 +282,62 @@ const ListingDetailsPage = () => {
   console.log("jsonData", jsonData);
   console.log("doctorLanguages", doctorLanguages);
 
-  // const handleBackToListings = () => {
-  //   navigate("/listings", {
-  //     state: {
-  //       fromListingsPage: true,
-  //       searchKeywordsState: location.state.searchKeywordsState,
-  //       areaRange: location.state.areaRange,
-  //       place: location.state.place,
-  //       currentPage: location.state.currentPage,
-  //       selectedOptions: location.state.selectedOptions,
-  //       profiles: location.state.profiles,
-  //       filteredProfiles: location.state.filteredProfiles,
-  //     },
-  //   });
-  // };
+  const handleBackToListings = () => {
+    const preservedState = sessionStorage.getItem("listingsState");
+    if (preservedState) {
+      const state = JSON.parse(preservedState);
+      navigate("/listings", { state });
+    }
+  };
 
-  // const handleBack = () => {
-  //   navigate(-1);
-  // };
+  useEffect(() => {
+    const preservedState = sessionStorage.getItem("listingsState");
+    if (preservedState) {
+      const state = JSON.parse(preservedState);
+      setJsonData((prevState) => ({
+        ...prevState,
+        ...state,
+      }));
+    }
+  }, []);
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const category = location.state?.category || jsonData.taxonomies;
 
   return (
     <>
       {/* <BreadCrumb /> */}
       <Container className="min-vh-100 pt-4 pb-5">
-        {/* {jsonData && (
-          <GenericButton
-            background="transparent"
-            color="#000"
-            hoverBgColor="transparent"
-            hoverColor="#000"
-            border="0"
-            padding="0"
-            height="fit-content"
-            onClick={handleBackToListings}
-            className="mb-4"
-          >
-            <FaArrowLeftLong size={28} /> Back to Listings
-          </GenericButton>
-        )} */}
+        <div className="d-flex align-items-center justify-content-between">
+          <BreadCrumb
+            state={location.state?.state}
+            city={location.state?.city}
+            listingTitle={jsonData.title?.rendered}
+            category={category}
+          />
 
-        <Row>
+          {jsonData && (
+            <GenericButton
+              background="transparent"
+              color="#667085"
+              weight="400"
+              hoverBgColor="transparent"
+              hoverColor="#00C1B6"
+              border="0"
+              padding="0"
+              height="fit-content"
+              onClick={handleBackToListings}
+              className="text-decoration-underline"
+            >
+              <HiOutlineChevronLeft size="16px" /> Return to Search Results
+            </GenericButton>
+          )}
+        </div>
+
+        <Row className="mt-4">
           {/* Left Content */}
           <Col lg={9}>
             {/* Profile Media */}

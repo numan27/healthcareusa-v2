@@ -80,18 +80,41 @@ const ProfileCard = ({
 
   const handleNavigate = (event, id) => {
     event.preventDefault();
+    const { state: extractedState, city: extractedCity } = extractStateAndCity(
+      place?.address || ""
+    );
+
+    const listingsState = {
+      searchKeywordsState,
+      areaRange,
+      place,
+      currentPage,
+      selectedOptions,
+      profiles,
+      filteredProfiles,
+      state: extractedState,
+      city: extractedCity,
+      category: singleProfile.taxonomies,
+    };
+
+    sessionStorage.setItem("listingsState", JSON.stringify(listingsState));
+
     navigate(`/listing-details/${id}`, {
       state: {
         fromListingsPage: true,
-        searchKeywordsState,
-        areaRange,
-        place,
-        currentPage,
-        selectedOptions,
-        profiles,
-        filteredProfiles,
+        state: extractedState,
+        city: extractedCity,
+        category: singleProfile.taxonomies,
       },
     });
+  };
+
+  const extractStateAndCity = (address) => {
+    if (!address) return { state: "", city: "" };
+    const parts = address.split(",");
+    const city = parts.length > 0 ? parts[0].trim() : "";
+    const state = parts.length > 1 ? parts[1].trim() : "";
+    return { state, city };
   };
 
   const formatAddress = (address) => {
