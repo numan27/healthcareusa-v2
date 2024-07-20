@@ -42,7 +42,7 @@ const SignInModal = ({
     try {
       // First, perform login using Basic Auth
       const loginResponse = await fetch(
-        "https://jsappone.demowp.io/wp-json/wp/v2/users/me",
+        "https://findhealthcare.com/wp-json/wp/v2/users/me",
         {
           method: "GET",
           headers: {
@@ -68,7 +68,7 @@ const SignInModal = ({
 
       // After successful login, fetch the JWT token
       const tokenResponse = await fetch(
-        "https://jsappone.demowp.io/wp-json/jwt-auth/v1/token",
+        "https://findhealthcare.com/wp-json/jwt-auth/v1/token",
         {
           method: "POST",
           headers: {

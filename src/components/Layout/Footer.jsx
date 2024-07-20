@@ -19,7 +19,7 @@ const Footer = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const response = await axios.get('https://jsappone.demowp.io/wp-json/wp/v2/widgets/', {
+        const response = await axios.get('https://findhealthcare.com/wp-json/wp/v2/widgets/', {
           auth: {
             username: 'numan27',
             password: 'findhealthcareusa'

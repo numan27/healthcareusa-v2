@@ -32,7 +32,7 @@ const Dashboard = () => {
     const fetchCategories = async () => {
       try {
         const categoriesResponse = await axios.get(
-          "https://jsappone.demowp.io/wp-json/wp/v2/categories"
+          "https://findhealthcare.com/wp-json/wp/v2/categories"
         );
         setCategories(categoriesResponse.data);
       } catch (error) {
@@ -43,7 +43,7 @@ const Dashboard = () => {
     const fetchTags = async () => {
       try {
         const tagsResponse = await axios.get(
-          "https://jsappone.demowp.io/wp-json/wp/v2/tags"
+          "https://findhealthcare.com/wp-json/wp/v2/tags"
         );
         setTags(tagsResponse.data);
       } catch (error) {
@@ -107,7 +107,7 @@ const Dashboard = () => {
       uploadFormData.append("file", formData.profilePicture);
 
       const uploadResponse = await fetch(
-        "https://jsappone.demowp.io/wp-json/wp/v2/media",
+        "https://findhealthcare.com/wp-json/wp/v2/media",
         {
           method: "POST",
           headers: {
@@ -145,7 +145,7 @@ const Dashboard = () => {
       console.log("Payload before submission:", payload);
 
       const response = await fetch(
-        "https://jsappone.demowp.io/wp-json/wp/v2/posts",
+        "https://findhealthcare.com/wp-json/wp/v2/posts",
         {
           method: "POST",
           headers: {

@@ -29,7 +29,7 @@ const Header = () => {
     const fetchMenuItems = async () => {
       try {
         const response = await axios.get(
-          "https://jsappone.demowp.io/wp-json/wp/v2/menu-items",
+          "https://findhealthcare.com/wp-json/wp/v2/menu-items",
           {
             auth: {
               username: "numankhalil27@gmail.com",

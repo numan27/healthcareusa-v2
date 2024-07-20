@@ -1,14 +1,14 @@
 <!-- http://yourwebsite.com/wp-json/cubewp-forms/v1/get_form?post_type=post&form_type=search_filters -->
 
-https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?post_type=post&form_type=search_filters
+https://findhealthcare.com/wp-json/cubewp-forms/v1/get_form?post_type=post&form_type=search_filters
 
-https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?form_type=user_register
-
-
-https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=listing&cwp_query[orderby]=ASC&cwp_query[s]=&cwp_query[fc-google-address_range]=480&cwp_query[fc-google-address]=New%20York&cwp_query[fc-google-address_lat]=40.730610&cwp_query[fc-google-address_lng]=-73.935242
+https://findhealthcare.com/wp-json/cubewp-forms/v1/get_form?form_type=user_register
 
 
-https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=listing&cwp_query[orderby]=ASC&cwp_query[s]=&cwp_query[fc-google-address_range]=480&cwp_query[fc-google-address]=Lahore&cwp_query[fc-google-address_lat]=31.5497&cwp_query[fc-google-address_lng]=74.3436
+https://findhealthcare.com/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=listing&cwp_query[orderby]=ASC&cwp_query[s]=&cwp_query[fc-google-address_range]=480&cwp_query[fc-google-address]=New%20York&cwp_query[fc-google-address_lat]=40.730610&cwp_query[fc-google-address_lng]=-73.935242
+
+
+https://findhealthcare.com/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=listing&cwp_query[orderby]=ASC&cwp_query[s]=&cwp_query[fc-google-address_range]=480&cwp_query[fc-google-address]=Lahore&cwp_query[fc-google-address_lat]=31.5497&cwp_query[fc-google-address_lng]=74.3436
 
 
 
@@ -219,7 +219,7 @@ https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=li
           "post_modified_gmt": "2024-06-27 11:46:22",
           "post_content_filtered": "",
           "post_parent": 0,
-          "guid": "https:\/\/jsappone.demowp.io\/listing\/frontier-oral-surgery-and-implant-center\/",
+          "guid": "https:\/\/findhealthcare.com\/listing\/frontier-oral-surgery-and-implant-center\/",
           "menu_order": 0,
           "post_type": "listing",
           "post_mime_type": "",
@@ -245,7 +245,7 @@ https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=li
           "post_modified_gmt": "2024-06-27 11:46:18",
           "post_content_filtered": "",
           "post_parent": 0,
-          "guid": "https:\/\/jsappone.demowp.io\/listing\/chad-petersen-dds\/",
+          "guid": "https:\/\/findhealthcare.com\/listing\/chad-petersen-dds\/",
           "menu_order": 0,
           "post_type": "listing",
           "post_mime_type": "",
@@ -271,7 +271,7 @@ https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=li
           "post_modified_gmt": "2024-06-27 11:46:18",
           "post_content_filtered": "",
           "post_parent": 0,
-          "guid": "https:\/\/jsappone.demowp.io\/listing\/rex-dolan-dds\/",
+          "guid": "https:\/\/findhealthcare.com\/listing\/rex-dolan-dds\/",
           "menu_order": 0,
           "post_type": "listing",
           "post_mime_type": "",
@@ -297,7 +297,7 @@ https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=li
           "post_modified_gmt": "2024-06-27 11:46:18",
           "post_content_filtered": "",
           "post_parent": 0,
-          "guid": "https:\/\/jsappone.demowp.io\/listing\/nathan-steele-dds-md\/",
+          "guid": "https:\/\/findhealthcare.com\/listing\/nathan-steele-dds-md\/",
           "menu_order": 0,
           "post_type": "listing",
           "post_mime_type": "",
@@ -323,7 +323,7 @@ https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?cwp_query[post_type]=li
           "post_modified_gmt": "2024-06-27 11:46:18",
           "post_content_filtered": "",
           "post_parent": 0,
-          "guid": "https:\/\/jsappone.demowp.io\/listing\/roland-gustafson-dds\/",
+          "guid": "https:\/\/findhealthcare.com\/listing\/roland-gustafson-dds\/",
           "menu_order": 0,
           "post_type": "listing",
           "post_mime_type": "",

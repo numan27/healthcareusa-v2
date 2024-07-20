@@ -20,7 +20,7 @@ const SignInModal = ({ show, onHide, title, moveToForgetPassword, moveToFSignUp 
     const handleSignIn = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('https://jsappone.demowp.io/wp-json/wp/v2/users/me', {
+        const response = await fetch('https://findhealthcare.com/wp-json/wp/v2/users/me', {
             method: 'GET',
             headers: {
                 'Authorization': 'Basic ' + btoa(`${email}:${password}`)

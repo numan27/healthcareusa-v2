@@ -1,4 +1,3 @@
-import AppLayout from '../../components/Layout/AppLayout'
 import BlogsSection from "../Home/components/Blogs"
 
 const Blogs = () => {

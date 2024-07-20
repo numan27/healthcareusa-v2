@@ -11,7 +11,7 @@ export const GroupedListingsProvider = ({ children }) => {
     const fetchListings = async () => {
       try {
         const response = await axios.get(
-          "https://jsappone.demowp.io/wp-json/wp/v2/service?per_page=100"
+          "https://findhealthcare.com/wp-json/wp/v2/service?per_page=100"
         );
         const data = response.data.map((item) => ({
           ...item,

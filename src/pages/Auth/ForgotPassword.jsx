@@ -15,7 +15,7 @@ const ForgotPassword = ({ show, onHide, title, moveToSignIn }) => {
 
     const handleForgotPassword = async (values, { setSubmitting, setFieldError }) => {
         try {
-            const response = await axios.post('https://jsappone.demowp.io/wp-json/wp/v2/users/lostpassword', {
+            const response = await axios.post('https://findhealthcare.com/wp-json/wp/v2/users/lostpassword', {
                 email: values.email
             });
 

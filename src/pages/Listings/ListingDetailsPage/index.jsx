@@ -72,14 +72,14 @@ const ListingDetailsPage = () => {
 
   useEffect(() => {
     const fetchListingData = async () => {
-      const url = `https://jsappone.demowp.io/wp-json/wp/v2/listing/${id}`;
+      const url = `https://findhealthcare.com/wp-json/wp/v2/listing/${id}`;
       try {
         const response = await axios.get(url);
         const listingData = response.data;
 
         if (listingData.featured_media) {
           const mediaResponse = await axios.get(
-            `https://jsappone.demowp.io/wp-json/wp/v2/media/${listingData.featured_media}`
+            `https://findhealthcare.com/wp-json/wp/v2/media/${listingData.featured_media}`
           );
           listingData.mediaUrl = mediaResponse.data.source_url;
         }
@@ -94,7 +94,7 @@ const ListingDetailsPage = () => {
           listingData.cubewp_post_meta?.["cwp_field_310681993623"]?.meta_value;
         if (galleryMeta && Array.isArray(galleryMeta)) {
           const galleryResponse = await axios.get(
-            `https://jsappone.demowp.io/wp-json/wp/v2/media?include=${galleryMeta.join(
+            `https://findhealthcare.com/wp-json/wp/v2/media?include=${galleryMeta.join(
               ","
             )}`
           );
@@ -202,23 +202,23 @@ const ListingDetailsPage = () => {
   const listingDetailSocialShare = [
     {
       icon: <FaFacebookF size={14} color="#23262F" />,
-      link: "https://www.facebook.com/shareProfile?mini=true&url=https://jsappone.demowp.io/",
+      link: "https://www.facebook.com/shareProfile?mini=true&url=https://findhealthcare.com/",
     },
     {
       icon: <FaLinkedin size={14} color="#23262F" />,
-      link: "https://www.linkedin.com/shareProfile?mini=true&url=https://jsappone.demowp.io/",
+      link: "https://www.linkedin.com/shareProfile?mini=true&url=https://findhealthcare.com/",
     },
     {
       icon: <FaTwitter size={14} color="#23262F" />,
-      link: "https://www.twitter.com/shareProfile?mini=true&url=https://jsappone.demowp.io/",
+      link: "https://www.twitter.com/shareProfile?mini=true&url=https://findhealthcare.com/",
     },
     {
       icon: <RiInstagramFill size={14} color="#23262F" />,
-      link: "https://www.instagarm.com/shareProfile?mini=true&url=https://jsappone.demowp.io/",
+      link: "https://www.instagarm.com/shareProfile?mini=true&url=https://findhealthcare.com/",
     },
     {
       icon: <FaPinterest size={14} color="#23262F" />,
-      link: "https://www.pinterest.com/shareProfile?mini=true&url=https://jsappone.demowp.io/",
+      link: "https://www.pinterest.com/shareProfile?mini=true&url=https://findhealthcare.com/",
     },
   ];
 
