@@ -15,7 +15,7 @@ const NavigateToListings = () => {
   useEffect(() => {
     const fetchListings = async () => {
       const startTime = Date.now();
-      const url = "https://findhealthcare.com/wp-json/wp/v2/listing";
+      const url = "https://jsappone.demowp.io/wp-json/wp/v2/listing";
       try {
         const response = await axios.get(url);
         const profileData = response.data;
@@ -26,7 +26,7 @@ const NavigateToListings = () => {
           .filter((id) => id);
         const mediaResponses = await Promise.all(
           mediaIds.map((id) =>
-            axios.get(`https://findhealthcare.com/wp-json/wp/v2/media/${id}`)
+            axios.get(`https://jsappone.demowp.io/wp-json/wp/v2/media/${id}`)
           )
         );
         const mediaData = mediaResponses.reduce((acc, media) => {

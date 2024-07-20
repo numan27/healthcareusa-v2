@@ -29,9 +29,16 @@ const StyledTabs = styled.div`
 `;
 
 function GenericTabs(props) {
-  const { id, tabs, className } = props;
+  const { id, tabs, className, onSelect } = props;
   const defaultActiveKey = tabs.length > 0 ? tabs[0].eventKey : "";
   const [activeKey, setActiveKey] = useState(defaultActiveKey);
+
+  const handleSelect = (key) => {
+    setActiveKey(key);
+    if (onSelect) {
+      onSelect(key);
+    }
+  };
 
   return (
     <StyledTabs>
@@ -45,7 +52,7 @@ function GenericTabs(props) {
               <Nav.Link
                 eventKey={tab.eventKey}
                 active={activeKey === tab.eventKey}
-                onClick={() => setActiveKey(tab.eventKey)}
+                onClick={() => handleSelect(tab.eventKey)}
                 className="text-center"
               >
                 {tab.title}
@@ -79,6 +86,7 @@ GenericTabs.propTypes = {
     })
   ),
   className: PropTypes.string,
+  onSelect: PropTypes.func,
 };
 
 GenericTabs.defaultProps = {

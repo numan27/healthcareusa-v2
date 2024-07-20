@@ -38,7 +38,7 @@ const Header = () => {
     const fetchMenuItems = async () => {
       try {
         const response = await axios.get(
-          "https://findhealthcare.com/wp-json/wp/v2/menu-items?menus=144",
+          "https://jsappone.demowp.io/wp-json/wp/v2/menu-items?menus=144",
           {
             auth: {
               username: "numankhalil27@gmail.com",
@@ -142,7 +142,7 @@ const Header = () => {
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ms-auto">
-                  {menus.map((menu, index) => {
+                  {menus?.map((menu, index) => {
                     const linkTo = menuPaths[menu.title.rendered];
                     const isActive =
                       location.pathname === menuPaths[menu.title.rendered];

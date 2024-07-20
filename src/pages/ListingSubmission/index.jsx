@@ -81,7 +81,7 @@ const ListingSubmission = () => {
     uploadFormData.append("file", formData.profilePicture);
 
     const uploadResponse = await fetch(
-      "https://findhealthcare.com/wp-json/wp/v2/media",
+      "https://jsappone.demowp.io/wp-json/wp/v2/media",
       {
         method: "POST",
         headers: {
@@ -105,7 +105,7 @@ const ListingSubmission = () => {
         uploadFormData.append("file", picture);
 
         const uploadResponse = await fetch(
-          "https://findhealthcare.com/wp-json/wp/v2/media",
+          "https://jsappone.demowp.io/wp-json/wp/v2/media",
           {
             method: "POST",
             headers: {
@@ -163,7 +163,7 @@ const ListingSubmission = () => {
       };
 
       const response = await fetch(
-        "https://findhealthcare.com/wp-json/wp/v2/listing",
+        "https://jsappone.demowp.io/wp-json/wp/v2/listing",
         {
           method: "POST",
           headers: {

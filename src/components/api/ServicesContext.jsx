@@ -10,7 +10,7 @@ export const ServicesProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchPosts = async (perPage) => {
-      let url = `https://findhealthcare.com/wp-json/wp/v2/service?per_page=${perPage}`;
+      let url = `https://jsappone.demowp.io/wp-json/wp/v2/service?per_page=${perPage}`;
       try {
         const response = await axios.get(url);
         const data = response.data.map((item) => ({

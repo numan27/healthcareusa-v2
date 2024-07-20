@@ -702,6 +702,10 @@ body {
     border-color: #09BBB1;
 }
 
+.price-plan-price {
+    font-family: "Sora", sans-serif !important;
+}
+
 /* Media Queries */
 
 @media screen and (max-width: 1400px) {

@@ -13,6 +13,7 @@ import GenericInput from "./TextField"
 import LinkButton from "./LinkButton"
 import Checkbox from "./Checkbox"
 import GenericTabs from "./Tabs"
+import GenericStepper from "./Stepper"
 
 export {
     Typography,
@@ -30,4 +31,5 @@ export {
     LinkButton,
     Checkbox,
     GenericTabs,
+    GenericStepper,
 };

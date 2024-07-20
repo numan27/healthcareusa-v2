@@ -57,13 +57,11 @@ function RouterConfig() {
       <Route
         path={PATH.DASHBOARD}
         element={
-          <ProtectedRoute>
-            <PublicRoute
-              element={
-                <AppRoute element={<WEB_PAGES.DASHBOARD />} useLayout={false} />
-              }
-            />
-          </ProtectedRoute>
+          <PublicRoute
+            element={
+              <AppRoute element={<WEB_PAGES.DASHBOARD />} useLayout={false} />
+            }
+          />
         }
       />
       <Route

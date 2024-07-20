@@ -7,11 +7,10 @@ import {
   GenericSelect,
   Typography,
 } from "../../components/GenericComponents";
-import AppLayout from "../../components/Layout/AppLayout";
-// import FormHeader from "../../components/Layout/FormLayout/FormHeader";
 import { LoaderCenter } from "../../assets";
 import { toast } from "react-toastify";
 import axios from "axios";
+import FormHeader from "../../components/Layout/FormLayout/FormHeader";
 
 const initialFormState = {
   featuredImage: null,
@@ -32,7 +31,7 @@ const Dashboard = () => {
     const fetchCategories = async () => {
       try {
         const categoriesResponse = await axios.get(
-          "https://findhealthcare.com/wp-json/wp/v2/categories"
+          "https://jsappone.demowp.io/wp-json/wp/v2/categories"
         );
         setCategories(categoriesResponse.data);
       } catch (error) {
@@ -43,7 +42,7 @@ const Dashboard = () => {
     const fetchTags = async () => {
       try {
         const tagsResponse = await axios.get(
-          "https://findhealthcare.com/wp-json/wp/v2/tags"
+          "https://jsappone.demowp.io/wp-json/wp/v2/tags"
         );
         setTags(tagsResponse.data);
       } catch (error) {
@@ -107,7 +106,7 @@ const Dashboard = () => {
       uploadFormData.append("file", formData.profilePicture);
 
       const uploadResponse = await fetch(
-        "https://findhealthcare.com/wp-json/wp/v2/media",
+        "https://jsappone.demowp.io/wp-json/wp/v2/media",
         {
           method: "POST",
           headers: {
@@ -145,7 +144,7 @@ const Dashboard = () => {
       console.log("Payload before submission:", payload);
 
       const response = await fetch(
-        "https://findhealthcare.com/wp-json/wp/v2/posts",
+        "https://jsappone.demowp.io/wp-json/wp/v2/posts",
         {
           method: "POST",
           headers: {
@@ -174,134 +173,130 @@ const Dashboard = () => {
 
   console.log("formData post", formData);
 
-  // console.error("Show Errors", errors);
-
   return (
     <div>
-      <AppLayout showHeader={false} showFooter={false}>
-        <FormHeader />
-        <Box background="#F3F4F6" className="w-100 mt-4">
-          <Container className="w-100 mx-auto py-5">
-            <Row>
-              <Col className="mx-auto" md={10}>
-                <Card className="border-0 py-2 px-4 mb-2 custom-shadow-2">
-                  <Typography
-                    color="#111827"
-                    weight="500"
-                    size="23px"
-                    lineHeight="36px"
-                    as="h2"
-                    className="mb-0"
-                  >
-                    Creating New Article
-                  </Typography>
-                </Card>
+      <FormHeader />
+      <Box background="#F3F4F6" className="w-100 mt-4">
+        <Container className="w-100 mx-auto py-5">
+          <Row>
+            <Col className="mx-auto" md={10}>
+              <Card className="border-0 py-2 px-4 mb-2 custom-shadow-2">
+                <Typography
+                  color="#111827"
+                  weight="500"
+                  size="23px"
+                  lineHeight="36px"
+                  as="h2"
+                  className="mb-0"
+                >
+                  Creating New Article
+                </Typography>
+              </Card>
 
-                <Card className="border-0 custom-shadow-2">
-                  <Form className="px-4 py-2" onSubmit={handleSubmit}>
-                    <Row>
-                      <Col xs={12} className="mb-2">
-                        <GenericInput
-                          type="file"
-                          name="profilePicture"
-                          onFileChange={handleProfilePictureChange}
-                          // key={`${formKey}-profilePicture`}
-                        />
-                        {!profilePictureUploaded && (
-                          <small className="text-danger" size="14px">
-                            Profile picture required
-                          </small>
-                        )}
-                      </Col>
-                      <Col xs={12} className="mb-2">
-                        <GenericInput
-                          labelWeight={600}
-                          type="text"
-                          background="#fff"
-                          borderColor="#CFD9E0"
-                          name="title"
-                          label="Title of Your Article"
-                          height="40px"
-                          placeholder="Enter Article Name"
-                          value={formData.title}
-                          onChange={handleChange}
-                        />
-                      </Col>
-                      <Col xs={12} className="mb-3">
-                        <Form.Label className="form_label_bold">
-                          Select Category*
-                        </Form.Label>
-                        <GenericSelect
-                          minWidth="120px"
-                          minheight="40px"
-                          borderColor="#CFD9E0"
-                          borderRadius="4px"
-                          bgcolor="#fff"
-                          placeholder="Select Category"
-                          placeholderColor="#333333"
-                          iconColor="#06312E"
-                          menuPlacement="auto"
-                          options={categories.map((category) => ({
-                            id: category.id,
-                            label: category.name,
-                            value: category.slug,
-                          }))}
-                          onChange={handleCategoryChange}
-                        />
-                      </Col>
-                      <Col xs={12} className="mb-2">
-                        <GenericInput
-                          labelWeight={600}
-                          className="rounded-3"
-                          as="textarea"
-                          rows="15"
-                          background="#fff"
-                          borderColor="#CFD9E0"
-                          label="Body of Your Article"
-                          name="articleDesc"
-                          placeholder="Enter here"
-                          value={formData.articleDesc}
-                          onChange={handleChange}
-                        />
-                      </Col>
-                      <Col xs={12} className="mb-2">
-                        <GenericInput
-                          enableSmallText
-                          enableTagInput
-                          smallText="Enter at least 5 tags separated by commas."
-                          labelWeight={600}
-                          type="text"
-                          background="#fff"
-                          borderColor="#CFD9E0"
-                          name="tags"
-                          label="Keyword Tags"
-                          height="40px"
-                          placeholder="Enter Tags"
-                          onTagsChange={handleTagsChange} // Call handleTagsChange on change
-                        />
-                      </Col>
-                    </Row>
-                    <Box
-                      background="#F9FAFB"
-                      className="w-100 d-flex justify-content-end py-2 rounded-bottom-2 px-3"
-                    >
-                      <GenericButton
+              <Card className="border-0 custom-shadow-2">
+                <Form className="px-4 py-2" onSubmit={handleSubmit}>
+                  <Row>
+                    <Col xs={12} className="mb-2">
+                      <GenericInput
+                        type="file"
+                        name="profilePicture"
+                        onFileChange={handleProfilePictureChange}
+                        // key={`${formKey}-profilePicture`}
+                      />
+                      {!profilePictureUploaded && (
+                        <small className="text-danger" size="14px">
+                          Profile picture required
+                        </small>
+                      )}
+                    </Col>
+                    <Col xs={12} className="mb-2">
+                      <GenericInput
+                        labelWeight={600}
+                        type="text"
+                        background="#fff"
+                        borderColor="#CFD9E0"
+                        name="title"
+                        label="Title of Your Article"
                         height="40px"
-                        width="115px"
-                        className=""
-                        type="submit"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? <LoaderCenter /> : "Post Now"}
-                      </GenericButton>
-                    </Box>
-                  </Form>
-                </Card>
-              </Col>
-            </Row>
-          </Container>
-        </Box>
-      </AppLayout>
+                        placeholder="Enter Article Name"
+                        value={formData.title}
+                        onChange={handleChange}
+                      />
+                    </Col>
+                    <Col xs={12} className="mb-3">
+                      <Form.Label className="form_label_bold">
+                        Select Category*
+                      </Form.Label>
+                      <GenericSelect
+                        minWidth="120px"
+                        minheight="40px"
+                        borderColor="#CFD9E0"
+                        borderRadius="4px"
+                        bgcolor="#fff"
+                        placeholder="Select Category"
+                        placeholderColor="#333333"
+                        iconColor="#06312E"
+                        menuPlacement="auto"
+                        options={categories.map((category) => ({
+                          id: category.id,
+                          label: category.name,
+                          value: category.slug,
+                        }))}
+                        onChange={handleCategoryChange}
+                      />
+                    </Col>
+                    <Col xs={12} className="mb-2">
+                      <GenericInput
+                        labelWeight={600}
+                        className="rounded-3"
+                        as="textarea"
+                        rows="15"
+                        background="#fff"
+                        borderColor="#CFD9E0"
+                        label="Body of Your Article"
+                        name="articleDesc"
+                        placeholder="Enter here"
+                        value={formData.articleDesc}
+                        onChange={handleChange}
+                      />
+                    </Col>
+                    <Col xs={12} className="mb-2">
+                      <GenericInput
+                        enableSmallText
+                        enableTagInput
+                        smallText="Enter at least 5 tags separated by commas."
+                        labelWeight={600}
+                        type="text"
+                        background="#fff"
+                        borderColor="#CFD9E0"
+                        name="tags"
+                        label="Keyword Tags"
+                        height="40px"
+                        placeholder="Enter Tags"
+                        onTagsChange={handleTagsChange} // Call handleTagsChange on change
+                      />
+                    </Col>
+                  </Row>
+                  <Box
+                    background="#F9FAFB"
+                    className="w-100 d-flex justify-content-end py-2 rounded-bottom-2 px-3"
+                  >
+                    <GenericButton
+                      height="40px"
+                      width="115px"
+                      className=""
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? <LoaderCenter /> : "Post Now"}
+                    </GenericButton>
+                  </Box>
+                </Form>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </Box>
     </div>
   );
 };

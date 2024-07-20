@@ -46,7 +46,7 @@ const ClaimListingSubmission = () => {
       const uploadFormData = new FormData();
       uploadFormData.append("file", formData.profilePicture);
       const uploadResponse = await fetch(
-        "https://findhealthcare.com/wp-json/wp/v2/media",
+        "https://jsappone.demowp.io/wp-json/wp/v2/media",
         {
           method: "POST",
           headers: {
@@ -86,7 +86,7 @@ const ClaimListingSubmission = () => {
       };
 
       const response = await fetch(
-        "https://findhealthcare.com/wp-json/wp/v2/claimed-listing",
+        "https://jsappone.demowp.io/wp-json/wp/v2/claimed-listing",
         {
           method: "POST",
           headers: {

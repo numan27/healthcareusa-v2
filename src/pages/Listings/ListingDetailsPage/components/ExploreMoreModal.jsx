@@ -62,7 +62,7 @@ const ExploreMoreModal = ({ show, onHide, googleAddress, profileTitle }) => {
       };
 
       const response = await fetch(
-        "https://findhealthcare.com/wp-json/wp/v2/claimed-listing",
+        "https://jsappone.demowp.io/wp-json/wp/v2/claimed-listing",
         {
           method: "POST",
           headers: {

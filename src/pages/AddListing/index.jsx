@@ -12,7 +12,7 @@ const PaginatedListings = ({ selectedCategory }) => {
     const fetchListings = async () => {
       if (!selectedCategory) return;
 
-      const url = `https://findhealthcare.com/wp-json/wp/v2/listing?taxonomies=${selectedCategory}&per_page=100`; // Adjust the URL to filter by taxonomy
+      const url = `https://jsappone.demowp.io/wp-json/wp/v2/listing?taxonomies=${selectedCategory}&per_page=100`; // Adjust the URL to filter by taxonomy
       try {
         const response = await axios.get(url);
         const profileData = response.data;
@@ -23,7 +23,7 @@ const PaginatedListings = ({ selectedCategory }) => {
           .filter((id) => id);
         const mediaResponses = await Promise.all(
           mediaIds.map((id) =>
-            axios.get(`https://findhealthcare.com/wp-json/wp/v2/media/${id}`)
+            axios.get(`https://jsappone.demowp.io/wp-json/wp/v2/media/${id}`)
           )
         );
         const mediaData = mediaResponses.reduce((acc, media) => {

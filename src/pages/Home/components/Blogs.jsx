@@ -28,8 +28,8 @@ const Blogs = ({
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const postUrl = "https://findhealthcare.com/wp-json/wp/v2/posts?_embed";
-      const tagsUrl = "https://findhealthcare.com/wp-json/wp/v2/tags";
+      const postUrl = "https://jsappone.demowp.io/wp-json/wp/v2/posts?_embed";
+      const tagsUrl = "https://jsappone.demowp.io/wp-json/wp/v2/tags";
 
       try {
         const [postsResponse, tagsResponse] = await Promise.all([

@@ -13,7 +13,7 @@ const DropdownFilter = ({
     const fetchDropdownOptions = async () => {
       try {
         const response = await fetch(
-          "https://findhealthcare.com/wp-json/cubewp-forms/v1/get_form?post_type=listing&form_type=post_type"
+          "https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?post_type=listing&form_type=post_type"
         );
         const data = await response.json();
 

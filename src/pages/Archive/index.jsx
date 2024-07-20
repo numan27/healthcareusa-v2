@@ -225,7 +225,7 @@ const Archive = () => {
 
       try {
         const response = await axios.get(
-          `https://findhealthcare.com/wp-json/cubewp-posts/v1/query?${query}`
+          `https://jsappone.demowp.io/wp-json/cubewp-posts/v1/query?${query}`
         );
 
         const basicProfiles = response.data.posts;
@@ -236,14 +236,14 @@ const Archive = () => {
 
         const detailedProfilesPromises = basicProfiles.map(async (profile) => {
           const detailedResponse = await axios.get(
-            `https://findhealthcare.com/wp-json/wp/v2/listing/${profile.ID}`
+            `https://jsappone.demowp.io/wp-json/wp/v2/listing/${profile.ID}`
           );
           const detailedProfile = detailedResponse.data;
 
           if (detailedProfile.featured_media) {
             try {
               const mediaResponse = await axios.get(
-                `https://findhealthcare.com/wp-json/wp/v2/media/${detailedProfile.featured_media}`
+                `https://jsappone.demowp.io/wp-json/wp/v2/media/${detailedProfile.featured_media}`
               );
               detailedProfile.featured_media_url =
                 mediaResponse.data.source_url;

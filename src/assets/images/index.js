@@ -50,6 +50,7 @@ import adsExternalLink from "./ads-external-link.png"
 import placeholderProfile from "./placeholder-profile.jpg"
 import placeholderProfile2 from "./placeholder-profile-2.png"
 import homeIcon from "../SVGs/HomeIcon.svg"
+import bulkUploadIcon from "../SVGs/bulkUploadIcon.svg"
 
 const IMAGES = {
     LOGO: logo,
@@ -104,6 +105,7 @@ const IMAGES = {
     PLACEHOLDER_PROFILE: placeholderProfile,
     PLACEHOLDER_PROFILE_2: placeholderProfile2,
     HOME_ICON: homeIcon,
+    BULK_UPLOAD_ICON: bulkUploadIcon,
 }
 
 export default IMAGES;
