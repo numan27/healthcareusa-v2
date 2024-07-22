@@ -263,7 +263,7 @@ const ListingDetailsPage = () => {
               className="border rounded-2 listing-detail-social"
             >
               <a
-                className="w-100 h-100 d-flex align-items-center justify-content-center"
+                className="w-100 h-100 d-flex align-items-center justify-content-center cursor-pointer"
                 // href={items.link}
                 onClick={(e) => {
                   e.preventDefault();
@@ -306,6 +306,32 @@ const ListingDetailsPage = () => {
   }, []);
 
   const category = location.state?.category || jsonData.taxonomies;
+
+  const handleMapClick = () => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    window.open(url, "_blank");
+  };
+
+  const handleWebsiteClick = () => {
+    const url = jsonData.cubewp_post_meta?.["fc-website"]?.meta_value;
+    if (url) {
+      window.open(url, "_blank");
+    }
+  };
+
+  const saveBookmark = () => {
+    const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+    bookmarks.push("Profile Page URL");
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    console.log("Bookmark saved");
+  };
+
+  const handleBookmark = () => {
+    saveBookmark();
+    toast.success("Profile bookmarked successfully!", {
+      autoClose: 1000,
+    });
+  };
 
   return (
     <>
@@ -504,7 +530,12 @@ const ListingDetailsPage = () => {
                       className="pt-2 position-absolute d-flex flex-sm-row flex-column-reverse  align-items-center gap-2"
                     >
                       <div className="d-flex gap-2">
-                        <BookmarkIcon />
+                        <span
+                          onClick={handleBookmark}
+                          className="cursor-pointer"
+                        >
+                          <BookmarkIcon />
+                        </span>
 
                         <OverlayTrigger
                           bsClass="custom-overlay"
@@ -662,6 +693,7 @@ const ListingDetailsPage = () => {
                         width="90px"
                         padding="0px"
                         className="mt-2"
+                        onClick={handleMapClick}
                       >
                         Get Directions
                       </GenericButton>
@@ -738,7 +770,7 @@ const ListingDetailsPage = () => {
                       lineHeight="24px"
                       weight="400"
                     >
-                      Websites:
+                      Website:
                     </Typography>
                   </Col>
                   <Col sm={6} xs={6}>
@@ -751,9 +783,8 @@ const ListingDetailsPage = () => {
                       weight="700"
                     >
                       <span className="gap-2 listing-detail-link">
-                        <Link to="">Website</Link>,
-                        <Link className="ms-1" to="">
-                          LinkedIn
+                        <Link onClick={handleWebsiteClick} to="">
+                          Click to Visit
                         </Link>
                       </span>
                     </Typography>
@@ -813,7 +844,7 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border py-4 px-3">
-              <ContactForm profileTitle={profileTitle} />
+              <ContactForm profileTitle={profileTitle} googleAddress={googleAddress} />
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative">

@@ -130,14 +130,10 @@ const Blogs = ({
                   className="custom-shadow border-0 cursor-pointer blog-card"
                   key={post.id}
                 >
-                  <Card.Img
-                    className="max-h-75 h-50"
-                    variant="top"
-                    src={post.blogImg}
-                  />
+                  <Card.Img className="" variant="top" src={post.blogImg} />
                   <Box
                     className="d-flex flex-column justify-content-between w-100 h-100"
-                    padding="30px 35px"
+                    padding="30px"
                   >
                     <div>
                       <GenericBadge text={post.tagText} />
@@ -149,13 +145,13 @@ const Blogs = ({
                         color="#121212"
                         weight="700"
                         size="26x"
-                        lineHeight="30px"
+                        lineHeight="36px"
                       >
                         {post.blogTitle}
                       </Typography>
                     </div>
 
-                    <div className="d-flex align-items-center gap-4">
+                    <div className="d-flex align-items-center gap-3">
                       <Typography
                         className="mb-0"
                         as="p"
@@ -165,7 +161,7 @@ const Blogs = ({
                         lineHeight="26px"
                       >
                         <span style={{ color: "#BBB6B6" }}>by</span>{" "}
-                        {post.author}
+                        {post.author ? post.author : "Avitex"} 
                       </Typography>
 
                       <div className="d-flex align-items-center gap-2">

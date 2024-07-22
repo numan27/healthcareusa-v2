@@ -19,7 +19,8 @@ const StyledSelect = styled(Select)`
     border-radius: ${(props) => props.borderRadius};
   }
   .react-select__control:hover {
-    border-color: #b2bac0 !important;
+    border-color: ${(props) => props.borderColorHover};
+    // border-color: #b2bac0 !important;
   }
 
   .react-select__menu-list {
@@ -132,6 +133,7 @@ const GenericSelect = ({
   isMulti,
   iconColor,
   fontSize,
+  borderColorHover,
   placeholderColor,
   valueColor,
   ...props
@@ -159,6 +161,7 @@ const GenericSelect = ({
       maxheight={maxheight}
       bgcolor={bgcolor}
       fontSize={fontSize}
+      borderColorHover={borderColorHover}
       borderRadius={borderRadius}
       className={`${className} react-select-container`}
       classNamePrefix="react-select"
@@ -189,6 +192,7 @@ GenericSelect.propTypes = {
   isMulti: PropTypes.bool,
   iconColor: PropTypes.string,
   fontSize: PropTypes.string,
+  borderColorHover: PropTypes.string,
   placeholderColor: PropTypes.string,
   valueColor: PropTypes.string,
 };
@@ -205,6 +209,7 @@ GenericSelect.defaultProps = {
   isMulti: false,
   borderRadius: "8px",
   fontSize: "15px",
+  borderColorHover: "#b2bac0",
   className: "",
   valueColor: "#333333",
   iconColor: "#BBB6B6",

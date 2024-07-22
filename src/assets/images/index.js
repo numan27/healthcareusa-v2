@@ -7,7 +7,9 @@ import legalIcon from "./legal-services-icon.png"
 import careIcon from "./care-services-icon.png"
 import providersIcon from "./providers-services-icon.png"
 import adsImg from "./ads-img.png"
-import blogImg from "./blog-img.png"
+import blogImg1 from "./blog-img-1.png"
+import blogImg2 from "./blog-img-2.png"
+import blogImg3 from "./blog-img-3.png"
 import partnerLogo1 from "./partner-logo.png"
 import partnerLogo2 from "./partner-logo-2.png"
 import partnerLogo3 from "./partner-logo-3.png"
@@ -51,6 +53,13 @@ import placeholderProfile from "./placeholder-profile.jpg"
 import placeholderProfile2 from "./placeholder-profile-2.png"
 import homeIcon from "../SVGs/HomeIcon.svg"
 import bulkUploadIcon from "../SVGs/bulkUploadIcon.svg"
+import categoryIcon1 from "../SVGs/product-services-icon.svg"
+import categoryIcon2 from "../SVGs/facilities-testing-icon.svg"
+import categoryIcon3 from "../SVGs/personal-care-icon.svg"
+import categoryIcon4 from "../SVGs/insurance-plan-icon.svg"
+import categoryIcon5 from "../SVGs/comfort-legal-icon.svg"
+import categoryIcon6 from "../SVGs/mental-health-icon.svg"
+import categoryIcon7 from "../SVGs/providers-icon.svg"
 
 const IMAGES = {
     LOGO: logo,
@@ -62,7 +71,9 @@ const IMAGES = {
     FACILITIES_SERVICES_ICON: facilitiesIcon,
     PROVIDERS_SERVICES_ICON: providersIcon,
     ADS_IMG: adsImg,
-    BLOG_IMG: blogImg,
+    BLOG_IMG_1: blogImg1,
+    BLOG_IMG_2: blogImg2,
+    BLOG_IMG_3: blogImg3,
     PARTNER_LOGO_1: partnerLogo1,
     PARTNER_LOGO_2: partnerLogo2,
     PARTNER_LOGO_3: partnerLogo3,
@@ -106,6 +117,13 @@ const IMAGES = {
     PLACEHOLDER_PROFILE_2: placeholderProfile2,
     HOME_ICON: homeIcon,
     BULK_UPLOAD_ICON: bulkUploadIcon,
+    CATEGORY_ICON_1: categoryIcon1,
+    CATEGORY_ICON_2: categoryIcon2,
+    CATEGORY_ICON_3: categoryIcon3,
+    CATEGORY_ICON_4: categoryIcon4,
+    CATEGORY_ICON_5: categoryIcon5,
+    CATEGORY_ICON_6: categoryIcon6,
+    CATEGORY_ICON_7: categoryIcon7,
 }
 
 export default IMAGES;

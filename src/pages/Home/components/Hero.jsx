@@ -72,21 +72,21 @@ const Hero = () => {
   };
 
   const order = [
-    "HEALTH INSURANCE",
-    "GOVERNMENT RESOURCES",
-    "Providers",
-    "MENTAL HEALTH",
-    "PCA REHAB AND LEGAL",
-    "FACILITIES AND TESTING",
-    "PRODUCTS AND SERVICES",
-    "FITNESS AND SELF CARE",
-    "Dentist",
+    { name: "HEALTH INSURANCE", icon: IMAGES.CATEGORY_ICON_1 },
+    { name: "GOVERNMENT RESOURCES", icon: IMAGES.PRODUCTS_SERVICES_ICON },
+    { name: "Providers", icon: IMAGES.CATEGORY_ICON_7 },
+    { name: "MENTAL HEALTH", icon: IMAGES.CATEGORY_ICON_6 },
+    { name: "PCA REHAB AND LEGAL", icon: IMAGES.CATEGORY_ICON_5 },
+    { name: "FACILITIES AND TESTING", icon: IMAGES.CATEGORY_ICON_3 },
+    { name: "PRODUCTS AND SERVICES", icon: IMAGES.PRODUCTS_SERVICES_ICON },
+    { name: "FITNESS AND SELF CARE", icon: IMAGES.CATEGORY_ICON_7 },
+    { name: "Dentist", icon: IMAGES.CATEGORY_ICON_7 },
   ];
 
   const sortGroupedListings = (groupedListings) => {
     return groupedListings.sort((a, b) => {
-      const indexA = order.indexOf(a.heading.name);
-      const indexB = order.indexOf(b.heading.name);
+      const indexA = order.findIndex((o) => o.name === a.heading.name);
+      const indexB = order.findIndex((o) => o.name === b.heading.name);
       if (indexA === -1 && indexB === -1) return 0;
       if (indexA === -1) return 1;
       if (indexB === -1) return -1;
@@ -166,67 +166,77 @@ const Hero = () => {
             ) : (
               <div className="service-grid w-100">
                 {sortGroupedListings(groupedListings).map(
-                  (group, groupIndex) => (
-                    <Box
-                      key={groupIndex}
-                      width="100"
-                      className="service-box transition-2 rounded-3"
-                      border="1px solid #99B8B6"
-                      padding="25px 20px 25px 25px"
-                    >
-                      <div className="d-flex align-items-center gap-2">
-                        <img
-                          width={27}
-                          src={IMAGES.PRODUCTS_SERVICES_ICON}
-                          alt="icon"
-                        />
-                        <Typography
-                          className="mb-0 text-nowrap text-uppercase"
-                          align="center"
-                          as="h3"
-                          weight="700"
-                          size="16px"
-                          color="#333333"
-                        >
-                          {group.heading.name}
-                        </Typography>
-                      </div>
+                  (group, groupIndex) => {
+                    const IconComponent = order.find(
+                      (o) => o.name === group.heading.name
+                    )?.icon;
+                    return (
+                      <Box
+                        key={groupIndex}
+                        style={{minHeight: "270px"}}
+                        width="100"
+                        className="service-box transition-2 rounded-3"
+                        border="1px solid #99B8B6"
+                        padding="25px 20px 25px 25px"
+                      >
+                        <div className="d-flex align-items-center gap-2">
+                          {IconComponent && (
+                            <img
+                              width={27}
+                              src={IconComponent}
+                              alt={`${group.heading.name} icon`}
+                            />
+                          )}
+                          <Typography
+                            className="mb-0 text-nowrap text-uppercase"
+                            align="center"
+                            as="h3"
+                            weight="700"
+                            size="16px"
+                            color="#333333"
+                          >
+                            {group.heading.name}
+                          </Typography>
+                        </div>
 
-                      <div className="columns-container mt-2">
-                        {renderItemsInColumns(group.items.slice(0, 4)).map(
-                          (column, columnIndex) => (
-                            <ul className="list-unstyled" key={columnIndex}>
-                              {column.map((item, itemIndex) => (
-                                <li className="mb-2" key={itemIndex}>
-                                  <span
-                                    className="text-decoration-none service-item transition-2"
-                                    onClick={() => handleNavigate(item)}
-                                    style={{ cursor: "pointer" }}
-                                  >
-                                    {item.name}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          )
+                        <div className="columns-container mt-2">
+                          {renderItemsInColumns(group.items.slice(0, 4)).map(
+                            (column, columnIndex) => (
+                              <ul className="list-unstyled" key={columnIndex}>
+                                {column.map((item, itemIndex) => (
+                                  <li className="mb-2" key={itemIndex}>
+                                    <span
+                                      className="text-decoration-none service-item transition-2"
+                                      onClick={() => handleNavigate(item)}
+                                      style={{ cursor: "pointer" }}
+                                    >
+                                      {item.name}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )
+                          )}
+                        </div>
+
+                        {group.items.length > 4 && (
+                          <Link
+                            onClick={() =>
+                              OpenModal(group.heading, group.items)
+                            }
+                            className="service-link"
+                          >
+                            Explore More{" "}
+                            <FiChevronRight
+                              className="transition-2"
+                              size={18}
+                              color="#6BE2C4"
+                            />
+                          </Link>
                         )}
-                      </div>
-
-                      {group.items.length > 4 && (
-                        <Link
-                          onClick={() => OpenModal(group.heading, group.items)}
-                          className="service-link"
-                        >
-                          Explore More{" "}
-                          <FiChevronRight
-                            className="transition-2"
-                            size={18}
-                            color="#6BE2C4"
-                          />
-                        </Link>
-                      )}
-                    </Box>
-                  )
+                      </Box>
+                    );
+                  }
                 )}
               </div>
             )}

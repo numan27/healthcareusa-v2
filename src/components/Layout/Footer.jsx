@@ -70,8 +70,8 @@ const Footer = () => {
   const socialIcons = [
     { icon: FaFacebookF, link: "" },
     { icon: FaLinkedin, link: "" },
-    { icon: FaTwitter, link: "" },
-    { icon: FaPinterest, link: "" },
+    // { icon: FaTwitter, link: "" },
+    // { icon: FaPinterest, link: "" },
     { icon: RiInstagramFill, link: "" },
     { icon: FaYoutube, link: "" },
   ];
@@ -156,7 +156,7 @@ const Footer = () => {
                     weight="400"
                     color="#23262F"
                   >
-                    101 E 129th St, East Chicago, IN 46312, US
+                    101 E 129th St, East Chicago, IN 46312.
                   </Typography>
                 </div>
 
@@ -212,12 +212,12 @@ const Footer = () => {
 
             <Row className="my-3 d-flex flex-lg-row flex-column-reverse justify-content-between">
               <Col
-                xl={4}
+                xl={5}
                 lg={6}
                 className="d-flex align-items-center justify-content-lg-start justify-content-center gap-4 px-0 mt-lg-0 mt-4"
               >
                 <Typography
-                  className="mb-0"
+                  className="mb-0 text-nowrap"
                   as="p"
                   color="#23262F"
                   size="14px"

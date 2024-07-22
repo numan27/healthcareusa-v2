@@ -9,6 +9,7 @@ const LanguageSelect = () => {
         minWidth="120px"
         borderColor="transparent"
         bgcolor="transparent"
+        borderColorHover="transparent"
         placeholder="English"
         placeholderColor="#333333"
         iconColor="#06312E"

@@ -127,6 +127,23 @@ const ProfileCard = ({
     return address;
   };
 
+  const handleClickCall = () => {
+    window.open(`tel:${phone}`, "_self");
+  };
+
+  const handleMapClick = () => {
+    if (singleProfile.lat && singleProfile.lng) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${singleProfile.lat},${singleProfile.lng}`;
+      window.open(url, "_blank");
+    }
+  };
+
+  const handleWebsiteClick = () => {
+    if (singleProfile.website) {
+      window.open(singleProfile.website, "_blank");
+    }
+  };
+
   return (
     <div>
       <Box
@@ -139,9 +156,16 @@ const ProfileCard = ({
             <Col
               lg={3}
               md={6}
-              className="d-flex justify-content-center mx-auto mb-3 mb-lg-0 pt-md-0 pt-4"
+              className="d-flex justify-content-center mx-auto mb-3 mb-lg-0 pt-md-0 pt-4 "
             >
-              <img className="img-fluid" src={profileImg} alt="Profile" />
+              {/* <div> */}
+              <img
+                className="my-auto listing-profile-img rounded-2 w-100"
+                src={profileImg}
+                style={{ maxHeight: "260px" }}
+                alt="Profile"
+              />
+              {/* </div> */}
             </Col>
           )}
 
@@ -242,7 +266,7 @@ const ProfileCard = ({
                     </Box>
                   )}
 
-                  <Box width="140px">
+                  <Box style={{ maxWidth: "200px" }}>
                     <Typography
                       as="span"
                       color="#23262F"
@@ -296,6 +320,7 @@ const ProfileCard = ({
                   gap="15px"
                   height="46px"
                   width="100%"
+                  onClick={handleClickCall}
                 >
                   <CallIcon />
                   Call
@@ -309,23 +334,26 @@ const ProfileCard = ({
                   background="#F3F3F3"
                   height="46px"
                   width="100%"
+                  onClick={handleMapClick}
                 >
                   <MapIcon />
-                  Map
+                  Directions
                 </GenericButton>
-
-                <GenericButton
-                  hoverBgColor="#e3e3e3"
-                  borderColor="transparent"
-                  hoverColor="#23262F"
-                  color="#23262F"
-                  background="#F3F3F3"
-                  height="46px"
-                  width="100%"
-                >
-                  <InternetIcon />
-                  Website
-                </GenericButton>
+                {singleProfile.website && (
+                  <GenericButton
+                    hoverBgColor="#e3e3e3"
+                    borderColor="transparent"
+                    hoverColor="#23262F"
+                    color="#23262F"
+                    background="#F3F3F3"
+                    height="46px"
+                    width="100%"
+                    onClick={handleWebsiteClick}
+                  >
+                    <InternetIcon />
+                    Website
+                  </GenericButton>
+                )}
               </div>
             )}
           </Col>

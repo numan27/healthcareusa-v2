@@ -15,13 +15,8 @@ const Pagination = ({
   const adjustedStartIndex = startIndex < 1 ? 1 : startIndex;
 
   return (
-    <div className="d-flex justify-content-end mb-4">
+    <div className="d-flex justify-content-start mb-4">
       <div className="pagination-modify">
-        {/* <div className="page-counter">
-          <span>
-            {adjustedStartIndex} to {endIndex} out of {filteredProfiles} entries
-          </span>
-        </div> */}
         <ReactPaginate
           previousLabel={<FiChevronLeft />}
           nextLabel={<FiChevronRight />}
@@ -36,10 +31,10 @@ const Pagination = ({
           pageClassName="page-item"
           pageLinkClassName="page-link"
           previousClassName="page-item"
-          previousLinkClassName="page-link"
+          previousLinkClassName="next-link"
           nextClassName="page-item"
           labelClassName="page-link"
-          nextLinkClassName="page-link"
+          nextLinkClassName="next-link"
           forcePage={currentPage}
           renderOnZeroPageCount={null}
         />

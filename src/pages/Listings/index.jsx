@@ -381,27 +381,9 @@ const Listings = () => {
     applyFilters();
   }, [profiles, selectedOptions]);
 
-  const handleSearchKeywordsChangeAndFetch = (e) => {
-    handleSearchKeywordsChange(e);
-    setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState: e.target.value,
-      areaRange,
-      place: placeState || {
-        lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-        lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-        address: autocompleteRef.current.getPlace().formatted_address,
-      },
-      currentPage: 0,
-    });
-  };
-
   const handleAreaRangeChange = (value) => {
     setAreaRange(value);
   };
-
   const handleSearchButton = () => {
     setCurrentPage(0);
     setLoadingType("search");
@@ -410,9 +392,9 @@ const Listings = () => {
       searchKeywordsState,
       areaRange,
       place: placeState || {
-        lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-        lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-        address: autocompleteRef.current.getPlace().formatted_address,
+        lat: autocompleteRef.current?.getPlace()?.geometry?.location?.lat(),
+        lng: autocompleteRef.current?.getPlace()?.geometry?.location?.lng(),
+        address: autocompleteRef.current?.getPlace()?.formatted_address,
       },
       currentPage: 0,
     });
@@ -423,8 +405,22 @@ const Listings = () => {
     handleSearchButton();
   };
 
+  const debouncedFetchData = useCallback(
+    debounce((keywords) => {
+      fetchData({
+        searchKeywordsState: keywords,
+        areaRange,
+        place,
+        currentPage: 0,
+      });
+    }, 300),
+    [fetchData, areaRange, place, currentPage]
+  );
+
   const handleSearchKeywordsChange = (e) => {
     setSearchKeywordsState(e.target.value);
+    setLoadingType("search");
+    debouncedFetchData(e.target.value);
   };
 
   const handleResetSearch = () => {
@@ -531,7 +527,11 @@ const Listings = () => {
                 radius="8px"
                 className="custom-shadow-2 py-3 px-4 w-100"
               >
-                <Form onSubmit={handleFormSubmit} className="h-100 p-1">
+                <Form
+                  className="h-100 p-1"
+                  autoComplete="off"
+                  onSubmit={handleFormSubmit}
+                >
                   <Row>
                     <div className="d-flex align-items-center ps-md-4 my-md-0 my-3 border-bottom pb-3">
                       {window.google && (
@@ -597,7 +597,6 @@ const Listings = () => {
                         onChange={handleAreaRangeChange}
                       />
                     </Col>
-
                     <Col md={6} className="d-flex align-items-center">
                       <InputGroup className="search-bar">
                         <Form.Control
@@ -607,6 +606,11 @@ const Listings = () => {
                           className="py-3"
                           value={searchKeywordsState}
                           onChange={handleSearchKeywordsChange}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                            }
+                          }}
                         />
                         {searchKeywordsState && (
                           <InputGroup.Text
@@ -624,10 +628,9 @@ const Listings = () => {
                           <LoaderCenter />
                         )}
                       </InputGroup>
-
                       <div className="ms-1">
                         <GenericButton
-                          onClick={handleSearchButton}
+                          type="submit"
                           width="50px"
                           height="50px"
                           padding="0"
@@ -738,6 +741,14 @@ const Listings = () => {
                 )}
               </div>
 
+              <div className="d-flex justify-content-start mt-5">
+                <Pagination
+                  pageCount={totalPages}
+                  onPageChange={handlePageClick}
+                  currentPage={currentPage}
+                />
+              </div>
+
               <AdsSection margin={3} padding={0} />
 
               {/* <div className="my-4 pt-2">
@@ -785,7 +796,7 @@ const Listings = () => {
                       className="rounded-3"
                       mapContainerStyle={containerStyle}
                       center={center}
-                      zoom={placeState ? 12 : 8}
+                      zoom={placeState ? 10 : 4}
                     >
                       {filteredProfiles?.slice(0, profilesPerPage).map(
                         (profile) =>
@@ -813,14 +824,6 @@ const Listings = () => {
               </div>
             </Col>
           </Row>
-
-          <div className="d-flex justify-content-end mt-5">
-            <Pagination
-              pageCount={totalPages}
-              onPageChange={handlePageClick}
-              currentPage={currentPage}
-            />
-          </div>
         </Container>
       </>
     </LoadScriptNext>
