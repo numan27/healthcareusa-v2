@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Box, Typography } from "../../../components/GenericComponents";
 import ExploreMoreModal from "./ExploreMoreModal";
-import { PATH } from "../../../config";
 import IMAGES from "../../../assets/images";
 import { LoaderCenter } from "../../../assets/Loader";
 import SearchForm from "./SearchForm";
@@ -173,7 +172,7 @@ const Hero = () => {
                     return (
                       <Box
                         key={groupIndex}
-                        style={{minHeight: "270px"}}
+                        style={{ minHeight: "270px" }}
                         width="100"
                         className="service-box transition-2 rounded-3"
                         border="1px solid #99B8B6"

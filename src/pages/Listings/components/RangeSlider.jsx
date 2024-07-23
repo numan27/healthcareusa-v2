@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Slider from "@mui/material/Slider";
 import { Box } from "../../../components/GenericComponents";
 import { makeStyles } from "@mui/styles";
+import { FaLocationArrow } from "react-icons/fa";
 
 const useStyles = makeStyles({
   rail: {
@@ -35,18 +36,30 @@ const useStyles = makeStyles({
     color: "#000000",
     fontSize: "12px",
     fontWeight: "400",
+    width: "40px",
+    padding: "4px 8px",
     position: "absolute",
     top: "-30px !important",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
+  },
+  valueLabelCircle: {
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
   },
 });
 
 function ValueLabelComponent(props) {
   const { children, value } = props;
+  const classes = useStyles();
 
   return (
-    <span className={props.className}>
+    <span className={`${props.className} ${classes.valueLabelCircle}`}>
+      <FaLocationArrow size={10} />
+      <span>{value} mi</span>
       {children}
-      <span>{value} km</span>
     </span>
   );
 }

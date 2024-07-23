@@ -30,8 +30,9 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c;
-  return distance.toFixed(1); // Return distance in kilometers
+  const distanceKm = R * c;
+  const distanceMi = distanceKm * 0.621371; // Convert kilometers to miles
+  return distanceMi.toFixed(1); // Return distance in miles
 };
 
 const ProfileCard = ({
@@ -77,7 +78,7 @@ const ProfileCard = ({
     status,
     id,
   } = singleProfile;
-
+  
   const handleNavigate = (event, id) => {
     event.preventDefault();
     const { state: extractedState, city: extractedCity } = extractStateAndCity(
@@ -158,14 +159,12 @@ const ProfileCard = ({
               md={6}
               className="d-flex justify-content-center mx-auto mb-3 mb-lg-0 pt-md-0 pt-4 "
             >
-              {/* <div> */}
               <img
                 className="my-auto listing-profile-img rounded-2 w-100"
                 src={profileImg}
                 style={{ maxHeight: "260px" }}
                 alt="Profile"
               />
-              {/* </div> */}
             </Col>
           )}
 
@@ -177,8 +176,11 @@ const ProfileCard = ({
           >
             <div className="d-flex flex-sm-row flex-column justify-content-between align-items-sm-center">
               <div>
-                <Link
+                <a
                   className="text-decoration-none"
+                  href={`/listing-details/${id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={(event) => handleNavigate(event, id)}
                 >
                   <Typography
@@ -190,7 +192,8 @@ const ProfileCard = ({
                   >
                     {title || "No Title"}
                   </Typography>
-                </Link>
+                </a>
+
                 {enableSponsoredProfile ? (
                   <div className="d-flex gap-2">
                     {designation && (
@@ -261,7 +264,7 @@ const ProfileCard = ({
                         size="12px"
                         lineHeight="15px"
                       >
-                        {distance} km
+                        {distance} mi
                       </Typography>
                     </Box>
                   )}
@@ -279,9 +282,9 @@ const ProfileCard = ({
                   </Box>
                 </div>
 
-                <Link
-                  to="#"
-                  className="d-flex align-items-center gap-2 mt-3 link"
+                <span
+                  onClick={handleClickCall}
+                  className="d-flex align-items-center gap-2 mt-3 link cursor-pointer"
                 >
                   <PhoneCircleIcon />
                   <Typography
@@ -294,7 +297,7 @@ const ProfileCard = ({
                   >
                     {phone}
                   </Typography>
-                </Link>
+                </span>
               </div>
 
               {enableSponsoredProfile && (

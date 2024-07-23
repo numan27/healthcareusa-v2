@@ -48,10 +48,10 @@ const ExternalLinkAdScreen = () => {
 
   return (
     <div className="w-100" style={{ height: "calc(100vh - 80px)" }}>
-      <Container className="d-flex flex-column justify-content-center align-items-center pt-5">
+      <Container className="d-flex flex-column justify-content-center align-items-center pt-3">
         <img
           className="ads-loading-icon"
-          width={240}
+          width={230}
           src={IMAGES.ADS_EXTERNAL_LINK}
           alt="icon"
         />
@@ -81,9 +81,10 @@ const ExternalLinkAdScreen = () => {
           I changed my mind. Let’s go back.
         </GenericButton>
 
-        <Box width="450px" className="ads-square-box">
+        <Box width="390px" className="ads-square-box d-flex mt-2">
           <img
-            className="mt-5 img-fluid"
+            style={{ maxWidth: "370px" }}
+            className="mt-4 mx-auto img-fluid navigate-ads-img"
             src={IMAGES.ADS_SQUARE_IMG}
             alt="Ad"
           />

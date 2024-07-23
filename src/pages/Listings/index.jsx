@@ -11,12 +11,13 @@ import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "./components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   Autocomplete,
   GoogleMap,
   LoadScriptNext,
   Marker,
+  InfoWindow,
 } from "@react-google-maps/api";
 import axios from "axios";
 import IMAGES from "../../assets/images";
@@ -26,6 +27,7 @@ import { LoaderCenter } from "../../assets/Loader";
 import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
 import BreadCrumb from "../../components/BreadCrumb";
+import SquareMenu from "../../assets/SVGs/SquareMenu";
 
 const Listings = () => {
   const [profiles, setProfiles] = useState([]);
@@ -41,10 +43,13 @@ const Listings = () => {
   const [locationState, setLocationState] = useState("");
   const [placeState, setPlaceState] = useState(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [selectedListing, setSelectedListing] = useState("");
+
+  console.log("selectedListing", selectedListing);
 
   const autocompleteRef = useRef(null);
   const profilesPerPage = 10;
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
   const { searchKeywords, place, filteredListings } = location.state || {};
   const fetchRequestRef = useRef(null);
@@ -87,7 +92,7 @@ const Listings = () => {
     setPlaceState(null);
     setLocationState("");
     setCurrentPage(0);
-    setLoadingType("initial");
+    setLoadingType("search");
     setLoading(true);
     fetchData({
       searchKeywordsState,
@@ -136,25 +141,6 @@ const Listings = () => {
       }
     }
   }, [location.state]);
-
-  // useEffect(() => {
-  //   if (location.state) {
-  //     const { searchKeywords, place, filteredListings } = location.state;
-  //     setSearchKeywordsState(searchKeywords || "");
-  //     setPlaceState(place || null);
-  //     if (filteredListings && filteredListings.length > 0) {
-  //       const profilesData = filteredListings.flatMap((group) => group.items);
-  //       setProfiles(profilesData);
-  //       setFilteredProfiles(profilesData);
-  //     } else {
-  //       fetchData({ searchKeywordsState: searchKeywords || "", place });
-  //     }
-  //   } else {
-  //     setLoadingType("initial");
-  //     setLoading(true);
-  //     fetchData({ searchKeywordsState, areaRange, place: null, currentPage });
-  //   }
-  // }, [location.state]);
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -347,7 +333,6 @@ const Listings = () => {
       placeState?.lng ||
       (filteredProfiles?.length > 0 ? filteredProfiles[0].lng : 0),
   };
-
   useEffect(() => {
     const applyFilters = () => {
       let filtered = profiles;
@@ -474,11 +459,28 @@ const Listings = () => {
     borderRadius: "8px",
   };
 
+  const markerStyle = {
+    borderRadius: "50%",
+    width: "38px",
+    height: "38px",
+    border: "2px solid black",
+  };
+
   const extractStateAndCity = (address = "") => {
     const parts = address.split(",");
     const city = parts.length > 0 ? parts[0].trim() : "";
     const state = parts.length > 1 ? parts[1].trim() : "";
     return { state, city };
+  };
+
+  const handleMarkerClick = (profile) => {
+    // if (!selectedListing || selectedListing.id !== profile.id) {
+    setSelectedListing(profile);
+    // }
+  };
+
+  const handleCloseInfoWindow = () => {
+    setSelectedListing("");
   };
 
   return (
@@ -525,58 +527,17 @@ const Listings = () => {
               <Box
                 border="1px solid #E4E4E4"
                 radius="8px"
-                className="custom-shadow-2 py-3 px-4 w-100"
+                className="custom-shadow-2 py-3 px-3 w-100"
               >
                 <Form
                   className="h-100 p-1"
                   autoComplete="off"
                   onSubmit={handleFormSubmit}
                 >
-                  <Row>
-                    <div className="d-flex align-items-center ps-md-4 my-md-0 my-3 border-bottom pb-3">
-                      {window.google && (
-                        <Autocomplete
-                          className="w-100"
-                          onLoad={onLoad}
-                          onPlaceChanged={onPlaceChanged}
-                        >
-                          <InputGroup className="search-bar border-search-md w-100">
-                            <InputGroup.Text
-                              className="bg-white border-0 p-2"
-                              id="basic-addon1"
-                            >
-                              <FaLocationCrosshairs color="#06312E" size={20} />
-                            </InputGroup.Text>
-                            <Form.Control
-                              placeholder="city, state or zip"
-                              aria-label="Location"
-                              aria-describedby="basic-addon1"
-                              className="py-2"
-                              value={locationState}
-                              onChange={(e) => setLocationState(e.target.value)}
-                            />
-                            {locationState && (
-                              <InputGroup.Text
-                                onClick={handleResetLocation}
-                                style={{
-                                  cursor: "pointer",
-                                  background: "transparent",
-                                  border: "none",
-                                }}
-                              >
-                                <FaTimes />
-                              </InputGroup.Text>
-                            )}
-                            {isLoadingLocation && <LoaderCenter />}
-                          </InputGroup>
-                        </Autocomplete>
-                      )}
-                    </div>
-                  </Row>
                   <Row className="d-flex align-items-center pt-3">
                     <Col
-                      md={6}
-                      className="d-flex align-items-center gap-2 section-responsive-border pe-4 pt-4"
+                      md={4}
+                      className="d-flex align-items-center gap-2 pe-4 mb-md-0 mb-2"
                     >
                       <Typography
                         className="text-nowrap mt-2"
@@ -597,13 +558,22 @@ const Listings = () => {
                         onChange={handleAreaRangeChange}
                       />
                     </Col>
-                    <Col md={6} className="d-flex align-items-center">
+                    <Col
+                      md={4}
+                      className="d-flex align-items-center section-responsive-border h-100 mb-md-3 mb-2"
+                    >
                       <InputGroup className="search-bar">
+                        <InputGroup.Text
+                          className="bg-white border-0 p-2"
+                          id="basic-addon1"
+                        >
+                          <SquareMenu />
+                        </InputGroup.Text>
                         <Form.Control
                           placeholder="Key words or company"
                           aria-label="Search Keywords"
                           aria-describedby="basic-addon1"
-                          className="py-3"
+                          className=""
                           value={searchKeywordsState}
                           onChange={handleSearchKeywordsChange}
                           onKeyDown={(e) => {
@@ -624,10 +594,56 @@ const Listings = () => {
                             <FaTimes />
                           </InputGroup.Text>
                         )}
-                        {loadingType === "search" && loading && (
-                          <LoaderCenter />
-                        )}
                       </InputGroup>
+                    </Col>
+                    <Col
+                      md={4}
+                      className="d-flex align-items-center mb-md-3 mb-2"
+                    >
+                      <div className="d-flex align-items-center w-100">
+                        {window.google && (
+                          <Autocomplete
+                            className="w-100"
+                            onLoad={onLoad}
+                            onPlaceChanged={onPlaceChanged}
+                          >
+                            <InputGroup className="search-bar w-100">
+                              <InputGroup.Text
+                                className="bg-white border-0 p-2"
+                                id="basic-addon1"
+                              >
+                                <FaLocationCrosshairs
+                                  color="#06312E"
+                                  size={20}
+                                />
+                              </InputGroup.Text>
+                              <Form.Control
+                                placeholder="city, state or zip"
+                                aria-label="Location"
+                                aria-describedby="basic-addon1"
+                                className="py-2"
+                                value={locationState}
+                                onChange={(e) =>
+                                  setLocationState(e.target.value)
+                                }
+                              />
+                              {locationState && (
+                                <InputGroup.Text
+                                  onClick={handleResetLocation}
+                                  style={{
+                                    cursor: "pointer",
+                                    background: "transparent",
+                                    border: "none",
+                                  }}
+                                >
+                                  <FaTimes />
+                                </InputGroup.Text>
+                              )}
+                              {isLoadingLocation && <LoaderCenter />}
+                            </InputGroup>
+                          </Autocomplete>
+                        )}
+                      </div>
                       <div className="ms-1">
                         <GenericButton
                           type="submit"
@@ -649,32 +665,37 @@ const Listings = () => {
               />
 
               <div className="pt-3 mb-3">
-                {place ? (
-                  <Typography
-                    as="p"
-                    color="#7B7B7B"
-                    weight="400"
-                    size="16px"
-                    lineHeight="26px"
-                  >
-                    <span className="text-dark">{totalPosts}</span> search
-                    result(s){" "}
-                    <span className="fw-bold">{searchKeywordsState} </span>
-                    in
-                    <span className="fw-bold"> {placeState?.address} </span>
-                  </Typography>
+                {loadingType === "search" && loading ? (
+                  <LoaderCenter />
                 ) : (
-                  <Typography
-                    as="p"
-                    color="#7B7B7B"
-                    weight="400"
-                    size="16px"
-                    lineHeight="26px"
-                  >
-                    All results
-                  </Typography>
+                  <div>
+                    {place ? (
+                      <Typography
+                        as="p"
+                        color="#7B7B7B"
+                        weight="400"
+                        size="16px"
+                        lineHeight="26px"
+                      >
+                        <span className="text-dark">{totalPosts}</span> search
+                        result(s){" "}
+                        <span className="fw-bold">{searchKeywordsState} </span>
+                        in
+                        <span className="fw-bold"> {placeState?.address} </span>
+                      </Typography>
+                    ) : (
+                      <Typography
+                        as="p"
+                        color="#7B7B7B"
+                        weight="400"
+                        size="16px"
+                        lineHeight="26px"
+                      >
+                        All results
+                      </Typography>
+                    )}
+                  </div>
                 )}
-
                 <div className="d-flex align-items-center gap-2">
                   <Typography
                     as="h3"
@@ -750,33 +771,6 @@ const Listings = () => {
               </div>
 
               <AdsSection margin={3} padding={0} />
-
-              {/* <div className="my-4 pt-2">
-              <Typography
-                as="h2"
-                className="mb-0"
-                color="#23262F"
-                size="24px"
-                lineHeight="36px"
-                weight="700"
-              >
-                All Results
-              </Typography>
-
-              <div className="mt-3">
-                {profiles.map((profileItem) => (
-                  <ProfileCard
-                    key={profileItem.id}
-                    singleProfile={profileItem}
-                    searchKeywordsState={searchKeywordsState}
-                    areaRange={areaRange}
-                    place={place}
-                    currentPage={currentPage}
-                    selectedOptions={selectedOptions}
-                  />
-                ))}
-              </div>
-            </div> */}
             </Col>
 
             <Col
@@ -792,26 +786,101 @@ const Listings = () => {
               <Box className="w-100 mb-3">
                 {!loading && (
                   <LoadScriptNext googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
-                    <GoogleMap
-                      className="rounded-3"
-                      mapContainerStyle={containerStyle}
-                      center={center}
-                      zoom={placeState ? 10 : 4}
-                    >
-                      {filteredProfiles?.slice(0, profilesPerPage).map(
-                        (profile) =>
-                          profile.lat &&
-                          profile.lng && (
-                            <Marker
-                              key={profile.id}
+                    {window.google && (
+                      <GoogleMap
+                        className="rounded-3"
+                        mapContainerStyle={containerStyle}
+                        center={center}
+                        zoom={placeState ? 10 : 4}
+                      >
+                        {filteredProfiles
+                          ?.slice(0, profilesPerPage)
+                          .map((profile) =>
+                            profile.lat && profile.lng ? (
+                              <Marker
+                                style={{ borderRadius: "50%" }}
+                                key={profile.id}
+                                position={{
+                                  lat: profile.lat,
+                                  lng: profile.lng,
+                                }}
+                                onClick={() => handleMarkerClick(profile)}
+                                icon={{
+                                  url: profile.profileImg,
+                                  scaledSize: new window.google.maps.Size(
+                                    38,
+                                    38
+                                  ),
+                                  origin: new window.google.maps.Point(0, 0),
+                                  anchor: new window.google.maps.Point(19, 19),
+                                  labelOrigin: new window.google.maps.Point(
+                                    19,
+                                    38
+                                  ),
+                                }}
+                                options={{
+                                  shape: {
+                                    type: "circle",
+                                    coords: [19, 19, 19],
+                                  },
+                                  icon: {
+                                    ...markerStyle,
+                                  },
+                                }}
+                              />
+                            ) : null
+                          )}
+                        {selectedListing &&
+                          selectedListing.lat &&
+                          selectedListing.lng && (
+                            <InfoWindow
+                              key={selectedListing.id}
                               position={{
-                                lat: profile.lat,
-                                lng: profile.lng,
+                                lat: selectedListing.lat,
+                                lng: selectedListing.lng,
                               }}
-                            />
-                          )
-                      )}
-                    </GoogleMap>
+                              onCloseClick={handleCloseInfoWindow}
+                              options={{
+                                pixelOffset: new window.google.maps.Size(
+                                  0,
+                                  -38
+                                ),
+                                maxWidth: containerStyle.width * 0.6,
+                              }}
+                            >
+                              <div>
+                                <Typography
+                                  size="13px"
+                                  weight="600"
+                                  color="#23262F"
+                                  lineHeight="19px"
+                                  className="mb-0"
+                                >
+                                  {selectedListing.title}
+                                </Typography>
+                                <Typography
+                                  size="8px"
+                                  weight="700"
+                                  color="#64666C"
+                                  lineHeight="19px"
+                                  className="mb-0"
+                                >
+                                  {selectedListing.designation}
+                                </Typography>
+                                <Typography
+                                  size="9px"
+                                  weight="400"
+                                  color="#23262F"
+                                  lineHeight="19px"
+                                  className="mb-0"
+                                >
+                                  {selectedListing.address}
+                                </Typography>
+                              </div>
+                            </InfoWindow>
+                          )}
+                      </GoogleMap>
+                    )}
                   </LoadScriptNext>
                 )}
               </Box>

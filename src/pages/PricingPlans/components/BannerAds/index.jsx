@@ -7,7 +7,7 @@ import Step4 from "./components/steps/Step3";
 import { Col, Container, Row } from "react-bootstrap";
 
 const BannerAds = () => {
-  const defaultSteps = ["Step 1", "Step 2", "Step 3", "Step 4"];
+  const defaultSteps = ["Add Placement", "Upload Ad Banners", "Duration Plan", "Payment"];
   const stepContent = [<Step1 />, <Step2 />, <Step3 />, <Step4 />];
 
   return (

@@ -13,7 +13,7 @@ import {
 import { RiInstagramFill } from "react-icons/ri";
 import { MdShield } from "react-icons/md";
 import { toast } from "react-toastify";
-import AppLayout from "../../../components/Layout/AppLayout";
+import { HiOutlineChevronLeft } from "react-icons/hi2";
 import {
   Box,
   GenericBadge,
@@ -32,7 +32,7 @@ import ClaimListingSection from "./components/ClaimListingSection";
 import axios from "axios";
 import styled from "styled-components";
 import { LoaderCenter } from "../../../assets/Loader";
-import { FaArrowLeftLong } from "react-icons/fa6";
+import BreadCrumb from "../../../components/BreadCrumb";
 
 const StyledPopover = styled(Popover)`
   max-width: 200px;
@@ -56,7 +56,6 @@ const ListingDetailsPage = () => {
   const { id } = useParams();
   const location = useLocation();
   const [jsonData, setJsonData] = useState(location.state?.jsonData || {});
-  // const [jsonData, setJsonData] = useState({});
   const [showMore, setShowMore] = useState(false);
   const [copyIconVisible, setCopyIconVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
@@ -142,7 +141,6 @@ const ListingDetailsPage = () => {
       lat: coordinates[0],
       lng: coordinates[1],
     };
-
     return (
       <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
         <GoogleMap
@@ -265,7 +263,7 @@ const ListingDetailsPage = () => {
               className="border rounded-2 listing-detail-social"
             >
               <a
-                className="w-100 h-100 d-flex align-items-center justify-content-center"
+                className="w-100 h-100 d-flex align-items-center justify-content-center cursor-pointer"
                 // href={items.link}
                 onClick={(e) => {
                   e.preventDefault();
@@ -285,44 +283,87 @@ const ListingDetailsPage = () => {
   console.log("doctorLanguages", doctorLanguages);
 
   const handleBackToListings = () => {
-    navigate("/listings", {
-      state: {
-        fromListingsPage: true,
-        searchKeywordsState: location.state.searchKeywordsState,
-        areaRange: location.state.areaRange,
-        place: location.state.place,
-        currentPage: location.state.currentPage,
-        selectedOptions: location.state.selectedOptions,
-        profiles: location.state.profiles, // Preserve profiles
-        filteredProfiles: location.state.filteredProfiles, // Preserve filtered profiles
-      },
-    });
+    const preservedState = sessionStorage.getItem("listingsState");
+    if (preservedState) {
+      const state = JSON.parse(preservedState);
+      navigate("/listings", { state });
+    }
   };
+
+  useEffect(() => {
+    const preservedState = sessionStorage.getItem("listingsState");
+    if (preservedState) {
+      const state = JSON.parse(preservedState);
+      setJsonData((prevState) => ({
+        ...prevState,
+        ...state,
+      }));
+    }
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const category = location.state?.category || jsonData.taxonomies;
+
+  const handleMapClick = () => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    window.open(url, "_blank");
+  };
+
+  const handleWebsiteClick = () => {
+    const url = jsonData.cubewp_post_meta?.["fc-website"]?.meta_value;
+    if (url) {
+      window.open(url, "_blank");
+    }
+  };
+
+  const saveBookmark = () => {
+    const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+    bookmarks.push("Profile Page URL");
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    console.log("Bookmark saved");
+  };
+
+  const handleBookmark = () => {
+    saveBookmark();
+    toast.success("Profile bookmarked successfully!", {
+      autoClose: 1000,
+    });
+  };
+
   return (
     <>
+      {/* <BreadCrumb /> */}
       <Container className="min-vh-100 pt-4 pb-5">
-        {jsonData && (
-          <GenericButton
-            background="transparent"
-            color="#000"
-            hoverBgColor="transparent"
-            hoverColor="#000"
-            border="0"
-            padding="0"
-            height="fit-content"
-            onClick={handleBackToListings}
-            className="mb-4"
-          >
-            <FaArrowLeftLong size={28} /> Back to Listings
-          </GenericButton>
-        )}
+        <div className="d-flex align-items-center justify-content-between">
+          <BreadCrumb
+            state={location.state?.state}
+            city={location.state?.city}
+            listingTitle={jsonData.title?.rendered}
+            category={category}
+          />
 
-        <Row>
+          {jsonData && (
+            <GenericButton
+              background="transparent"
+              color="#667085"
+              weight="400"
+              hoverBgColor="transparent"
+              hoverColor="#00C1B6"
+              border="0"
+              padding="0"
+              height="fit-content"
+              onClick={handleBackToListings}
+              className="text-decoration-underline"
+            >
+              <HiOutlineChevronLeft size="16px" /> Return to Search Results
+            </GenericButton>
+          )}
+        </div>
+
+        <Row className="mt-4">
           {/* Left Content */}
           <Col lg={9}>
             {/* Profile Media */}
@@ -368,7 +409,7 @@ const ListingDetailsPage = () => {
                           width={132}
                           height={132}
                           className="rounded-circle"
-                          src={jsonData.mediaUrl}
+                          src={jsonData.mediaUrl || IMAGES.DOCTOR_LIST_PROFILE}
                           alt=""
                         />
 
@@ -489,7 +530,12 @@ const ListingDetailsPage = () => {
                       className="pt-2 position-absolute d-flex flex-sm-row flex-column-reverse  align-items-center gap-2"
                     >
                       <div className="d-flex gap-2">
-                        <BookmarkIcon />
+                        <span
+                          onClick={handleBookmark}
+                          className="cursor-pointer"
+                        >
+                          <BookmarkIcon />
+                        </span>
 
                         <OverlayTrigger
                           bsClass="custom-overlay"
@@ -647,6 +693,7 @@ const ListingDetailsPage = () => {
                         width="90px"
                         padding="0px"
                         className="mt-2"
+                        onClick={handleMapClick}
                       >
                         Get Directions
                       </GenericButton>
@@ -723,7 +770,7 @@ const ListingDetailsPage = () => {
                       lineHeight="24px"
                       weight="400"
                     >
-                      Websites:
+                      Website:
                     </Typography>
                   </Col>
                   <Col sm={6} xs={6}>
@@ -736,9 +783,8 @@ const ListingDetailsPage = () => {
                       weight="700"
                     >
                       <span className="gap-2 listing-detail-link">
-                        <Link to="">Website</Link>,
-                        <Link className="ms-1" to="">
-                          LinkedIn
+                        <Link onClick={handleWebsiteClick} to="">
+                          Click to Visit
                         </Link>
                       </span>
                     </Typography>
@@ -798,7 +844,7 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border py-4 px-3">
-              <ContactForm profileTitle={profileTitle} />
+              <ContactForm profileTitle={profileTitle} googleAddress={googleAddress} />
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative">

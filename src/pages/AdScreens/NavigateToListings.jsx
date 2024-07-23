@@ -55,7 +55,7 @@ const NavigateToListings = () => {
         <Box width="450px" className="ads-square-box d-flex mt-2">
           <img
             style={{ maxWidth: "420px" }}
-            className="mt-4 mx-auto img-fluid"
+            className="mt-4 mx-auto img-fluid navigate-ads-img"
             src={IMAGES.ADS_SQUARE_IMG}
             alt="Ad"
           />

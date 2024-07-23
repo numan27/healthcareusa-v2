@@ -92,6 +92,10 @@ const Header = () => {
     });
   };
 
+  const handleNavigatePricing = () => {
+    navigate("/pricing-plans");
+  };
+
   return (
     <>
       <Box
@@ -116,7 +120,10 @@ const Header = () => {
             >
               Looking to Promote Your Practice?
             </Typography>
-            <Button className="getStartedBtn rounded-5 text-white border-0 py-1">
+            <Button
+              onClick={handleNavigatePricing}
+              className="getStartedBtn rounded-5 text-white border-0 py-1"
+            >
               Click here to get started!
             </Button>
           </Box>
@@ -173,7 +180,7 @@ const Header = () => {
                         color="#fff"
                         hoverColor="#fff"
                         hoverBgColor="#B22234"
-                        className=""
+                        className="navBtn"
                       >
                         Logout
                         <LoginIcon color="#fff" flipHorizontal />
@@ -186,22 +193,22 @@ const Header = () => {
                         color="#06312E"
                         hoverColor="#06312E"
                         hoverBgColor="#dbdbdb"
-                        className=""
+                        className="navBtn"
                       >
                         <LoginIcon /> Sign In
                       </GenericButton>
                     )}
                     <GenericButton
                       onClick={handleNavigateListingSubmission}
-                      className="my-sm-0 my-2"
+                      className="my-sm-0 navBtn"
                     >
                       <HiOutlinePlusCircle className="" size={20} /> Add Listing
                     </GenericButton>
                     <GenericButton
                       onClick={handleNavigateDashboard}
-                      className="my-sm-0 my-2"
+                      className="my-sm-0"
                     >
-                      <HiOutlinePlusCircle className="" size={20} /> Dashboard
+                      <HiOutlinePlusCircle className="navBtn" size={20} /> Dashboard
                     </GenericButton>
                   </div>
                 </Nav>

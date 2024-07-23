@@ -118,13 +118,36 @@ const SearchForm = () => {
     setInputLocation("");
   };
 
+  const handleFetchCurrentLocation = () => {
+    if (navigator.geolocation) {
+      setIsLoadingLocation(true);
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg`
+        );
+        const data = await response.json();
+        if (data.results && data.results.length > 0) {
+          const address = data.results[0].formatted_address;
+          setPlace({ lat: latitude, lng: longitude, address });
+          setLocation(address);
+          setInputLocation(address);
+        } else {
+          setLocation("Current Location");
+          setInputLocation("Current Location");
+        }
+        setIsLoadingLocation(false);
+      });
+    }
+  };
+
   useEffect(() => {
     if (locationPath.pathname === "/") {
       setPlace(null);
       setSearchKeywords("");
     }
 
-    // Fetch current location
+    // Auto-fetch current location
     if (navigator.geolocation) {
       setIsLoadingLocation(true);
       navigator.geolocation.getCurrentPosition(async (position) => {
@@ -184,8 +207,9 @@ const SearchForm = () => {
                 <InputGroup.Text
                   className="bg-white border-0 p-2"
                   id="basic-addon1"
+                  onClick={handleFetchCurrentLocation}
                 >
-                  <FaLocationCrosshairs color="#06312E" size={20} />
+                  <FaLocationCrosshairs className="cursor-pointer" color="#06312E" size={20} />
                 </InputGroup.Text>
                 <Form.Control
                   placeholder="city, state or zip"

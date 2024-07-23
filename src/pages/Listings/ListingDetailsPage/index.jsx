@@ -131,6 +131,12 @@ const ListingDetailsPage = () => {
     return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
+  const phone = jsonData.cubewp_post_meta?.["fc-phone"]?.meta_value;
+
+  const handleClickCall = () => {
+    window.open(`tel:${phone}`, "_self");
+  };
+
   const ProfileMap = ({ coordinates }) => {
     const mapContainerStyle = {
       height: "300px",
@@ -141,16 +147,19 @@ const ListingDetailsPage = () => {
       lat: coordinates[0],
       lng: coordinates[1],
     };
+
     return (
-      <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          center={center}
-          zoom={13}
-        >
-          <Marker position={center} />
-        </GoogleMap>
-      </LoadScript>
+      <div style={mapContainerStyle}>
+        <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            center={center}
+            zoom={13}
+          >
+            <Marker position={center} />
+          </GoogleMap>
+        </LoadScript>
+      </div>
     );
   };
 
@@ -179,7 +188,7 @@ const ListingDetailsPage = () => {
   const listingDetailSocial = [
     {
       icon: <FaFacebookF size={18} color="#23262F" />,
-      // link: "https://facebook.com/numan27",
+      // link: "https://facebook.com/abc",
       link: jsonData.cubewp_post_meta?.["fc-facebook"]?.meta_value || "#",
     },
     {
@@ -194,7 +203,7 @@ const ListingDetailsPage = () => {
     },
     {
       icon: <FaYoutube size={18} color="#23262F" />,
-      // link: "https://youtube.com/ayc",
+      // link: "https://youtube.com/abc",
       link: jsonData.cubewp_post_meta?.["fc-youtube"]?.meta_value || "#",
     },
   ];
@@ -264,11 +273,12 @@ const ListingDetailsPage = () => {
             >
               <a
                 className="w-100 h-100 d-flex align-items-center justify-content-center cursor-pointer"
-                // href={items.link}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleLinkClick(items.link);
-                }}
+                href={items.link}
+                target="_blank"
+                // onClick={(e) => {
+                //   e.preventDefault();
+                //   handleLinkClick(items.link);
+                // }}
               >
                 {items.icon}
               </a>
@@ -313,7 +323,7 @@ const ListingDetailsPage = () => {
   };
 
   const handleWebsiteClick = () => {
-    const url = jsonData.cubewp_post_meta?.["fc-website"]?.meta_value;
+    const url = jsonData.cubewp_post_meta?.["fc-website"]?.meta_value || "https://sampleweb.com/";
     if (url) {
       window.open(url, "_blank");
     }
@@ -342,7 +352,7 @@ const ListingDetailsPage = () => {
             state={location.state?.state}
             city={location.state?.city}
             listingTitle={jsonData.title?.rendered}
-            category={category}
+            // category={category}
           />
 
           {jsonData && (
@@ -650,17 +660,14 @@ const ListingDetailsPage = () => {
             className="pb-4"
           >
             {/* Google Map */}
-            <Box className="w-100 rounded-3" style={{ height: "300px" }}>
+            {/* <Box className="w-100 rounded-3" style={{ height: "300px" }}>
               {isValidCoordinates ? (
                 <ProfileMap coordinates={[latitude, longitude]} />
               ) : (
                 <LoaderCenter />
               )}
-            </Box>
-
-            {/* <Box className="w-100 rounded-3">
-              <img src={IMAGES.MAP_IMG_2} className="img-fluid" alt="map" />
             </Box> */}
+
             <Box className="border py-3 rounded-bottom-3 w-100 mb-4">
               <div
                 className="px-3 border-bottom pb-3"
@@ -722,16 +729,18 @@ const ListingDetailsPage = () => {
                     </Typography>
                   </Col>
                   <Col sm={6} xs={6}>
-                    <Typography
-                      as="label"
-                      className="mb-0"
-                      color="#23262F"
-                      size="14px"
-                      lineHeight="24px"
-                      weight="700"
-                    >
-                      {jsonData.cubewp_post_meta?.["fc-phone"]?.meta_value}
-                    </Typography>
+                    <div className="cursor-pointer" onClick={handleClickCall}>
+                      <Typography
+                        as="label"
+                        className="mb-0 cursor-pointer"
+                        color="#23262F"
+                        size="14px"
+                        lineHeight="24px"
+                        weight="700"
+                      >
+                        {phone}
+                      </Typography>
+                    </div>
                   </Col>
                   <Col sm={6} xs={6}>
                     <Typography
@@ -746,16 +755,18 @@ const ListingDetailsPage = () => {
                     </Typography>
                   </Col>
                   <Col sm={6} xs={6}>
-                    <Typography
-                      as="label"
-                      className="mb-0"
-                      color="#23262F"
-                      size="14px"
-                      lineHeight="24px"
-                      weight="700"
-                    >
-                      {jsonData.cubewp_post_meta?.["fc-phone"]?.meta_value}
-                    </Typography>
+                    <span className="cursor-pointer" onClick={handleClickCall}>
+                      <Typography
+                        as="label"
+                        className="mb-0 cursor-pointer"
+                        color="#23262F"
+                        size="14px"
+                        lineHeight="24px"
+                        weight="700"
+                      >
+                        {phone}
+                      </Typography>
+                    </span>
                   </Col>
                 </Row>
               </div>
@@ -825,7 +836,7 @@ const ListingDetailsPage = () => {
                     className="border rounded-5 listing-detail-social"
                   >
                     <a
-                      className="w-100 h-100 rounded-5 d-flex align-items-center justify-content-center"
+                      className="w-100 h-100 rounded-5 d-flex align-items-center justify-content-center cursor-pointer"
                       // href={items.link}
                       onClick={(e) => {
                         e.preventDefault();
@@ -844,7 +855,10 @@ const ListingDetailsPage = () => {
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border py-4 px-3">
-              <ContactForm profileTitle={profileTitle} googleAddress={googleAddress} />
+              <ContactForm
+                profileTitle={profileTitle}
+                googleAddress={googleAddress}
+              />
             </Box>
 
             <Box className="w-100 mb-4 rounded-3 border pt-4 pb-3 px-3 position-relative">

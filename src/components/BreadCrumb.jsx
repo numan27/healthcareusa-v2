@@ -55,7 +55,13 @@ const NonClickableText = styled.span`
   color: #667085;
 `;
 
-export default function BreadCrumb({ state, city, listingTitle, category }) {
+export default function BreadCrumb({
+  state,
+  city,
+  listingTitle,
+  category,
+  location,
+}) {
   const navigate = useNavigate();
 
   const handleStateCityClick = () => {
@@ -72,11 +78,6 @@ export default function BreadCrumb({ state, city, listingTitle, category }) {
 
     if (typeof categorySlug === "string") {
       const slug = categorySlug.toLowerCase().replace(/\s+/g, "-");
-      // Save the latest query parameters to session storage
-      sessionStorage.setItem(
-        "latestQueryParams",
-        JSON.stringify(latestQueryParams)
-      );
       navigate(`/archive/${slug}`, { state: { reload: true, category: slug } });
     } else {
       console.error("Category is not a string:", category);
@@ -88,6 +89,7 @@ export default function BreadCrumb({ state, city, listingTitle, category }) {
   const displayCity = city || "";
   const displayListingTitle = listingTitle || "";
   const displayCategory = category || "";
+  const displayLocation = location || "";
 
   return (
     <div role="presentation">
@@ -100,7 +102,8 @@ export default function BreadCrumb({ state, city, listingTitle, category }) {
           <HomeLink component={RouterLink} to="/" active={false}>
             <HomeIcon size="24px" />
           </HomeLink>
-          {displayState && displayCity ? (
+
+          {displayState && displayCity && (
             displayListingTitle ? (
               <StyledLink
                 className="cursor-pointer"
@@ -114,22 +117,26 @@ export default function BreadCrumb({ state, city, listingTitle, category }) {
                 {displayState}, {displayCity}
               </NonClickableText>
             )
-          ) : (
-            <div>
-              {displayCategory &&
-                (window.location.pathname.includes("/archive") ? (
-                  <NonClickableText>{displayCategory}</NonClickableText>
-                ) : (
-                  <StyledLink
-                    className="cursor-pointer"
-                    onClick={handleCategoryClick}
-                    active={false}
-                  >
-                    {displayCategory}
-                  </StyledLink>
-                ))}
-            </div>
           )}
+
+          {displayCategory && !window.location.pathname.includes("/archive") && (
+            <StyledLink
+              className="cursor-pointer"
+              onClick={handleCategoryClick}
+              active={false}
+            >
+              {displayCategory}
+            </StyledLink>
+          )}
+
+          {displayCategory && window.location.pathname.includes("/archive") && (
+            <NonClickableText>{displayCategory}</NonClickableText>
+          )}
+
+          {displayLocation && (
+            <NonClickableText>{displayLocation}</NonClickableText>
+          )}
+
           {displayListingTitle && (
             <StyledLink className="text-capitalize" aria-current="page">
               {displayListingTitle}
