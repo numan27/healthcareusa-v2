@@ -11,7 +11,7 @@ import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "./components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Autocomplete,
   GoogleMap,
@@ -849,15 +849,12 @@ const Listings = () => {
                               }}
                             >
                               <div>
-                                <Typography
-                                  size="13px"
-                                  weight="600"
-                                  color="#23262F"
-                                  lineHeight="19px"
-                                  className="mb-0"
+                                <Link
+                                 className="font-weight-bold map-link"
+                                  to={`/listing-details/${selectedListing.id}`}
                                 >
                                   {selectedListing.title}
-                                </Typography>
+                                </Link>
                                 <Typography
                                   size="8px"
                                   weight="700"

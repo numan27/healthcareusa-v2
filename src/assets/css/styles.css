@@ -214,6 +214,19 @@ body {
     text-decoration: underline;
 }
 
+.map-link {
+    color: #23262f;
+    font-weight: 800 !important;
+    font-size: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.map-link:hover {
+    color: #00ADA2 !important;
+    text-decoration: underline;
+}
+
 /* Navbar */
 
 .navLink {
