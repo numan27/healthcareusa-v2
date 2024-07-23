@@ -18,14 +18,15 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
           const fields = data.groups["112156535"].fields;
           const optionsMap = {};
 
-          const dropdownLabels = [
-            "Gender",
-            "Languages",
-            "Specialization",
-          ];
+          const dropdownLabels = ["Gender", "Languages", "Specialty"];
 
           dropdownLabels.forEach((label) => {
-            const field = fields.find((field) => field.label === label);
+            const field = fields.find((field) => {
+              if (label === "Specialty" && field.label === "Specialization") {
+                return true;
+              }
+              return field.label === label;
+            });
             if (field && field.options) {
               const options = JSON.parse(field.options);
               const parsedOptions = options.label

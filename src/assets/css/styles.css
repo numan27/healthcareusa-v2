@@ -297,6 +297,11 @@ body {
     border-left: 1px solid #e5e5e5;
 }
 
+.text-shadow {
+    /* box-shadow: 0px 4px 4px 0px #00000040; */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
 /* Modal */
 
 .link-box:hover {

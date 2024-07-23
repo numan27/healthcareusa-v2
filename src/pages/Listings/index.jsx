@@ -483,6 +483,10 @@ const Listings = () => {
     setSelectedListing("");
   };
 
+  const getProfileImgUrl = () => {
+    return IMAGES.MALE_CIRCLE_PLACEHOLDER;
+  };
+
   return (
     <LoadScriptNext
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
@@ -806,7 +810,7 @@ const Listings = () => {
                                 }}
                                 onClick={() => handleMarkerClick(profile)}
                                 icon={{
-                                  url: profile.profileImg,
+                                  url: getProfileImgUrl(profile.profileImg),
                                   scaledSize: new window.google.maps.Size(
                                     38,
                                     38
@@ -850,7 +854,7 @@ const Listings = () => {
                             >
                               <div>
                                 <Link
-                                 className="font-weight-bold map-link"
+                                  className="font-weight-bold map-link"
                                   to={`/listing-details/${selectedListing.id}`}
                                 >
                                   {selectedListing.title}

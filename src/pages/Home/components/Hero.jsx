@@ -71,15 +71,16 @@ const Hero = () => {
   };
 
   const order = [
-    { name: "HEALTH INSURANCE", icon: IMAGES.CATEGORY_ICON_1 },
-    { name: "GOVERNMENT RESOURCES", icon: IMAGES.PRODUCTS_SERVICES_ICON },
+    { name: "Dentist", icon: IMAGES.CATEGORY_ICON_7 },
+    { name: "HEALTH INSURANCE", icon: IMAGES.CATEGORY_ICON_33 },
+    { name: "GOVERNMENT RESOURCES", icon: IMAGES.CATEGORY_ICON_22 },
     { name: "Providers", icon: IMAGES.CATEGORY_ICON_7 },
     { name: "MENTAL HEALTH", icon: IMAGES.CATEGORY_ICON_6 },
-    { name: "PCA REHAB AND LEGAL", icon: IMAGES.CATEGORY_ICON_5 },
-    { name: "FACILITIES AND TESTING", icon: IMAGES.CATEGORY_ICON_3 },
-    { name: "PRODUCTS AND SERVICES", icon: IMAGES.PRODUCTS_SERVICES_ICON },
-    { name: "FITNESS AND SELF CARE", icon: IMAGES.CATEGORY_ICON_7 },
-    { name: "Dentist", icon: IMAGES.CATEGORY_ICON_7 },
+    { name: "PCA REHAB & LEGAL", icon: IMAGES.CATEGORY_ICON_3 },
+    { name: "FACILITIES AND TESTING", icon: IMAGES.CATEGORY_ICON_2 },
+    { name: "PRODUCTS & SERVICES", icon: IMAGES.PRODUCTS_SERVICES_ICON },
+    { name: "FITNESS AND SELF CARE", icon: IMAGES.CATEGORY_ICON_3 },
+    // { name: "Dentist", icon: IMAGES.CATEGORY_ICON_7 },
   ];
 
   const sortGroupedListings = (groupedListings) => {
@@ -103,7 +104,7 @@ const Hero = () => {
                 <Typography
                   lineHeight="55px"
                   align="center"
-                  className="mt-3 mb-0"
+                  className="mt-3 mb-0 text-shadow"
                   as="h1"
                   weight="800"
                   color="#fff"
@@ -114,7 +115,7 @@ const Hero = () => {
                 <Typography
                   lineHeight="55px"
                   align="center"
-                  className=""
+                  className="text-shadow"
                   as="h1"
                   weight="500"
                   color="#fff"

@@ -26,7 +26,7 @@ const DropdownFilter = ({
           const dropdownLabels = [
             "Gender",
             "Languages",
-            "Specialty", // Updated label
+            "Specialty",
           ];
 
           dropdownLabels.forEach((label) => {

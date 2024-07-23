@@ -1,6 +1,6 @@
-import React from 'react'
-import { GenericSelect } from '../GenericComponents'
-import FlagSVG from "../../assets/SVGs/Flag"
+import React from "react";
+import { GenericSelect } from "../GenericComponents";
+import FlagSVG from "../../assets/SVGs/Flag";
 
 const LanguageSelect = () => {
   return (
@@ -20,10 +20,10 @@ const LanguageSelect = () => {
             label: "English",
             value: "EN",
           },
-          {
-            label: "Spanish",
-            value: "Es",
-          },
+          // {
+          //   label: "Spanish",
+          //   value: "Es",
+          // },
           {
             label: "French",
             value: "Fr",
@@ -31,7 +31,7 @@ const LanguageSelect = () => {
         ]}
       />
     </div>
-  )
-}
+  );
+};
 
-export default LanguageSelect
+export default LanguageSelect;

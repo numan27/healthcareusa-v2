@@ -2,7 +2,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Container, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
 import { LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, LoadScriptNext, Marker } from "@react-google-maps/api";
 import {
   FaFacebookF,
   FaLinkedin,
@@ -33,6 +33,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { LoaderCenter } from "../../../assets/Loader";
 import BreadCrumb from "../../../components/BreadCrumb";
+import ProfileMap from "./components/ProfileMap";
 
 const StyledPopover = styled(Popover)`
   max-width: 200px;
@@ -137,31 +138,91 @@ const ListingDetailsPage = () => {
     window.open(`tel:${phone}`, "_self");
   };
 
-  const ProfileMap = ({ coordinates }) => {
-    const mapContainerStyle = {
-      height: "300px",
-      width: "100%",
-    };
+  // const ProfileMap = ({ profile }) => {
+  //   const [selectedListing, setSelectedListing] = useState(null);
 
-    const center = {
-      lat: coordinates[0],
-      lng: coordinates[1],
-    };
+  //   const mapContainerStyle = {
+  //     height: "300px",
+  //     width: "100%",
+  //   };
 
-    return (
-      <div style={mapContainerStyle}>
-        <LoadScript googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            center={center}
-            zoom={13}
-          >
-            <Marker position={center} />
-          </GoogleMap>
-        </LoadScript>
-      </div>
-    );
-  };
+  //   const center = {
+  //     lat: profile.coordinates[0],
+  //     lng: profile.coordinates[1],
+  //   };
+
+  //   const handleMarkerClick = (profile) => {
+  //     setSelectedListing(profile);
+  //   };
+
+  //   const handleCloseInfoWindow = () => {
+  //     setSelectedListing(null);
+  //   };
+
+  //   const markerStyle = {
+  //     url: profile.profileImg,
+  //     scaledSize: new window.google.maps.Size(38, 38),
+  //     origin: new window.google.maps.Point(0, 0),
+  //     anchor: new window.google.maps.Point(19, 19),
+  //   };
+
+  //   return (
+  //     <div style={mapContainerStyle}>
+  //       <LoadScriptNext googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
+  //         {window.google && (
+  //           <GoogleMap
+  //             className="rounded-3"
+  //             mapContainerStyle={mapContainerStyle}
+  //             center={center}
+  //             zoom={13}
+  //           >
+  //             <Marker
+  //               style={{ borderRadius: "50%" }}
+  //               key={profile.id}
+  //               position={{
+  //                 lat: profile.coordinates[0],
+  //                 lng: profile.coordinates[1],
+  //               }}
+  //               onClick={() => handleMarkerClick(profile)}
+  //               icon={markerStyle}
+  //               options={{
+  //                 shape: {
+  //                   type: "circle",
+  //                   coords: [19, 19, 19],
+  //                 },
+  //               }}
+  //             />
+  //             {selectedListing && (
+  //               <InfoWindow
+  //                 key={selectedListing.id}
+  //                 position={{
+  //                   lat: selectedListing.coordinates[0],
+  //                   lng: selectedListing.coordinates[1],
+  //                 }}
+  //                 onCloseClick={handleCloseInfoWindow}
+  //                 options={{
+  //                   pixelOffset: new window.google.maps.Size(0, -38),
+  //                   maxWidth: mapContainerStyle.width * 0.6,
+  //                 }}
+  //               >
+  //                 <div>
+  //                   <Link
+  //                     className="font-weight-bold map-link"
+  //                     to=""
+  //                   >
+  //                     {selectedListing.title}
+  //                   </Link>
+  //                   <p>{selectedListing.designation}</p>
+  //                   <p>{selectedListing.address}</p>
+  //                 </div>
+  //               </InfoWindow>
+  //             )}
+  //           </GoogleMap>
+  //         )}
+  //       </LoadScriptNext>
+  //     </div>
+  //   );
+  // };
 
   const description =
     jsonData.cubewp_post_meta?.["cwp_field_288766456392"]?.meta_value ||
@@ -323,7 +384,9 @@ const ListingDetailsPage = () => {
   };
 
   const handleWebsiteClick = () => {
-    const url = jsonData.cubewp_post_meta?.["fc-website"]?.meta_value || "https://sampleweb.com/";
+    const url =
+      jsonData.cubewp_post_meta?.["fc-website"]?.meta_value ||
+      "https://sampleweb.com/";
     if (url) {
       window.open(url, "_blank");
     }
@@ -660,13 +723,22 @@ const ListingDetailsPage = () => {
             className="pb-4"
           >
             {/* Google Map */}
-            {/* <Box className="w-100 rounded-3" style={{ height: "300px" }}>
+            <Box className="w-100 rounded-3" style={{ height: "300px" }}>
               {isValidCoordinates ? (
-                <ProfileMap coordinates={[latitude, longitude]} />
+                <ProfileMap
+                  profile={{
+                    id: jsonData.id,
+                    coordinates: [latitude, longitude],
+                    profileImg: jsonData.mediaUrl || IMAGES.DOCTOR_LIST_PROFILE,
+                    title: jsonData.title?.rendered,
+                    designation: doctorDesignation,
+                    address: googleAddress.address,
+                  }}
+                />
               ) : (
                 <LoaderCenter />
               )}
-            </Box> */}
+            </Box>
 
             <Box className="border py-3 rounded-bottom-3 w-100 mb-4">
               <div

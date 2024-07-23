@@ -60,6 +60,9 @@ import categoryIcon4 from "../SVGs/insurance-plan-icon.svg"
 import categoryIcon5 from "../SVGs/comfort-legal-icon.svg"
 import categoryIcon6 from "../SVGs/mental-health-icon.svg"
 import categoryIcon7 from "../SVGs/providers-icon.svg"
+import categoryIcon22 from "../SVGs/category-icon-2.svg"
+import categoryIcon33 from "../SVGs/health-insurance-icon.svg"
+import maleCircle from "./Male-circle.png"
 
 const IMAGES = {
     LOGO: logo,
@@ -124,6 +127,9 @@ const IMAGES = {
     CATEGORY_ICON_5: categoryIcon5,
     CATEGORY_ICON_6: categoryIcon6,
     CATEGORY_ICON_7: categoryIcon7,
+    CATEGORY_ICON_22: categoryIcon22,
+    CATEGORY_ICON_33: categoryIcon33,
+    MALE_CIRCLE_PLACEHOLDER: maleCircle,
 }
 
 export default IMAGES;
