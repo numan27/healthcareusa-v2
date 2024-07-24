@@ -12,6 +12,7 @@ import ProfileCard from "../Listings/components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
 import { useLocation, useNavigate } from "react-router-dom";
+import SquareMenu from "../../assets/SVGs/SquareMenu";
 import {
   Autocomplete,
   GoogleMap,
@@ -167,8 +168,9 @@ const Archive = () => {
       });
       navigate(locationPath.pathname, { replace: true, state: {} });
     }
+  }, [locationPath.pathname, location.state]);
 
-    // Fetch current location
+  const handleLocationCrosshairsClick = () => {
     if (navigator.geolocation) {
       setIsLoadingLocation(true);
       navigator.geolocation.getCurrentPosition(async (position) => {
@@ -187,7 +189,7 @@ const Archive = () => {
         setIsLoadingLocation(false);
       });
     }
-  }, [locationPath.pathname, location.state]);
+  };
 
   const fetchData = useCallback(
     debounce(async (params) => {
@@ -463,7 +465,7 @@ const Archive = () => {
     const initialParams = {
       searchKeywordsState,
       areaRange,
-      place: null, 
+      place: null,
       currentPage: 0,
     };
     setLatestQueryParams(initialParams);
@@ -484,6 +486,8 @@ const Archive = () => {
     borderRadius: "8px",
   };
 
+  console.log("locationState", locationState);
+
   return (
     <LoadScriptNext
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
@@ -495,6 +499,7 @@ const Archive = () => {
             <BreadCrumb
               category={selectedItem ? selectedItem.name : ""}
               listingTitle={searchKeywords}
+              location={locationState}
             />
           </div>
           <div>
@@ -531,52 +536,10 @@ const Archive = () => {
                 className="custom-shadow-2 py-3 px-4 w-100"
               >
                 <Form onSubmit={handleFormSubmit} className="h-100 p-1">
-                  <Row>
-                    <div className="d-flex align-items-center ps-md-4 my-md-0 my-3 border-bottom pb-3">
-                      {window.google && (
-                        <Autocomplete
-                          className="w-100"
-                          onLoad={onLoad}
-                          onPlaceChanged={onPlaceChanged}
-                        >
-                          <InputGroup className="search-bar border-search-md w-100">
-                            <InputGroup.Text
-                              className="bg-white border-0 p-2"
-                              id="basic-addon1"
-                            >
-                              <FaLocationCrosshairs color="#06312E" size={20} />
-                            </InputGroup.Text>
-                            <Form.Control
-                              placeholder="city, state or zip"
-                              aria-label="Location"
-                              aria-describedby="basic-addon1"
-                              className="py-2"
-                              value={locationState}
-                              onChange={(e) => setLocationState(e.target.value)}
-                            />
-
-                            {locationState && (
-                              <InputGroup.Text
-                                onClick={handleResetLocation}
-                                style={{
-                                  cursor: "pointer",
-                                  background: "transparent",
-                                  border: "none",
-                                }}
-                              >
-                                <FaTimes />
-                              </InputGroup.Text>
-                            )}
-                            {isLoadingLocation && <LoaderCenter />}
-                          </InputGroup>
-                        </Autocomplete>
-                      )}
-                    </div>
-                  </Row>
                   <Row className="d-flex align-items-center pt-3">
                     <Col
-                      md={6}
-                      className="d-flex align-items-center gap-2 section-responsive-border pe-4 pt-4"
+                      md={4}
+                      className="d-flex align-items-center gap-2 pe-4 mb-md-0 mb-2"
                     >
                       <Typography
                         className="text-nowrap mt-2"
@@ -597,9 +560,17 @@ const Archive = () => {
                         onChange={handleAreaRangeChange}
                       />
                     </Col>
-
-                    <Col md={6} className="d-flex align-items-center">
+                    <Col
+                      md={4}
+                      className="d-flex align-items-center section-responsive-border h-100 mb-md-3 mb-2"
+                    >
                       <InputGroup className="search-bar">
+                        <InputGroup.Text
+                          className="bg-white border-0 p-2"
+                          id="basic-addon1"
+                        >
+                          <SquareMenu />
+                        </InputGroup.Text>
                         <Form.Control
                           placeholder="Key words or company"
                           aria-label="Search Keywords"
@@ -607,6 +578,11 @@ const Archive = () => {
                           className="py-3"
                           value={searchKeywordsState}
                           onChange={handleSearchKeywordsChange}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                            }
+                          }}
                         />
                         {searchKeywordsState && (
                           <InputGroup.Text
@@ -620,11 +596,58 @@ const Archive = () => {
                             <FaTimes />
                           </InputGroup.Text>
                         )}
-                        {loadingType === "search" && loading && (
-                          <LoaderCenter />
-                        )}
                       </InputGroup>
+                    </Col>
+                    <Col
+                      md={4}
+                      className="d-flex align-items-center mb-md-3 mb-2"
+                    >
+                      <div className="d-flex align-items-center w-100">
+                        {window.google && (
+                          <Autocomplete
+                            className="w-100"
+                            onLoad={onLoad}
+                            onPlaceChanged={onPlaceChanged}
+                          >
+                            <InputGroup className="search-bar border-search-md w-100">
+                              <InputGroup.Text
+                                className="bg-white border-0 p-2 cursor-pointer"
+                                id="basic-addon1"
+                                onClick={handleLocationCrosshairsClick}
+                              >
+                                <FaLocationCrosshairs
+                                  color="#06312E"
+                                  size={20}
+                                />
+                              </InputGroup.Text>
+                              <Form.Control
+                                placeholder="city, state or zip"
+                                aria-label="Location"
+                                aria-describedby="basic-addon1"
+                                className="py-2"
+                                value={locationState}
+                                onChange={(e) =>
+                                  setLocationState(e.target.value)
+                                }
+                              />
 
+                              {locationState && (
+                                <InputGroup.Text
+                                  onClick={handleResetLocation}
+                                  style={{
+                                    cursor: "pointer",
+                                    background: "transparent",
+                                    border: "none",
+                                  }}
+                                >
+                                  <FaTimes />
+                                </InputGroup.Text>
+                              )}
+                              {isLoadingLocation && <LoaderCenter />}
+                            </InputGroup>
+                          </Autocomplete>
+                        )}
+                      </div>
                       <div className="ms-1">
                         <GenericButton
                           onClick={handleSearchButton}
@@ -657,28 +680,34 @@ const Archive = () => {
               />
 
               <div className="pt-3 mb-3">
-                {place || selectedItem ? (
-                  <Typography
-                    as="p"
-                    color="#7B7B7B"
-                    weight="400"
-                    size="16px"
-                    lineHeight="26px"
-                  >
-                    <span className="text-dark">{totalPosts}</span> search
-                    result(s)
-                    <span className="fw-bold"> {place?.address} </span>
-                  </Typography>
+                {loadingType === "search" && loading ? (
+                  <LoaderCenter />
                 ) : (
-                  <Typography
-                    as="p"
-                    color="#7B7B7B"
-                    weight="400"
-                    size="16px"
-                    lineHeight="26px"
-                  >
-                    All results
-                  </Typography>
+                  <div>
+                    {place || selectedItem ? (
+                      <Typography
+                        as="p"
+                        color="#7B7B7B"
+                        weight="400"
+                        size="16px"
+                        lineHeight="26px"
+                      >
+                        <span className="text-dark">{totalPosts}</span> search
+                        result(s)
+                        <span className="fw-bold"> {place?.address} </span>
+                      </Typography>
+                    ) : (
+                      <Typography
+                        as="p"
+                        color="#7B7B7B"
+                        weight="400"
+                        size="16px"
+                        lineHeight="26px"
+                      >
+                        All results
+                      </Typography>
+                    )}
+                  </div>
                 )}
 
                 <div className="d-flex align-items-center gap-2">

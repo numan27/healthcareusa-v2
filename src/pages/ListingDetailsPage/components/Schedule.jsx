@@ -1,5 +1,4 @@
-import React from 'react';
-import { Box, GenericBadge, Typography } from '../../../../components/GenericComponents';
+import { Box, GenericBadge, Typography } from '../../../components/GenericComponents';
 
 const Schedule = ({ jsonData }) => {
     const scheduleData = [

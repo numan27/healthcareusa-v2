@@ -1,17 +1,16 @@
 import { Suspense, useEffect, useState } from "react";
 import axios from "axios";
-// import axios from "../../../../assets/axios"
 import { Col, Row } from "react-bootstrap";
 import { GoDotFill } from "react-icons/go";
 import {
   Box,
   GenericBadge,
   Typography,
-} from "../../../../components/GenericComponents";
-import IMAGES from "../../../../assets/images";
-import { LoaderCenter } from "../../../../assets/Loader";
+} from "../../../components/GenericComponents";
+import IMAGES from "../../../assets/images";
+import { LoaderCenter } from "../../../assets/Loader";
 import { useNavigate } from "react-router-dom";
-import { PATH } from "../../../../config";
+import { PATH } from "../../../config";
 
 const RelatedArticles = ({ postNumber }) => {
   const [relatedBlogsData, setRelatedBlogsData] = useState([]);

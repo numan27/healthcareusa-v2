@@ -2,15 +2,15 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import { Col, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
-import GenericModal from "../../../../components/GenericComponents/Modal";
+import GenericModal from "../../../components/GenericComponents/Modal";
 import {
   Box,
   GenericButton,
   GenericInput,
   Typography,
-} from "../../../../components/GenericComponents";
-import AdsSection from "../../../../components/Shared/AdsSection";
-import { LoaderCenter } from "../../../../assets";
+} from "../../../components/GenericComponents";
+import AdsSection from "../../../components/Shared/AdsSection";
+import { LoaderCenter } from "../../../assets";
 
 const ExploreMoreModal = ({ show, onHide, googleAddress, profileTitle }) => {
   const initialFormState = {

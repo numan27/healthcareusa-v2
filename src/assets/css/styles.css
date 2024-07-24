@@ -68,10 +68,10 @@ body {
     top: 50%;
 }
 
-.MuiSlider-thumb::before {
+/* .MuiSlider-thumb::before {
     box-shadow: none !important;
-}
-
+} */
+/* 
 .valueLabel {
     background-color: transparent !important;
     border: 1px solid #E4E4E4;
@@ -81,7 +81,7 @@ body {
     font-weight: 400;
     position: absolute;
     top: -30px !important;
-}
+} */
 
 ::-webkit-scrollbar {
     width: 10px;
@@ -215,16 +215,21 @@ body {
 }
 
 .map-link {
-    color: #23262f;
+    color: #23262f !important;
     font-weight: 800 !important;
     font-size: 12px;
     text-decoration: none;
     transition: all 0.2s ease-in-out;
+    font-family: Plus Jakarta !important;
 }
 
 .map-link:hover {
     color: #00ADA2 !important;
     text-decoration: underline;
+}
+
+.custom-marker img {
+    border: 2px solid #000 !important;
 }
 
 /* Navbar */
@@ -744,6 +749,7 @@ body {
 
 .gm-style div[role='button'] img {
     border-radius: 50% !important;
+    border: 2px solid #000 !important;
 }
 
 /* .gm-style-iw-c {
@@ -759,13 +765,19 @@ body {
     height: 90px !important;
 } */
 
-/* .gm-style-iw {
-    width: 250px !important;
+.gm-style-iw {
+    width: 240px !important;
     max-width: 250px !important;
-} */
+}
+
+.map-pin-address {
+    font-size: 9px !important;
+    font-weight: 400 !important;
+    color: #23262f !important;
+}
 
 .gm-style .gm-style-iw-c {
-    width: 250px !important;
+    width: 260px !important;
     height: 89px !important;
     overflow: hidden !important;
 }

@@ -11,7 +11,7 @@ import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "./components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Autocomplete,
   GoogleMap,
@@ -92,8 +92,8 @@ const Listings = () => {
     setPlaceState(null);
     setLocationState("");
     setCurrentPage(0);
-    setLoadingType("initial");
-    setLoading(true);
+    setLoadingType("search");
+    // setLoading(true);
     fetchData({
       searchKeywordsState,
       areaRange,
@@ -157,6 +157,21 @@ const Listings = () => {
     }
   }, [searchKeywords, place]);
 
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+    return distance / 1.609; // Convert km to miles
+  }
+
   const fetchData = useCallback(
     debounce(async (params) => {
       if (fetchRequestRef.current) {
@@ -180,7 +195,7 @@ const Listings = () => {
         "cwp_query[posts_per_page]": profilesPerPage,
         "cwp_query[paged]": params.currentPage + 1,
         "cwp_query[page_num]": params.currentPage + 1,
-        ...(searchKeywords && { "cwp_query[service]": searchKeywords }), // Conditionally include the service parameter
+        ...(searchKeywords && { "cwp_query[service]": searchKeywords }), 
       }).toString();
 
       try {
@@ -219,12 +234,25 @@ const Listings = () => {
 
         const detailedProfiles = await Promise.all(detailedProfilesPromises);
 
+        const userLat = params.place?.lat;
+        const userLng = params.place?.lng;
+
         const transformedProfileData = detailedProfiles.map((profile) => {
           const addressMeta =
             profile?.cubewp_post_meta?.["fc-google-address"]?.meta_value || {};
           const address = addressMeta?.address;
           const lat = addressMeta?.lat || null;
           const lng = addressMeta?.lng || null;
+
+          const distance =
+            userLat && userLng && lat && lng
+              ? calculateDistance(
+                  userLat,
+                  userLng,
+                  parseFloat(lat),
+                  parseFloat(lng)
+                )
+              : null;
 
           return {
             id: profile.id,
@@ -254,14 +282,28 @@ const Listings = () => {
             comment_status: profile.comment_status,
             status: profile.status,
             taxonomies: profile?.taxonomies || [],
+            distance: distance,
           };
         });
 
-        let filteredProfiles = transformedProfileData;
+        // Sort the profiles based on distance
+        const sortedProfiles = transformedProfileData
+          .map((profile) => ({
+            ...profile,
+            distance: calculateDistance(
+              userLat,
+              userLng,
+              profile.lat,
+              profile.lng
+            ),
+          }))
+          .sort((a, b) => a.distance - b.distance);
+
+        let filteredProfiles = sortedProfiles;
 
         if (searchKeywords) {
           const keywordsLower = searchKeywords.toLowerCase();
-          filteredProfiles = transformedProfileData.filter(
+          filteredProfiles = sortedProfiles.filter(
             (profile) =>
               (profile.specialization &&
                 profile.specialization.some((spec) =>
@@ -274,30 +316,12 @@ const Listings = () => {
           );
         }
 
-        if (placeState?.lat && placeState?.lng) {
-          filteredProfiles = filteredProfiles.sort((a, b) => {
-            const distanceA = calculateDistance(
-              placeState.lat,
-              placeState.lng,
-              a.lat,
-              a.lng
-            );
-            const distanceB = calculateDistance(
-              placeState.lat,
-              placeState.lng,
-              b.lat,
-              b.lng
-            );
-            return distanceA - distanceB;
-          });
-        }
-
         const totalProfiles = response.data.total_posts;
         setTotalPages(Math.ceil(totalProfiles / profilesPerPage));
         setTotalPosts(totalProfiles);
 
-        setProfiles(transformedProfileData);
-        setFilteredProfiles(filteredProfiles);
+        setProfiles(sortedProfiles);
+        setFilteredProfiles(sortedProfiles);
 
         setLoading(false);
       } catch (error) {
@@ -340,8 +364,9 @@ const Listings = () => {
 
   useEffect(() => {
     setLoadingType("initial");
-    fetchData({ searchKeywordsState, areaRange, place, currentPage });
-  }, [areaRange, place, currentPage, fetchData]);
+    setLoading(true);
+    fetchData({ searchKeywordsState, place, currentPage });
+  }, [place, currentPage, fetchData]);
 
   const center = {
     lat:
@@ -351,26 +376,25 @@ const Listings = () => {
       placeState?.lng ||
       (filteredProfiles?.length > 0 ? filteredProfiles[0].lng : 0),
   };
-
-  const calculateDistance = (lat1, lng1, lat2, lng2) => {
-    if (!lat1 || !lng1 || !lat2 || !lng2) return Infinity;
-    const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // Radius of the Earth in kilometers
-    const dLat = toRad(lat2 - lat1);
-    const dLng = toRad(lng2 - lng1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLng / 2) +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
   useEffect(() => {
     const applyFilters = () => {
       let filtered = profiles;
+
+      if (searchKeywordsState) {
+        const keywordsLower = searchKeywordsState.toLowerCase();
+        filtered = filtered.filter(
+          (profile) =>
+            profile.title.toLowerCase().includes(keywordsLower) ||
+            (profile.specialization &&
+              profile.specialization.some((spec) =>
+                spec.toLowerCase().includes(keywordsLower)
+              )) ||
+            (profile.taxonomies &&
+              profile.taxonomies.some((taxonomy) =>
+                taxonomy.toLowerCase().includes(keywordsLower)
+              ))
+        );
+      }
 
       selectedOptions.forEach((filter) => {
         filtered = filtered.filter((profile) => {
@@ -395,30 +419,11 @@ const Listings = () => {
         });
       });
 
-      // Sort profiles by distance
-      if (placeState?.lat && placeState?.lng) {
-        filtered = filtered.sort((a, b) => {
-          const distanceA = calculateDistance(
-            placeState.lat,
-            placeState.lng,
-            a.lat,
-            a.lng
-          );
-          const distanceB = calculateDistance(
-            placeState.lat,
-            placeState.lng,
-            b.lat,
-            b.lng
-          );
-          return distanceA - distanceB;
-        });
-      }
-
       setFilteredProfiles(filtered);
     };
 
     applyFilters();
-  }, [profiles, selectedOptions, placeState]);
+  }, [profiles, selectedOptions, searchKeywordsState]);
 
   const handleAreaRangeChange = (value) => {
     setAreaRange(value);
@@ -430,18 +435,34 @@ const Listings = () => {
     fetchData({
       searchKeywordsState,
       areaRange,
-      place: placeState || {
-        lat: autocompleteRef.current?.getPlace()?.geometry?.location?.lat(),
-        lng: autocompleteRef.current?.getPlace()?.geometry?.location?.lng(),
-        address: autocompleteRef.current?.getPlace()?.formatted_address,
-      },
+      place: autocompleteRef.current
+        ? {
+            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+            address: autocompleteRef.current.getPlace().formatted_address,
+          }
+        : placeState,
       currentPage: 0,
     });
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    handleSearchButton();
+    setCurrentPage(0);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({
+      searchKeywordsState,
+      areaRange,
+      place: autocompleteRef.current
+        ? {
+            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+            address: autocompleteRef.current.getPlace().formatted_address,
+          }
+        : placeState,
+      currentPage: 0,
+    });
   };
 
   const debouncedFetchData = useCallback(
@@ -466,7 +487,7 @@ const Listings = () => {
     setSearchKeywordsState("");
     setCurrentPage(0);
     setLoadingType("search");
-    setLoading(true);
+    // setLoading(true);
     fetchData({ searchKeywordsState: "", areaRange, place, currentPage: 0 });
   };
 
@@ -497,7 +518,7 @@ const Listings = () => {
         currentPage,
       });
     }
-  }, [placeState, searchKeywordsState, currentPage, fetchData]);
+  }, [placeState, searchKeywordsState, areaRange, currentPage, fetchData]);
 
   if (loading && loadingType === "initial") {
     return (
@@ -535,6 +556,10 @@ const Listings = () => {
 
   const handleCloseInfoWindow = () => {
     setSelectedListing("");
+  };
+
+  const getProfileImgUrl = () => {
+    return IMAGES.MALE_CIRCLE_PLACEHOLDER;
   };
 
   return (
@@ -852,7 +877,6 @@ const Listings = () => {
                           .map((profile) =>
                             profile.lat && profile.lng ? (
                               <Marker
-                                style={{ borderRadius: "50%" }}
                                 key={profile.id}
                                 position={{
                                   lat: profile.lat,
@@ -860,7 +884,7 @@ const Listings = () => {
                                 }}
                                 onClick={() => handleMarkerClick(profile)}
                                 icon={{
-                                  url: profile.profileImg,
+                                  url: getProfileImgUrl(profile.profileImg),
                                   scaledSize: new window.google.maps.Size(
                                     38,
                                     38
@@ -899,37 +923,36 @@ const Listings = () => {
                                   0,
                                   -38
                                 ),
-                                maxWidth: containerStyle.width * 0.6,
+                                maxWidth: containerStyle.width * 0.7,
                               }}
                             >
                               <div>
-                                <Typography
-                                  size="13px"
-                                  weight="600"
-                                  color="#23262F"
-                                  lineHeight="19px"
-                                  className="mb-0"
+                                <Link
+                                  className="font-weight-bold map-link"
+                                  to={`/listing-details/${selectedListing.id}`}
                                 >
                                   {selectedListing.title}
-                                </Typography>
+                                </Link>
                                 <Typography
                                   size="8px"
                                   weight="700"
                                   color="#64666C"
                                   lineHeight="19px"
-                                  className="mb-0"
+                                  className="mb-0 mt-2"
                                 >
                                   {selectedListing.designation}
                                 </Typography>
-                                <Typography
-                                  size="9px"
-                                  weight="400"
-                                  color="#23262F"
-                                  lineHeight="19px"
-                                  className="mb-0"
-                                >
-                                  {selectedListing.address}
-                                </Typography>
+
+                                <div className="d-flex align-items-start gap-1 mt-2">
+                                  <img
+                                    width={12}
+                                    src={IMAGES.LOCATION_ICON}
+                                    alt="icon"
+                                  />
+                                  <p className="mb-0 map-pin-address">
+                                    {selectedListing.address}
+                                  </p>
+                                </div>
                               </div>
                             </InfoWindow>
                           )}

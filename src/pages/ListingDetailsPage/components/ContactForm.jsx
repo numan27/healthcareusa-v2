@@ -4,7 +4,7 @@ import {
   GenericButton,
   GenericInput,
   Typography,
-} from "../../../../components/GenericComponents";
+} from "../../../components/GenericComponents";
 
 const ContactForm = ({ profileTitle, googleAddress }) => {
   const parseAddress = (address) => {

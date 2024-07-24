@@ -6,8 +6,8 @@ import {
 } from "@react-google-maps/api";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { LoaderCenter } from "../../../../assets";
-import IMAGES from "../../../../assets/images";
+import { LoaderCenter } from "../../../assets";
+import IMAGES from "../../../assets/images";
 
 const ProfileMap = ({ profile }) => {
   const [selectedListing, setSelectedListing] = useState(null);

@@ -9,7 +9,7 @@ const RESOURCES = React.lazy(() => import("./Resources"));
 const CONTACT = React.lazy(() => import("./Contact"));
 const LISTINGS = React.lazy(() => import("./Listings"));
 const LISTING_DETAILS = React.lazy(() =>
-  import("./Listings/ListingDetailsPage")
+  import("./ListingDetailsPage")
 );
 const ARCHIVE = React.lazy(() => import("./Archive"));
 const CLAIM_LISTING = React.lazy(() => import("./ClaimListingSubmission"));

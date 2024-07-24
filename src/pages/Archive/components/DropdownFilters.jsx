@@ -117,8 +117,10 @@ const DropdownFilter = ({
             key={label}
             isMulti
             name={label}
-            minWidth="120px"
+            minWidth={label === "Specialty" ? "200px" : "auto"}
             minHeight="34px"
+            maxwidth="300px"
+            width="100%"
             height="34px"
             borderColor="#EEF0F5"
             borderRadius="4px"

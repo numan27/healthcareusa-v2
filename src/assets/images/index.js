@@ -63,6 +63,7 @@ import categoryIcon7 from "../SVGs/providers-icon.svg"
 import categoryIcon22 from "../SVGs/category-icon-2.svg"
 import categoryIcon33 from "../SVGs/health-insurance-icon.svg"
 import maleCircle from "./Male-circle.png"
+import mapPin from "../SVGs/map-pin.svg"
 
 const IMAGES = {
     LOGO: logo,
@@ -130,6 +131,7 @@ const IMAGES = {
     CATEGORY_ICON_22: categoryIcon22,
     CATEGORY_ICON_33: categoryIcon33,
     MALE_CIRCLE_PLACEHOLDER: maleCircle,
+    MAP_PIN: mapPin,
 }
 
 export default IMAGES;

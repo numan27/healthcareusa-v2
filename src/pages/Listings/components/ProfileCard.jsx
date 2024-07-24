@@ -6,7 +6,7 @@ import {
   Typography,
 } from "../../../components/GenericComponents";
 import { Col, Row } from "react-bootstrap";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import PhoneCircleIcon from "../../../assets/SVGs/PhoneCircle";
 import MapIcon from "../../../assets/SVGs/Map";
 import CallIcon from "../../../assets/SVGs/Call";
@@ -288,7 +288,7 @@ const ProfileCard = ({
                 >
                   <PhoneCircleIcon />
                   <Typography
-                    className="mb-0"
+                    className="mb-0"  
                     as="h5"
                     color="#23262F"
                     weight="700"

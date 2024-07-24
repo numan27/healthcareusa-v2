@@ -8,6 +8,7 @@ const StyledSelect = styled(Select)`
     border-color: ${(props) => props.borderColor};
     background: ${(props) => props.bgcolor};
     min-width: ${(props) => props.minwidth};
+    max-width: ${(props) => props.maxwidth};
     width: 100%;
     height: 100%;
     min-height: ${(props) => props.minheight};
@@ -121,6 +122,7 @@ const GenericSelect = ({
   borderColor,
   minwidth,
   width,
+  maxwidth,
   minheight,
   maxheight,
   bgcolor,
@@ -156,6 +158,7 @@ const GenericSelect = ({
       iconColor={iconColor}
       placeholderColor={placeholderColor}
       minwidth={minwidth}
+      maxwidth={maxwidth}
       width={width}
       minheight={minheight}
       maxheight={maxheight}
@@ -180,6 +183,7 @@ GenericSelect.propTypes = {
   borderColor: PropTypes.string,
   minwidth: PropTypes.string,
   width: PropTypes.string,
+  maxwidth: PropTypes.string,
   minheight: PropTypes.string,
   maxheight: PropTypes.string,
   bgcolor: PropTypes.string,
@@ -204,6 +208,7 @@ GenericSelect.defaultProps = {
   maxheight: "50px",
   bgcolor: "rgb(241, 245, 248)",
   minwidth: "",
+  maxwidth: "",
   width: "",
   isSearchable: false,
   isMulti: false,

@@ -11,11 +11,12 @@ import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "../Listings/components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import SquareMenu from "../../assets/SVGs/SquareMenu";
 import {
   Autocomplete,
   GoogleMap,
+  InfoWindow,
   LoadScriptNext,
   Marker,
 } from "@react-google-maps/api";
@@ -28,6 +29,7 @@ import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
 import { GroupedListingsContext } from "../../components/api/GroupedListingsContext";
 import BreadCrumb from "../../components/BreadCrumb";
+import MapComponent from "../Listings/components/MapComponent";
 
 const Archive = () => {
   const { groupedListings } = useContext(GroupedListingsContext);
@@ -48,6 +50,7 @@ const Archive = () => {
   const [showMap, setShowMap] = useState(false);
   const [specialtyOptions, setSpecialtyOptions] = useState([]);
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
+  const [selectedListing, setSelectedListing] = useState("");
 
   console.log("specialtyOptions", specialtyOptions);
   console.log("groupedListings", groupedListings);
@@ -342,7 +345,7 @@ const Archive = () => {
       setLoading(true);
       fetchData({ searchKeywordsState, currentPage });
     }
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   useEffect(() => {
     setLoadingType("initial");
@@ -350,16 +353,16 @@ const Archive = () => {
     const initialParams = {
       searchKeywordsState: searchKeywords || "",
       areaRange,
-      place: place || null, // Use place if it's passed from the location state
+      place: place || null,
       currentPage,
     };
     setLatestQueryParams(initialParams);
     fetchData(initialParams);
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   const center = {
-    lat: place?.lat || 0,
-    lng: place?.lng || 0,
+    lat: placeState?.lat || 34.052235,
+    lng: placeState?.lng || -118.243683,
   };
 
   useEffect(() => {
@@ -488,6 +491,13 @@ const Archive = () => {
 
   console.log("locationState", locationState);
 
+  const markerStyle = {
+    borderRadius: "50%",
+    width: "38px",
+    height: "38px",
+    border: "2px solid black",
+  };
+
   return (
     <LoadScriptNext
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
@@ -578,6 +588,11 @@ const Archive = () => {
                           className="py-3"
                           value={searchKeywordsState}
                           onChange={handleSearchKeywordsChange}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                            }
+                          }}
                         />
                         {searchKeywordsState && (
                           <InputGroup.Text
@@ -784,26 +799,16 @@ const Archive = () => {
             >
               <Box className="w-100 mb-3">
                 {!loading && showMap && (
-                  <GoogleMap
-                    className="rounded-3"
-                    mapContainerStyle={containerStyle}
-                    center={placeState || { lat: 0, lng: 0 }}
-                    zoom={placeState ? 10 : 2}
-                  >
-                    {filteredProfiles?.map(
-                      (profile) =>
-                        profile.lat &&
-                        profile.lng && (
-                          <Marker
-                            key={profile.id}
-                            position={{
-                              lat: profile.lat,
-                              lng: profile.lng,
-                            }}
-                          />
-                        )
+                  <MapComponent
+                    center={center}
+                    filteredProfiles={filteredProfiles.slice(
+                      currentPage * profilesPerPage,
+                      (currentPage + 1) * profilesPerPage
                     )}
-                  </GoogleMap>
+                    selectedListing={selectedListing}
+                    setSelectedListing={setSelectedListing}
+                    placeState={placeState}
+                  />
                 )}
               </Box>
               <div>

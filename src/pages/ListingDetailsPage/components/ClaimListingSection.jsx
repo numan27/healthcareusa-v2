@@ -1,12 +1,9 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
 import {
   GenericButton,
-  LinkButton,
   Typography,
-} from "../../../../components/GenericComponents";
+} from "../../../components/GenericComponents";
 import { HiOutlineChevronDoubleRight } from "react-icons/hi";
-// import { PATH } from "../../../../config";
 import ExploreMoreModal from "./ExploreMoreModal";
 
 const ClaimListingSection = ({ profileTitle, googleAddress }) => {
