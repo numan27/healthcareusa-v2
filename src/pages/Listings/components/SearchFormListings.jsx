@@ -1,12 +1,11 @@
-import { useCallback, useRef } from "react";
+import { useEffect } from "react";
 import { Form, InputGroup, Row, Col } from "react-bootstrap";
-import debounce from "lodash.debounce";
 import {
   Box,
   GenericButton,
   Typography,
 } from "../../../components/GenericComponents";
-import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
+import { FaLocationCrosshairs } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 import SearchIcon from "../../../assets/SVGs/Search";
 import { Autocomplete } from "@react-google-maps/api";
@@ -23,6 +22,7 @@ const SearchFormListings = ({
   locationState,
   setLocationState,
   placeState,
+  handleFormSubmit,
   setPlaceState,
   selectedOptions,
   setSelectedOptions,
@@ -34,40 +34,28 @@ const SearchFormListings = ({
   handleResetLocation,
   handleResetSearch,
 }) => {
-  const autocompleteRef = useRef(null);
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
+  const debouncedHandleSearch = (keywords) => {
     handleSearch({
-      searchKeywordsState,
+      searchKeywordsState: keywords,
       areaRange,
-      place: autocompleteRef.current
-        ? {
-            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-            address: autocompleteRef.current.getPlace().formatted_address,
-          }
-        : placeState,
+      place: placeState,
       currentPage: 0,
     });
   };
 
-  const debouncedHandleSearch = useCallback(
-    debounce((keywords) => {
-      handleSearch({
-        searchKeywordsState: keywords,
-        areaRange,
-        place: placeState,
-        currentPage: 0,
-      });
-    }, 300),
-    [handleSearch, areaRange, placeState]
-  );
-
   const handleSearchKeywordsChange = (e) => {
+    console.log(e.target.value);
     setSearchKeywordsState(e.target.value);
-    debouncedHandleSearch(e.target.value);
   };
+
+  useEffect(() => {
+    handleSearch({
+      searchKeywordsState: searchKeywordsState,
+      areaRange,
+      place: placeState,
+      currentPage: 0,
+    });
+  }, [areaRange, placeState]);
 
   return (
     <>

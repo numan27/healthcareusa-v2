@@ -1,20 +1,65 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import debounce from "lodash.debounce";
-import { Container, Row, Col } from "react-bootstrap";
-import { Box, Typography } from "../../components/GenericComponents";
+import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
+import {
+  Box,
+  GenericButton,
+  Typography,
+} from "../../components/GenericComponents";
 import AdsSection from "../../components/Shared/AdsSection";
+import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "./components/ProfileCard";
-import { FaCircleInfo } from "react-icons/fa6";
-import { useLocation } from "react-router-dom";
-import { LoadScriptNext } from "@react-google-maps/api";
+import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
+import SearchIcon from "../../assets/SVGs/Search";
+import { Link, useLocation } from "react-router-dom";
+import {
+  Autocomplete,
+  GoogleMap,
+  LoadScriptNext,
+  Marker,
+  InfoWindow,
+} from "@react-google-maps/api";
 import axios from "axios";
 import IMAGES from "../../assets/images";
 import NavigateToListings from "../AdScreens/NavigateToListings";
+import DropdownFilter from "./components/DropdownFilters";
+import { LoaderCenter } from "../../assets/Loader";
+import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
 import BreadCrumb from "../../components/BreadCrumb";
-import MapComponent from "./components/MapComponent";
-import SearchForm from "./components/SearchFormListings";
-import { LoaderCenter } from "../../assets/Loader";
+import SquareMenu from "../../assets/SVGs/SquareMenu";
+
+const debouncedSearch = debounce(
+  (
+    value,
+    fetchData,
+    setSearchKeywordsState,
+    setLoading,
+    setLoadingType,
+    setCurrentPage,
+    areaRange,
+    placeState,
+    autocompleteRef
+  ) => {
+    setSearchKeywordsState(value);
+    setCurrentPage(0);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({
+      searchKeywordsState: value,
+      areaRange,
+      place: autocompleteRef.current
+        ? {
+            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+            address: autocompleteRef.current.getPlace().formatted_address,
+          }
+        : placeState,
+      currentPage: 0,
+    });
+  },
+  300
+);
 
 const Listings = () => {
   const [profiles, setProfiles] = useState([]);
@@ -36,6 +81,7 @@ const Listings = () => {
 
   const autocompleteRef = useRef(null);
   const profilesPerPage = 10;
+  // const navigate = useNavigate();
   const location = useLocation();
   const { searchKeywords, place, filteredListings } = location.state || {};
   const fetchRequestRef = useRef(null);
@@ -79,19 +125,12 @@ const Listings = () => {
     setLocationState("");
     setCurrentPage(0);
     setLoadingType("search");
+    // setLoading(true);
     fetchData({
       searchKeywordsState,
       areaRange,
       currentPage: 0,
     });
-  };
-
-  const handleResetSearch = () => {
-    setSearchKeywordsState("");
-    setCurrentPage(0);
-    setLoadingType("search");
-    // setLoading(true);
-    fetchData({ searchKeywordsState: "", areaRange, place, currentPage: 0 });
   };
 
   useEffect(() => {
@@ -180,15 +219,14 @@ const Listings = () => {
       const query = new URLSearchParams({
         "cwp_query[post_type]": "listing",
         "cwp_query[orderby]": "ASC",
-        "cwp_query[s]": "",
-        "cwp_query[fc-google-address_range]": params.areaRange.toString(),
+        "cwp_query[s]": searchKeywords,
+        "cwp_query[fc-google-address_range]": params.areaRange?.toString(),
         "cwp_query[fc-google-address]": params.place?.address || "",
         "cwp_query[fc-google-address_lat]": params.place?.lat || "",
         "cwp_query[fc-google-address_lng]": params.place?.lng || "",
         "cwp_query[posts_per_page]": profilesPerPage,
         "cwp_query[paged]": params.currentPage + 1,
         "cwp_query[page_num]": params.currentPage + 1,
-        ...(searchKeywords && { "cwp_query[service]": searchKeywords }),
       }).toString();
 
       try {
@@ -377,7 +415,7 @@ const Listings = () => {
         const keywordsLower = searchKeywordsState.toLowerCase();
         filtered = filtered.filter(
           (profile) =>
-            profile.title.toLowerCase().includes(keywordsLower) ||
+            profile.title?.toLowerCase().includes(keywordsLower) ||
             (profile.specialization &&
               profile.specialization.some((spec) =>
                 spec.toLowerCase().includes(keywordsLower)
@@ -418,12 +456,55 @@ const Listings = () => {
     applyFilters();
   }, [profiles, selectedOptions, searchKeywordsState]);
 
-  const handleSearch = (params) => {
-    setCurrentPage(params.currentPage);
+  const handleAreaRangeChange = (value) => {
+    setAreaRange(value);
+  };
+  const handleSearchButton = () => {
+    setCurrentPage(0);
     setLoadingType("search");
     setLoading(true);
-    fetchData(params);
+    fetchData({
+      searchKeywordsState,
+      areaRange,
+      place: autocompleteRef.current
+        ? {
+            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+            address: autocompleteRef.current.getPlace().formatted_address,
+          }
+        : placeState,
+      currentPage: 0,
+    });
   };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setCurrentPage(0);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({
+      searchKeywordsState,
+      areaRange,
+      place: autocompleteRef.current
+        ? {
+            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+            address: autocompleteRef.current.getPlace().formatted_address,
+          }
+        : placeState,
+      currentPage: 0,
+    });
+  };
+
+  const handleResetSearch = () => {
+    setSearchKeywordsState("");
+    setCurrentPage(0);
+    setLoadingType("search");
+    // setLoading(true);
+    fetchData({ searchKeywordsState: "", areaRange, place, currentPage: 0 });
+  };
+
+  const topRef = useRef(null);
 
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
@@ -434,7 +515,22 @@ const Listings = () => {
       place: placeState,
       currentPage: selected,
     });
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
+
+  useEffect(() => {
+    if (placeState) {
+      setLoading(true);
+      fetchData({
+        searchKeywordsState,
+        areaRange,
+        place: placeState,
+        currentPage,
+      });
+    }
+  }, [placeState, searchKeywordsState, areaRange, currentPage, fetchData]);
 
   if (loading && loadingType === "initial") {
     return (
@@ -444,11 +540,38 @@ const Listings = () => {
     );
   }
 
+  const containerStyle = {
+    width: "100%",
+    height: "400px",
+    borderRadius: "8px",
+  };
+
+  const markerStyle = {
+    borderRadius: "50%",
+    width: "38px",
+    height: "38px",
+    border: "2px solid black",
+  };
+
   const extractStateAndCity = (address = "") => {
     const parts = address.split(",");
     const city = parts.length > 0 ? parts[0].trim() : "";
     const state = parts.length > 1 ? parts[1].trim() : "";
     return { state, city };
+  };
+
+  const handleMarkerClick = (profile) => {
+    // if (!selectedListing || selectedListing.id !== profile.id) {
+    setSelectedListing(profile);
+    // }
+  };
+
+  const handleCloseInfoWindow = () => {
+    setSelectedListing("");
+  };
+
+  const getProfileImgUrl = () => {
+    return IMAGES.MALE_CIRCLE_PLACEHOLDER;
   };
 
   return (
@@ -457,7 +580,7 @@ const Listings = () => {
       libraries={["places"]}
     >
       <>
-        <Container className="min-vh-100">
+        <Container ref={topRef} className="min-vh-100">
           <div className="mt-4">
             <BreadCrumb
               state={extractStateAndCity(placeState?.address).state}
@@ -492,24 +615,156 @@ const Listings = () => {
                 </Typography>
               </Box>
 
-              <SearchForm
-                areaRange={areaRange}
-                setAreaRange={setAreaRange}
-                searchKeywordsState={searchKeywordsState}
-                setSearchKeywordsState={setSearchKeywordsState}
-                locationState={locationState}
-                setLocationState={setLocationState}
-                placeState={placeState}
-                setPlaceState={setPlaceState}
-                selectedOptions={selectedOptions}
+              <Box
+                border="1px solid #E4E4E4"
+                radius="8px"
+                className="custom-shadow-2 py-3 px-3 w-100"
+              >
+                <Form
+                  className="h-100 p-1"
+                  autoComplete="off"
+                  onSubmit={handleFormSubmit}
+                >
+                  <Row className="d-flex align-items-center pt-3">
+                    <Col
+                      md={4}
+                      className="d-flex align-items-center gap-2 pe-4 mb-md-0 mb-2"
+                    >
+                      <Typography
+                        className="text-nowrap mt-2"
+                        as="span"
+                        color="#00C1B6"
+                        weight="700"
+                        lineHeight="18px"
+                      >
+                        Near Me
+                      </Typography>
+                      <RangeSlider
+                        className="mt-3"
+                        defaultValue={areaRange}
+                        min={0}
+                        max={500}
+                        step={1}
+                        value={areaRange}
+                        onChange={handleAreaRangeChange}
+                      />
+                    </Col>
+                    <Col
+                      md={4}
+                      className="d-flex align-items-center section-responsive-border h-100 mb-md-3 mb-2"
+                    >
+                      <InputGroup className="search-bar">
+                        <InputGroup.Text
+                          className="bg-white border-0 p-2"
+                          id="basic-addon1"
+                        >
+                          <SquareMenu />
+                        </InputGroup.Text>
+                        <Form.Control
+                          placeholder="Key words or company"
+                          aria-label="Search Keywords"
+                          aria-describedby="basic-addon1"
+                          className=""
+                          value={searchKeywordsState}
+                          onChange={(e) =>
+                            debouncedSearch(
+                              e.target.value,
+                              fetchData,
+                              setSearchKeywordsState,
+                              setLoading,
+                              setLoadingType,
+                              setCurrentPage,
+                              areaRange,
+                              placeState,
+                              autocompleteRef
+                            )
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                            }
+                          }}
+                        />
+                        {searchKeywordsState && (
+                          <InputGroup.Text
+                            onClick={handleResetSearch}
+                            style={{
+                              cursor: "pointer",
+                              background: "transparent",
+                              border: "none",
+                            }}
+                          >
+                            <FaTimes />
+                          </InputGroup.Text>
+                        )}
+                      </InputGroup>
+                    </Col>
+                    <Col
+                      md={4}
+                      className="d-flex align-items-center mb-md-3 mb-2"
+                    >
+                      <div className="d-flex align-items-center w-100">
+                        {window.google && (
+                          <Autocomplete
+                            className="w-100"
+                            onLoad={onLoad}
+                            onPlaceChanged={onPlaceChanged}
+                          >
+                            <InputGroup className="search-bar w-100">
+                              <InputGroup.Text
+                                className="bg-white border-0 p-2"
+                                id="basic-addon1"
+                              >
+                                <FaLocationCrosshairs
+                                  color="#06312E"
+                                  size={20}
+                                />
+                              </InputGroup.Text>
+                              <Form.Control
+                                placeholder="city, state or zip"
+                                aria-label="Location"
+                                aria-describedby="basic-addon1"
+                                className="py-2"
+                                value={locationState}
+                                onChange={(e) =>
+                                  setLocationState(e.target.value)
+                                }
+                              />
+                              {locationState && (
+                                <InputGroup.Text
+                                  onClick={handleResetLocation}
+                                  style={{
+                                    cursor: "pointer",
+                                    background: "transparent",
+                                    border: "none",
+                                  }}
+                                >
+                                  <FaTimes />
+                                </InputGroup.Text>
+                              )}
+                              {isLoadingLocation && <LoaderCenter />}
+                            </InputGroup>
+                          </Autocomplete>
+                        )}
+                      </div>
+                      <div className="ms-1">
+                        <GenericButton
+                          type="submit"
+                          width="50px"
+                          height="50px"
+                          padding="0"
+                        >
+                          <SearchIcon />
+                        </GenericButton>
+                      </div>
+                    </Col>
+                  </Row>
+                </Form>
+              </Box>
+
+              <DropdownFilter
                 setSelectedOptions={setSelectedOptions}
-                handleSearch={handleSearch}
-                loading={loading}
-                isLoadingLocation={isLoadingLocation}
-                onLoad={onLoad}
-                onPlaceChanged={onPlaceChanged}
-                handleResetLocation={handleResetLocation}
-                handleResetSearch={handleResetSearch}
+                selectedOptions={selectedOptions}
               />
 
               <div className="pt-3 mb-3">
@@ -633,13 +888,101 @@ const Listings = () => {
             >
               <Box className="w-100 mb-3">
                 {!loading && (
-                  <MapComponent
-                    center={center}
-                    filteredProfiles={filteredProfiles}
-                    selectedListing={selectedListing}
-                    setSelectedListing={setSelectedListing}
-                    placeState={placeState}
-                  />
+                  <LoadScriptNext googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
+                    {window.google && (
+                      <GoogleMap
+                        className="rounded-3"
+                        mapContainerStyle={containerStyle}
+                        center={center}
+                        zoom={placeState ? 10 : 4}
+                      >
+                        {filteredProfiles
+                          ?.slice(0, profilesPerPage)
+                          .map((profile) =>
+                            profile.lat && profile.lng ? (
+                              <Marker
+                                key={profile.id}
+                                position={{
+                                  lat: profile.lat,
+                                  lng: profile.lng,
+                                }}
+                                onClick={() => handleMarkerClick(profile)}
+                                icon={{
+                                  url: getProfileImgUrl(profile.profileImg),
+                                  scaledSize: new window.google.maps.Size(
+                                    38,
+                                    38
+                                  ),
+                                  origin: new window.google.maps.Point(0, 0),
+                                  anchor: new window.google.maps.Point(19, 19),
+                                  labelOrigin: new window.google.maps.Point(
+                                    19,
+                                    38
+                                  ),
+                                }}
+                                options={{
+                                  shape: {
+                                    type: "circle",
+                                    coords: [19, 19, 19],
+                                  },
+                                  icon: {
+                                    ...markerStyle,
+                                  },
+                                }}
+                              />
+                            ) : null
+                          )}
+                        {selectedListing &&
+                          selectedListing.lat &&
+                          selectedListing.lng && (
+                            <InfoWindow
+                              key={selectedListing.id}
+                              position={{
+                                lat: selectedListing.lat,
+                                lng: selectedListing.lng,
+                              }}
+                              onCloseClick={handleCloseInfoWindow}
+                              options={{
+                                pixelOffset: new window.google.maps.Size(
+                                  0,
+                                  -38
+                                ),
+                                maxWidth: containerStyle.width * 0.7,
+                              }}
+                            >
+                              <div>
+                                <Link
+                                  className="font-weight-bold map-link"
+                                  to={`/listing-details/${selectedListing.id}`}
+                                >
+                                  {selectedListing.title}
+                                </Link>
+                                <Typography
+                                  size="8px"
+                                  weight="700"
+                                  color="#64666C"
+                                  lineHeight="19px"
+                                  className="mb-0 mt-2"
+                                >
+                                  {selectedListing.designation}
+                                </Typography>
+
+                                <div className="d-flex align-items-start gap-1 mt-2">
+                                  <img
+                                    width={12}
+                                    src={IMAGES.LOCATION_ICON}
+                                    alt="icon"
+                                  />
+                                  <p className="mb-0 map-pin-address">
+                                    {selectedListing.address}
+                                  </p>
+                                </div>
+                              </div>
+                            </InfoWindow>
+                          )}
+                      </GoogleMap>
+                    )}
+                  </LoadScriptNext>
                 )}
               </Box>
               <div>
