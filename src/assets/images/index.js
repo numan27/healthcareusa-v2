@@ -64,8 +64,10 @@ import categoryIcon22 from "../SVGs/category-icon-2.svg"
 import categoryIcon33 from "../SVGs/health-insurance-icon.svg"
 import maleCircle from "./Male-circle.png"
 import mapPin from "../SVGs/map-pin.svg"
+import ad1 from "./ad1.png"
 
 const IMAGES = {
+    AD1:ad1,
     LOGO: logo,
     PRODUCTS_SERVICES_ICON: productsIcon,
     CARE_SERVICES_ICON: careIcon,

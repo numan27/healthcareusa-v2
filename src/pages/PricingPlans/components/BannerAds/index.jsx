@@ -14,7 +14,7 @@ const BannerAds = () => {
     <div className="d-flex w-100 align-items-center justify-content-center">
       <Container className="mt-5 pt-5">
         <Row>
-          <Col className="mx-auto" md={6}>
+          <Col className="mx-auto " md={10}>
             <GenericStepper steps={defaultSteps} stepContent={stepContent} />
           </Col>
         </Row>
