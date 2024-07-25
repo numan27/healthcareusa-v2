@@ -219,8 +219,8 @@ const Listings = () => {
       const query = new URLSearchParams({
         "cwp_query[post_type]": "listing",
         "cwp_query[orderby]": "ASC",
-        "cwp_query[s]": searchKeywords, // Include search keywords here
-        "cwp_query[fc-google-address_range]": params.areaRange.toString(),
+        "cwp_query[s]": searchKeywords,
+        "cwp_query[fc-google-address_range]": params.areaRange?.toString(),
         "cwp_query[fc-google-address]": params.place?.address || "",
         "cwp_query[fc-google-address_lat]": params.place?.lat || "",
         "cwp_query[fc-google-address_lng]": params.place?.lng || "",
@@ -415,7 +415,7 @@ const Listings = () => {
         const keywordsLower = searchKeywordsState.toLowerCase();
         filtered = filtered.filter(
           (profile) =>
-            profile.title.toLowerCase().includes(keywordsLower) ||
+            profile.title?.toLowerCase().includes(keywordsLower) ||
             (profile.specialization &&
               profile.specialization.some((spec) =>
                 spec.toLowerCase().includes(keywordsLower)
