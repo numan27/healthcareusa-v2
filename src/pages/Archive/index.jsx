@@ -81,11 +81,11 @@ const Archive = () => {
         const address = placeResult.formatted_address;
         setPlaceState({ lat, lng, address });
         setLocationState(address);
-        setShowMap(true); // Show map when location is selected
+        setShowMap(true);
       } else {
         setPlaceState(null);
         setLocationState("");
-        setShowMap(false); // Hide map when no geometry is found
+        setShowMap(false);
       }
     }
   };
@@ -203,7 +203,6 @@ const Archive = () => {
       const source = axios.CancelToken.source();
       fetchRequestRef.current = source;
 
-      // Ensure all params are defined
       const {
         searchKeywordsState = "",
         areaRange = 10,
@@ -591,6 +590,7 @@ const Archive = () => {
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
+                              handleFormSubmit(e); // Trigger form submit on Enter key
                             }
                           }}
                         />
@@ -639,8 +639,13 @@ const Archive = () => {
                                 onChange={(e) =>
                                   setLocationState(e.target.value)
                                 }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    handleFormSubmit(e); // Trigger form submit on Enter key
+                                  }
+                                }}
                               />
-
                               {locationState && (
                                 <InputGroup.Text
                                   onClick={handleResetLocation}
