@@ -120,6 +120,19 @@ const Listings = () => {
     }
   };
 
+  const handleResetLocation = () => {
+    setPlaceState(null);
+    setLocationState("");
+    setCurrentPage(0);
+    setLoadingType("search");
+    // setLoading(true);
+    fetchData({
+      searchKeywordsState,
+      areaRange,
+      currentPage: 0,
+    });
+  };
+
   useEffect(() => {
     if (location.state) {
       const { searchKeywords, place, filteredListings } = location.state;
@@ -487,22 +500,8 @@ const Listings = () => {
     setSearchKeywordsState("");
     setCurrentPage(0);
     setLoadingType("search");
-    setLoading(true);
+    // setLoading(true);
     fetchData({ searchKeywordsState: "", areaRange, place, currentPage: 0 });
-  };
-
-  const handleResetLocation = () => {
-    setPlaceState(null);
-    setLocationState("");
-    setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState,
-      areaRange,
-      currentPage: 0,
-      place,
-    });
   };
 
   const topRef = useRef(null);
@@ -523,7 +522,7 @@ const Listings = () => {
 
   useEffect(() => {
     if (placeState) {
-      // setLoading(true);
+      setLoading(true);
       fetchData({
         searchKeywordsState,
         areaRange,
@@ -647,7 +646,7 @@ const Listings = () => {
                         max={500}
                         step={1}
                         value={areaRange}
-                        onChange={(value) => setAreaRange(value)}
+                        onChange={handleAreaRangeChange}
                       />
                     </Col>
                     <Col
@@ -668,12 +667,21 @@ const Listings = () => {
                           className=""
                           value={searchKeywordsState}
                           onChange={(e) =>
-                            setSearchKeywordsState(e.target.value)
+                            debouncedSearch(
+                              e.target.value,
+                              fetchData,
+                              setSearchKeywordsState,
+                              setLoading,
+                              setLoadingType,
+                              setCurrentPage,
+                              areaRange,
+                              placeState,
+                              autocompleteRef
+                            )
                           }
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
-                              handleFormSubmit(e);
                             }
                           }}
                         />
@@ -696,43 +704,48 @@ const Listings = () => {
                       className="d-flex align-items-center mb-md-3 mb-2"
                     >
                       <div className="d-flex align-items-center w-100">
-                        {/* {window.google && ( */}
-                        <Autocomplete
-                          className="w-100"
-                          onLoad={onLoad}
-                          onPlaceChanged={onPlaceChanged}
-                        >
-                          <InputGroup className="search-bar w-100">
-                            <InputGroup.Text
-                              className="bg-white border-0 p-2"
-                              id="basic-addon1"
-                            >
-                              <FaLocationCrosshairs color="#06312E" size={20} />
-                            </InputGroup.Text>
-                            <Form.Control
-                              placeholder="city, state or zip"
-                              aria-label="Location"
-                              aria-describedby="basic-addon1"
-                              className="py-2"
-                              value={locationState}
-                              onChange={(e) => setLocationState(e.target.value)}
-                            />
-                            {locationState && (
+                        {window.google && (
+                          <Autocomplete
+                            className="w-100"
+                            onLoad={onLoad}
+                            onPlaceChanged={onPlaceChanged}
+                          >
+                            <InputGroup className="search-bar w-100">
                               <InputGroup.Text
-                                onClick={handleResetLocation}
-                                style={{
-                                  cursor: "pointer",
-                                  background: "transparent",
-                                  border: "none",
-                                }}
+                                className="bg-white border-0 p-2"
+                                id="basic-addon1"
                               >
-                                <FaTimes />
+                                <FaLocationCrosshairs
+                                  color="#06312E"
+                                  size={20}
+                                />
                               </InputGroup.Text>
-                            )}
-                            {isLoadingLocation && <LoaderCenter />}
-                          </InputGroup>
-                        </Autocomplete>
-                        {/* )} */}
+                              <Form.Control
+                                placeholder="city, state or zip"
+                                aria-label="Location"
+                                aria-describedby="basic-addon1"
+                                className="py-2"
+                                value={locationState}
+                                onChange={(e) =>
+                                  setLocationState(e.target.value)
+                                }
+                              />
+                              {locationState && (
+                                <InputGroup.Text
+                                  onClick={handleResetLocation}
+                                  style={{
+                                    cursor: "pointer",
+                                    background: "transparent",
+                                    border: "none",
+                                  }}
+                                >
+                                  <FaTimes />
+                                </InputGroup.Text>
+                              )}
+                              {isLoadingLocation && <LoaderCenter />}
+                            </InputGroup>
+                          </Autocomplete>
+                        )}
                       </div>
                       <div className="ms-1">
                         <GenericButton

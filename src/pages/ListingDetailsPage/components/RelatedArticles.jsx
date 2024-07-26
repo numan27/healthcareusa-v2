@@ -90,13 +90,23 @@ const RelatedArticles = ({ postNumber }) => {
                 <Box
                   onClick={() => handleNavigate(items.id)}
                   key={index}
-                  className="blog-shadow mt-4 cursor-pointer"
+                  className="blog-shadow mt-4 cursor-pointer w-100"
                   radius="8px"
+                  // maxHeight="290px"
                 >
-                  <Row>
-                    <Col md={5} className="position-relative">
+                  <Row className="d-flex">
+                    <Col
+                      style={{ maxHeight: "290px" }}
+                      md={5}
+                      className="position-relative h-100"
+                    >
                       <img
-                        className="img-fluid related-blog-img h-100 w-100"
+                        style={{
+                          maxHeight: "100%",
+                          objectFit: "cover",
+                          height: "290px",
+                        }}
+                        className="img-fluid related-blog-img w-100"
                         src={items.blogImg}
                         alt=""
                       />
