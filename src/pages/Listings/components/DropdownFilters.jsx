@@ -71,7 +71,7 @@ const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
           if (values.length > 0) {
             updatedOptions[optionIndex] = { label, values };
           } else {
-            updatedOptions.splice(optionIndex, 1); // Remove the option if no values are selected
+            updatedOptions.splice(optionIndex, 1);
           }
         } else if (values.length > 0) {
           updatedOptions.push({ label, values });

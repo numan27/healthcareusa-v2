@@ -11,15 +11,9 @@ import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "../Listings/components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SquareMenu from "../../assets/SVGs/SquareMenu";
-import {
-  Autocomplete,
-  GoogleMap,
-  InfoWindow,
-  LoadScriptNext,
-  Marker,
-} from "@react-google-maps/api";
+import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
 import axios from "axios";
 import IMAGES from "../../assets/images";
 import NavigateToListings from "../AdScreens/NavigateToListings";
@@ -359,11 +353,6 @@ const Archive = () => {
     fetchData(initialParams);
   }, []);
 
-  const center = {
-    lat: placeState?.lat || 34.052235,
-    lng: placeState?.lng || -118.243683,
-  };
-
   useEffect(() => {
     const applyFilters = () => {
       let filtered = profiles;
@@ -482,12 +471,6 @@ const Archive = () => {
   //   );
   // }
 
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-    borderRadius: "8px",
-  };
-
   console.log("locationState", locationState);
 
   const markerStyle = {
@@ -495,6 +478,10 @@ const Archive = () => {
     width: "38px",
     height: "38px",
     border: "2px solid black",
+  };
+
+  const getProfileImgUrl = () => {
+    return IMAGES.MALE_CIRCLE_PLACEHOLDER;
   };
 
   return (
@@ -803,18 +790,16 @@ const Archive = () => {
               className="pb-4"
             >
               <Box className="w-100 mb-3">
-                {!loading && showMap && (
-                  <MapComponent
-                    center={center}
-                    filteredProfiles={filteredProfiles.slice(
-                      currentPage * profilesPerPage,
-                      (currentPage + 1) * profilesPerPage
-                    )}
-                    selectedListing={selectedListing}
-                    setSelectedListing={setSelectedListing}
-                    placeState={placeState}
-                  />
-                )}
+                <MapComponent
+                  filteredProfiles={filteredProfiles}
+                  selectedListing={selectedListing}
+                  handleMarkerClick={(profile) => {
+                    setSelectedListing(profile);
+                  }}
+                  handleCloseInfoWindow={() => setSelectedListing(null)}
+                  getProfileImgUrl={getProfileImgUrl}
+                  markerStyle={markerStyle}
+                />
               </Box>
               <div>
                 <img

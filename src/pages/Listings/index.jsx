@@ -11,14 +11,8 @@ import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "./components/ProfileCard";
 import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
 import SearchIcon from "../../assets/SVGs/Search";
-import { Link, useLocation } from "react-router-dom";
-import {
-  Autocomplete,
-  GoogleMap,
-  LoadScriptNext,
-  Marker,
-  InfoWindow,
-} from "@react-google-maps/api";
+import { useLocation } from "react-router-dom";
+import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
 import axios from "axios";
 import IMAGES from "../../assets/images";
 import NavigateToListings from "../AdScreens/NavigateToListings";
@@ -28,38 +22,7 @@ import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
 import BreadCrumb from "../../components/BreadCrumb";
 import SquareMenu from "../../assets/SVGs/SquareMenu";
-
-const debouncedSearch = debounce(
-  (
-    value,
-    fetchData,
-    setSearchKeywordsState,
-    setLoading,
-    setLoadingType,
-    setCurrentPage,
-    areaRange,
-    placeState,
-    autocompleteRef
-  ) => {
-    setSearchKeywordsState(value);
-    setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState: value,
-      areaRange,
-      place: autocompleteRef.current
-        ? {
-            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-            address: autocompleteRef.current.getPlace().formatted_address,
-          }
-        : placeState,
-      currentPage: 0,
-    });
-  },
-  300
-);
+import MapComponent from "./components/MapComponent";
 
 const Listings = () => {
   const [profiles, setProfiles] = useState([]);
@@ -81,7 +44,6 @@ const Listings = () => {
 
   const autocompleteRef = useRef(null);
   const profilesPerPage = 10;
-  // const navigate = useNavigate();
   const location = useLocation();
   const { searchKeywords, place, filteredListings } = location.state || {};
   const fetchRequestRef = useRef(null);
@@ -386,33 +348,25 @@ const Listings = () => {
     fetchData({ searchKeywordsState, place, currentPage });
   }, [place, currentPage, fetchData]);
 
-  const center = {
-    lat:
-      placeState?.lat ||
-      (filteredProfiles?.length > 0 ? filteredProfiles[0].lat : 0),
-    lng:
-      placeState?.lng ||
-      (filteredProfiles?.length > 0 ? filteredProfiles[0].lng : 0),
-  };
   useEffect(() => {
     const applyFilters = () => {
       let filtered = profiles;
 
-      if (searchKeywordsState) {
-        const keywordsLower = searchKeywordsState.toLowerCase();
-        filtered = filtered.filter(
-          (profile) =>
-            profile.title?.toLowerCase().includes(keywordsLower) ||
-            (profile.specialization &&
-              profile.specialization.some((spec) =>
-                spec.toLowerCase().includes(keywordsLower)
-              )) ||
-            (profile.taxonomies &&
-              profile.taxonomies.some((taxonomy) =>
-                taxonomy.toLowerCase().includes(keywordsLower)
-              ))
-        );
-      }
+      // if (searchKeywordsState) {
+      //   const keywordsLower = searchKeywordsState.toLowerCase();
+      //   filtered = filtered.filter(
+      //     (profile) =>
+      //       profile.title?.toLowerCase().includes(keywordsLower) ||
+      //       (profile.specialization &&
+      //         profile.specialization.some((spec) =>
+      //           spec.toLowerCase().includes(keywordsLower)
+      //         )) ||
+      //       (profile.taxonomies &&
+      //         profile.taxonomies.some((taxonomy) =>
+      //           taxonomy.toLowerCase().includes(keywordsLower)
+      //         ))
+      //   );
+      // }
 
       selectedOptions.forEach((filter) => {
         filtered = filtered.filter((profile) => {
@@ -427,7 +381,7 @@ const Listings = () => {
               );
             case "gender":
               return filterValues.includes(profile.gender.toLowerCase());
-            case "specialization":
+            case "specialty":
               return profile.specialization.some((specialty) =>
                 filterValues.includes(specialty.toLowerCase())
               );
@@ -442,27 +396,6 @@ const Listings = () => {
 
     applyFilters();
   }, [profiles, selectedOptions, searchKeywordsState]);
-
-  const handleAreaRangeChange = (value) => {
-    setAreaRange(value);
-  };
-  const handleSearchButton = () => {
-    setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState,
-      areaRange,
-      place: autocompleteRef.current
-        ? {
-            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-            address: autocompleteRef.current.getPlace().formatted_address,
-          }
-        : placeState,
-      currentPage: 0,
-    });
-  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -540,12 +473,6 @@ const Listings = () => {
       </div>
     );
   }
-
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-    borderRadius: "8px",
-  };
 
   const markerStyle = {
     borderRadius: "50%",
@@ -874,103 +801,14 @@ const Listings = () => {
               className="pb-4"
             >
               <Box className="w-100 mb-3">
-                {!loading && (
-                  <LoadScriptNext googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg">
-                    {window.google && (
-                      <GoogleMap
-                        className="rounded-3"
-                        mapContainerStyle={containerStyle}
-                        center={center}
-                        zoom={placeState ? 10 : 4}
-                      >
-                        {filteredProfiles
-                          ?.slice(0, profilesPerPage)
-                          .map((profile) =>
-                            profile.lat && profile.lng ? (
-                              <Marker
-                                key={profile.id}
-                                position={{
-                                  lat: profile.lat,
-                                  lng: profile.lng,
-                                }}
-                                onClick={() => handleMarkerClick(profile)}
-                                icon={{
-                                  url: getProfileImgUrl(profile.profileImg),
-                                  scaledSize: new window.google.maps.Size(
-                                    38,
-                                    38
-                                  ),
-                                  origin: new window.google.maps.Point(0, 0),
-                                  anchor: new window.google.maps.Point(19, 19),
-                                  labelOrigin: new window.google.maps.Point(
-                                    19,
-                                    38
-                                  ),
-                                }}
-                                options={{
-                                  shape: {
-                                    type: "circle",
-                                    coords: [19, 19, 19],
-                                  },
-                                  icon: {
-                                    ...markerStyle,
-                                  },
-                                }}
-                              />
-                            ) : null
-                          )}
-                        {selectedListing &&
-                          selectedListing.lat &&
-                          selectedListing.lng && (
-                            <InfoWindow
-                              key={selectedListing.id}
-                              position={{
-                                lat: selectedListing.lat,
-                                lng: selectedListing.lng,
-                              }}
-                              onCloseClick={handleCloseInfoWindow}
-                              options={{
-                                pixelOffset: new window.google.maps.Size(
-                                  0,
-                                  -38
-                                ),
-                                maxWidth: containerStyle.width * 0.7,
-                              }}
-                            >
-                              <div>
-                                <Link
-                                  className="font-weight-bold map-link"
-                                  to={`/listing-details/${selectedListing.id}`}
-                                >
-                                  {selectedListing.title}
-                                </Link>
-                                <Typography
-                                  size="8px"
-                                  weight="700"
-                                  color="#64666C"
-                                  lineHeight="19px"
-                                  className="mb-0 mt-2"
-                                >
-                                  {selectedListing.designation}
-                                </Typography>
-
-                                <div className="d-flex align-items-start gap-1 mt-2">
-                                  <img
-                                    width={12}
-                                    src={IMAGES.LOCATION_ICON}
-                                    alt="icon"
-                                  />
-                                  <p className="mb-0 map-pin-address">
-                                    {selectedListing.address}
-                                  </p>
-                                </div>
-                              </div>
-                            </InfoWindow>
-                          )}
-                      </GoogleMap>
-                    )}
-                  </LoadScriptNext>
-                )}
+                <MapComponent
+                  filteredProfiles={filteredProfiles}
+                  selectedListing={selectedListing}
+                  handleMarkerClick={handleMarkerClick}
+                  handleCloseInfoWindow={handleCloseInfoWindow}
+                  getProfileImgUrl={getProfileImgUrl}
+                  markerStyle={markerStyle}
+                />
               </Box>
               <div>
                 <img
