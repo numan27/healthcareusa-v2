@@ -1,87 +1,108 @@
 import { useEffect, useState, useCallback } from "react";
 import { GenericSelect } from "../../../components/GenericComponents";
 
-const DropdownFilter = ({ setSelectedOptions, selectedOptions }) => {
+const DropdownFilter = ({
+  setSelectedOptions,
+  selectedOptions,
+  searchKeywordsState,
+  areaRange,
+  placeState,
+  currentPage,
+  fetchData,
+}) => {
   const [dropdownOptions, setDropdownOptions] = useState({});
 
   useEffect(() => {
-    const fetchDropdownOptions = async () => {
-      try {
-        const response = await fetch(
-          "https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?post_type=listing&form_type=post_type"
-        );
-        const data = await response.json();
-
-        console.log("Fetched data:", data);
-
-        if (data && data.groups) {
-          const fields = data.groups["112156535"].fields;
-          const optionsMap = {};
-
-          const dropdownLabels = ["Gender", "Languages", "Specialty"];
-
-          dropdownLabels.forEach((label) => {
-            const field = fields.find((field) => {
-              if (label === "Specialty" && field.label === "Specialization") {
-                return true;
-              }
-              return field.label === label;
-            });
-            if (field && field.options) {
-              const options = JSON.parse(field.options);
-              const parsedOptions = options.label
-                .map((label, index) => ({
-                  id: index,
-                  label: label,
-                  value: options.value[index],
-                }))
-                .filter((option) => option.label && option.label.trim() !== "");
-              optionsMap[label] = parsedOptions;
-            }
-          });
-
-          console.log("Dropdown Options:", optionsMap);
-          setDropdownOptions(optionsMap);
-        } else {
-          console.error("No groups found in data");
-        }
-      } catch (error) {
-        console.error("Error fetching dropdown options:", error);
-      }
-    };
-
     fetchDropdownOptions();
   }, []);
 
+  const fetchDropdownOptions = async () => {
+    try {
+      const response = await fetch(
+        "https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?post_type=listing&form_type=post_type"
+      );
+      const data = await response.json();
+
+      console.log("Fetched data:", data);
+
+      if (data && data.groups) {
+        const fields = data.groups["112156535"].fields;
+        const optionsMap = {};
+
+        const dropdownLabels = ["Gender", "Languages", "Specialty"];
+
+        dropdownLabels.forEach((label) => {
+          const field = fields.find((field) => {
+            if (label === "Specialty" && field.label === "Specialization") {
+              return true;
+            }
+            return field.label === label;
+          });
+          if (field && field.options) {
+            const options = JSON.parse(field.options);
+            const parsedOptions = options.label
+              .map((label, index) => ({
+                id: index,
+                label: label,
+                value: options.value[index],
+              }))
+              .filter((option) => option.label && option.label.trim() !== "");
+            optionsMap[label] = parsedOptions;
+          }
+        });
+
+        console.log("Dropdown Options:", optionsMap);
+        setDropdownOptions(optionsMap);
+      } else {
+        console.error("No groups found in data");
+      }
+    } catch (error) {
+      console.error("Error fetching dropdown options:", error);
+    }
+  };
+
   const handleDropdownOptions = useCallback(
     (label, selectedOption) => {
-      setSelectedOptions((prevSelectedOptions) => {
-        const updatedOptions = [...prevSelectedOptions];
-        const optionIndex = updatedOptions.findIndex(
-          (option) => option.label === label
-        );
+      const updatedOptions = [...selectedOptions];
+      const optionIndex = updatedOptions.findIndex(
+        (option) => option.label === label
+      );
 
-        const values = selectedOption.map((item) => ({
-          id: item.id,
-          label: item.label,
-          value: item.value,
-        }));
+      const values = selectedOption.map((item) => ({
+        id: item.id,
+        label: item.label,
+        value: item.value,
+      }));
 
-        if (optionIndex >= 0) {
-          if (values.length > 0) {
-            updatedOptions[optionIndex] = { label, values };
-          } else {
-            updatedOptions.splice(optionIndex, 1); // Remove the option if no values are selected
-          }
-        } else if (values.length > 0) {
-          updatedOptions.push({ label, values });
+      if (optionIndex >= 0) {
+        if (values.length > 0) {
+          updatedOptions[optionIndex] = { label, values };
+        } else {
+          updatedOptions.splice(optionIndex, 1);
         }
+      } else if (values.length > 0) {
+        updatedOptions.push({ label, values });
+      }
 
-        console.log("Updated selected options:", updatedOptions);
-        return updatedOptions;
+      setSelectedOptions(updatedOptions);
+
+      fetchData({
+        searchKeywordsState,
+        areaRange,
+        place: placeState,
+        currentPage,
+        selectedOptions: updatedOptions,
       });
     },
-    [setSelectedOptions]
+    [
+      selectedOptions,
+      setSelectedOptions,
+      fetchData,
+      areaRange,
+      placeState,
+      currentPage,
+      searchKeywordsState,
+    ]
   );
 
   return (
