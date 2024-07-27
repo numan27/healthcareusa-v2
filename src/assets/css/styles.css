@@ -1127,3 +1127,11 @@ body {
 .DragDropUpload .remove-button:hover .upload-link {
   text-decoration: none;
 }
+.fs_14 {
+  font-size: 14px;
+}
+.payment-input {
+  border: 1px solid #e6e6e6;
+  outline: none;
+  padding: 8px 10px;
+}
