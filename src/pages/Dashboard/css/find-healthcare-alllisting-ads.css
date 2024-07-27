@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+.find-healthcare-listing-ads {
+    margin: 32px 0;
+}
+.find-healthcare-listing-ads .ads-value-and-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+.find-healthcare-listing-ads .ads-value-and-button h2 {
+    color: #35404A;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 26px;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}
+
+.find-healthcare-listing-ads-dropdown #dropdown-basic {
+    background-color: white;
+    border: 1px solid #CACACA;
+    border-radius: 4px;
+    color: #23262F;
+    padding: 6px 12px;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    font-family: 'Plus Jakarta Sans';
+}
+
+.find-healthcare-listing-ads-dropdown #dropdown-basic:focus-visible{
+    background-color: unset;
+}

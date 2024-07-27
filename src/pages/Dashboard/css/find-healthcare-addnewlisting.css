@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+.find-healthcare-addnewlisting-content {
+    height: 952px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    margin: 0px 29px;
+}
+.find-healthcare-addnewlisting-img {
+    height: 284px;
+    width: 285px;
+    margin-bottom: 30px;
+}
+.find-healthcare-addnewlisting-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.find-healthcare-addnewlisting-text h1 {
+    color: #23262F;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 36px;
+    font-family: 'Plus Jakarta Sans';
+    margin-bottom: 8px;
+}
+.find-healthcare-addnewlisting-text {
+    margin-bottom: 57px;
+    margin-top: 30px;
+}
+.find-healthcare-addnewlisting-text p {
+    color: #35404A;
+    font-size: 18px;
+    line-height: 27px;
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 400;
+    margin: 0;
+}
+button.find-healthcare-addnewlisting-button {
+    margin-top: 57px;
+    padding: 11px 98px;
+    border: none;
+    border-radius: 4px;
+    background: #00C1B6;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    line-height: 21px;
+}

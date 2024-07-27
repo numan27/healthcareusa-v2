@@ -1,0 +1,267 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+.find-healthcare-listing .listing-ads-main-heading {
+    font-size: 24px;
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 700;
+    line-height: 24px;
+    padding: 17px 24px;
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom: 32px;
+}
+
+.find-healthcare-listing{
+    margin: 0 29px;
+}
+
+/* find-healthcare-banner-ad.js */
+
+.find-helathcare-banner-ad .banner-ad-img-and-heading {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.find-helathcare-banner-ad .banner-ad-heading h2 {
+    margin-bottom: 8px;
+    font-size: 18px;
+    line-height: 27px;
+    font-weight: 700;
+    color: #23262F;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-helathcare-banner-ad .banner-ad-heading h2 span {
+    color: #23262F;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-helathcare-banner-ad .banner-ad-heading p {
+    font-weight: 500;
+    line-height: 18px;
+    font-size: 12px;
+    color: #35404A;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}
+.find-helathcare-banner-ad {
+    background-color: white;
+    padding: 21px 0px;
+    border: 1px solid #E1E1E1;
+    border-radius: 8px 8px 0px 0px;
+    align-items: center;
+    margin: 0;
+}
+.find-helathcare-banner-ad .banner-ad-img-and-heading .banner-ad-img {
+    height: 81px;
+    width: 81px;
+    border-radius: 4px;
+}
+.banner-ad-details-and-status .details-text-style h3 {
+    line-height: 21px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    color: #23262F;
+    margin-bottom: 14px;
+}
+.banner-ad-details-and-status .details-text-style p {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    font-family: 'Plus Jakarta Sans';
+    color: #35404A;
+    margin: 0;
+}
+.find-helathcare-banner-ad .banner-ad-details-and-status {
+    display: flex;
+    align-items: flex-start;
+    justify-content: end;
+    gap: 56px;
+}
+.banner-ad-details-and-status .banner-ad-detail-status h3 {
+    border: 1px solid #7EE6CC;
+    background-color: #CAFFF2;
+    text-transform: uppercase;
+    border-radius: 20px;
+    padding: 4px 33px;
+    color: #01716A;
+    font-weight: 600;
+    line-height: 15px;
+    font-size: 12px;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}
+
+/* find-healthcare-upgrade-plan start*/
+.find-healthcare-upgrade-plan {
+    margin: 0px;
+    background-color: #EAFFFF;
+    border-radius: 0px 0px 8px 8px;
+}
+.find-healthcare-upgrade-plan-content {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding: 24px 25px;
+    gap: 12px
+}
+.find-healthcare-upgrade-plan-content  .upgrade-plan-paragraph {
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 400;
+    font-family: 'Plus Jakarta Sans';
+    color: #23262F;
+    margin: 0;
+}
+
+.find-healthcare-upgrade-plan-content .Premium-Plan-button {
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 400;
+    font-family: 'Plus Jakarta Sans';
+    color: white;
+    padding: 8px 16px;
+    background-color: #00C1B6;
+    border: none;
+    border-radius: 4px;
+}
+
+/* find-healthcare-ad-with-details start */
+.find-helathcare-banner-ad-width-details{
+    background-color: white;
+    padding: 21px 0px;
+    border: 1px solid #E1E1E1;
+    border-radius: 8px;
+    align-items: center;
+    margin: 0;
+}
+.find-helathcare-banner-ad-width-details .ad-img-and-heading{
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+.find-helathcare-banner-ad-width-details .ad-img-and-heading .banner-ad-img {
+    height: 81px;
+    width: 81px;
+    border-radius: 4px;
+}
+.find-helathcare-banner-ad-width-details .banner-ad-heading h2 {
+    margin-bottom: 8px;
+    font-size: 18px;
+    line-height: 27px;
+    font-weight: 700;
+    color: #23262F;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-helathcare-banner-ad-width-details .banner-ad-heading h2 span {
+    color: #23262F;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-helathcare-banner-ad-width-details .banner-ad-heading p {
+    font-weight: 500;
+    line-height: 18px;
+    font-size: 12px;
+    color: #35404A;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}
+.find-helathcare-banner-ad-width-details .banner-ad-details-status {
+    display: flex;
+    align-items: flex-start;
+    justify-content: end;
+    gap: 56px;
+}
+.banner-ad-details-status .details-text-style p {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    font-family: 'Plus Jakarta Sans';
+    color: #35404A;
+    margin-bottom: 14px;
+}
+
+.banner-ad-details-status .details-text-style h3 {
+    line-height: 21px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    color: #23262F;
+    margin-bottom: 0;
+}
+
+/* find-healthcare-ad-address-details */
+.find-helathcare-ad-address-details {
+    background-color: white;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.find-helathcare-ad-address-details .banner-ad-heading-and-address {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.banner-ad-heading-and-address .banner-ad-heading {
+    padding: 15.5px 14px;
+    border: 1px solid #E4E4E4;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.banner-ad-heading-and-address .banner-ad-heading h3 {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 18px;
+    color: #00C1B6;
+    font-family: 'Plus Jakarta Sans';
+    margin-bottom: 0;
+}
+
+.banner-ad-heading-and-address .banner-ad-address p{
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 500;
+    font-family: 'Plus Jakarta Sans';
+    color: #35404A;
+    margin: 0;
+}
+
+.banner-ad-heading-and-address .banner-ad-address h2 {
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    color: #35404A;
+    margin: 0;
+}
+
+.find-helathcare-ad-address-details .banner-ad-details-status {
+    display: flex;
+    align-items: flex-start;
+    justify-content: end;
+    gap: 32px;
+}
+.find-helathcare-ad-address-details .banner-ad-details-status .details-text-style p {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    font-family: 'Plus Jakarta Sans';
+    color: #35404A;
+    margin-bottom: 14px;
+}
+
+.find-helathcare-ad-address-details .banner-ad-details-status .details-text-style h3 {
+    line-height: 21px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    color: #23262F;
+    margin-bottom: 0;
+}
+

@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+.find-health-my.article {
+    margin: 0 29px;
+}
+
+/* all-articles-bar start */
+.find-healthcare-all-articles-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 10.5px 16px 24.5px;
+    background: white;
+    border-radius: 8px;
+    margin: 0px;
+}
+
+.find-healthcare-all-articles-bar .articles-heading {
+    margin: 0;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 31.2px;
+    color: #35404A;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-healthcare-all-articles-bar .new-blog-post {
+    padding: 11px 19px;
+    background: #00C1B6;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}
+
+/* Article Banner setion start */
+.healthcare-article-name-img {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.healthcare-article-name-img .article-heading-name h2 {
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 27px;
+    font-family: 'Plus Jakarta Sans';
+    color: #23262F;
+    margin-bottom: 8px;
+    
+}
+.healthcare-article-name-img .article-heading-name p {
+    color: #35404A;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}
+.find-healthcare-article-banner {
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #E1E1E1;
+    padding: 16px;
+    margin: 0px;
+}
+
+.find-healthcare-article-banner .healthcare-article-status {
+    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    height: 100% !important;
+}
+
+.find-healthcare-article-banner .article-status-date h3 {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 18px;
+    color: #35404A;
+    font-family: 'Plus Jakarta Sans';
+    margin-bottom: 15px;
+}
+.find-healthcare-article-banner .article-status-date {
+    border-left: 1px solid #E1E1E1;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+ .find-healthcare-article-banner .article-status-date p {
+    color: #23262F;
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: 400;
+    font-family: 'Plus Jakarta Sans';
+    padding: 3px 10px;
+    border-radius: 47px;
+    background-color: #F5F5F5;
+    width: fit-content;
+    margin: 0;
+}
+.find-healthcare-article-banner .healthcare-article-status-publish h3 {
+    border: 1px solid #7EE6CC;
+    background: #CAFFF2;
+    border-radius: 20px;
+    width: fit-content;
+    padding: 3px 14px;
+    color: #01716A;
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}
+
+.healthcare-article-status-publish {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.find-healthcare-article-banner .healthcare-article-status .article-banner-dropdown-menu {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+
+

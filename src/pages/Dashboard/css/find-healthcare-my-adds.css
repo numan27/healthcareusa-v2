@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+.find-healthcare-my-adds {
+    margin: 0px 29px;
+}
+
+.find-healthcare-my-adds .my-ads-main-heading {
+    font-size: 24px;
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 700;
+    line-height: 24px;
+    padding: 17px 24px;
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom:32px;
+}
+
+/* detail-about-ads start */
+
+.find-healthcare-details-about-ads {
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #E1E1E1;
+    padding: 22px 0px;
+    margin-bottom: 32px;
+}
+
+.find-healthcare-details-about-ads .details-about-ads-active-status p{
+    border: 1px solid #7EE6CC;
+    background-color: #CAFFF2;
+    text-transform: uppercase;
+    border-radius: 20px;
+    padding: 4px 33px;
+    color: #01716A;
+    font-weight: 600;
+    line-height: 15px;
+    font-size: 12px;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans';
+    width: fit-content;
+}
+
+
+.find-healthcare-details-about-ads .style-para-heading{
+    border-left: 1px solid #E1E1E1;
+}
+.find-healthcare-details-about-ads .style-para-heading p{
+    font-weight: 500;
+    line-height: 18px;
+    font-size: 12px;
+    color: #35404A;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    
+}
+
+.find-healthcare-details-about-ads .style-para-heading h2 {
+    margin: 0;
+    color: #23262F;
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans';
+}
+
+.find-healthcare-details-about-ads .style-para-heading .ads-date {
+    color: #23262F;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 15px;
+    padding: 3px 10px;
+    background-color: #F5F5F5;
+    border-radius: 47px;
+    font-family: 'Plus Jakarta Sans';
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.details-about-ads-dropdown-icon {
+    display: flex;
+    justify-content: space-between;
+}
+
+.find-healthcare-details-about-ads.custom-grid-one{
+    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 20px;
+}
+.details-about-ads-active-status {
+    margin: 0 auto;
+    align-items: center;
+    display: flex;
+}
+
+/* find-healtcare-ad-page-placement-banner start*/
+.findhealtcare-ad-page-placement-banner {
+    /* border: 1px solid #E1E1E1; */
+    padding: 24px 0px;
+    background-color: white;
+    /* border-radius: 8px; */
+}
+
+.ad-page-placement-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.findhealtcare-ad-page-placement-banner .ad-page-placement-banner .style-headings h3 {
+    color: #35404A;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    font-family: 'Plus Jakarta Sans';
+    margin-bottom: 8px;
+}
+.findhealtcare-ad-page-placement-banner .ad-page-placement-banner .style-headings h2 {
+    color: #23262F;
+    line-height: 21px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}
+
+.findhealtcare-status-and-view {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.findhealtcare-ad-page-placement-banner .findhealtcare-status-and-view .active-status {
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: 600;
+    color: #01716A;
+    padding: 3px 14px;
+    border: 1px solid #7EE6CC;
+    background-color: #CAFFF2;
+    font-family: 'Plus Jakarta Sans';
+    border-radius: 20px;
+    margin: 0;
+}
+.findhealtcare-ad-page-placement-banner .findhealtcare-status-and-view .view-status {
+    background-color: #F5F5F5;
+    border-radius: 20px;
+    color: #35404A;
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    padding: 3px 14px;
+    text-align: center;
+    margin: 0;
+}
+
+.page-placement-banner-dropdown-menu {
+    display: flex;
+    justify-content: end;
+}
+.findhealtcare-ads-number.style-headings {
+    text-align: center;
+}
+
+.custom-grid{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 20px;
+}
+
+@media screen and (max-width: 992px) {
+    .custom-grid{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+
+/* find-healthcare-ad-campaign-overview start*/
+.find-healthcare-ad-campaign-overview {
+    background: white;
+    border-top: 1px solid #E1E1E1;
+    padding: 6.25px 0px;
+}
+.ad-campaign-overview {
+    padding: 7px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+.find-healthcare-ad-campaign-overview .ad-campaign-overview .main-heading {
+    font-size: 14px;
+    line-height: 21px;
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 600;
+    color: #23262F;
+}
+.find-healthcare-ad-campaign-overview .ad-campaign-overview h4 {
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 400;
+    color: #35404A;
+    margin: 7px;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-healthcare-ad-campaign-overview .ad-campaign-overview h2 {
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 37.5px;
+    color: #23262F;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-healthcare-ad-campaign-overview .style-border{
+    border-left: 1px solid #E1E1E1;
+}
+
+.find-healthcare-ad-campaign-overview-content {
+    border: 1px solid #E1E1E1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+
+/* Find healthcare my adds two start*/
+.find-healthcare-my-adds-two .my-adds-main-heading-and-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 10.5px 16px 24.5px;
+    background: white;
+    border-radius: 8px;
+    margin: 0px;
+}
+.find-healthcare-my-adds-two .my-adds-main-heading-and-button .my-ads-main-two-heading {
+    margin: 0;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 31.2px;
+    color: #35404A;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-healthcare-my-adds-two .my-adds-main-heading-and-button .my-ads-main-two-button{
+    padding: 11px 19px;
+    background: #00C1B6;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+    margin: 0;
+}

@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+.find-healthcare-tabs {
+    padding-top: 48px;
+    padding-bottom: 32px;
+}
+
+.find-healthcare-items {
+    border: none;
+    background-color: #23262F;
+    border-radius: 8px;
+    padding: 16px;
+    gap: 8px;
+    margin-bottom: 32px !important;
+}
+
+.find-healthcare-items .nav-item .nav-link{
+    color: #F3F4F6 !important;
+    font-size: 16px !important;
+    line-height: 24px !important;
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 400 !important;
+    padding: 8px 12px !important;
+    border: none;
+}
+.find-healthcare-items .nav-item .nav-link.active {
+    background: #35404A !important;
+    border: none !important;
+    color: #F3F4F6 !important;
+    border-radius: 4px;
+}
+
+.find-healthcare-items .nav-item .nav-link:focus-visible{
+    outline: none !important;
+    border: none !important;
+}
