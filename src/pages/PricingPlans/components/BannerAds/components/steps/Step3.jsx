@@ -1,10 +1,9 @@
 import React from "react";
-
+import DurationPlan from "../DurationPlan/index";
 const Step3 = () => {
   return (
     <div>
-      <h2>Step 3: Create an ad</h2>
-      {/* Step 1 content here */}
+      <DurationPlan />
     </div>
   );
 };

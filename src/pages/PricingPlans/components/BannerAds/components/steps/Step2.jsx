@@ -1,10 +1,9 @@
 import React from "react";
-
+import UploadAdBanner from "../UploadAdBanner/index";
 const Step2 = () => {
   return (
     <div>
-      <h2>Step 2: Create an ad group</h2>
-      {/* Step 1 content here */}
+      <UploadAdBanner />
     </div>
   );
 };

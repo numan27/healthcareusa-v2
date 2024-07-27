@@ -218,10 +218,12 @@ export const ListingsProvider = ({ children }) => {
       currentPage: selected,
     });
   };
-
+  const [activeTab, setActiveTab] = useState("Home Page");
   return (
     <ListingsContext.Provider
       value={{
+        activeTab,
+        setActiveTab,
         profiles,
         loading,
         loadingType,

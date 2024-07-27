@@ -1059,3 +1059,71 @@ body {
   height: 26px;
   justify-content: center;
 }
+.tab-pane .MuiButton-textPrimary {
+  background-color: #00c1b6;
+  color: #fff;
+}
+.tab-pane .MuiButton-textInherit {
+  border: 1.5px solid #d8d8da;
+  color: #999999;
+  font-weight: 600;
+}
+.tab-pane .MuiButtonBase-root {
+  margin-bottom: 50px;
+}
+
+.DragDropUpload {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.DragDropUpload .dropzone {
+  border: 2px dashed #c5c5c5;
+  border-radius: 10px;
+  padding: 24px 0px;
+  text-align: center;
+  color: #555;
+  cursor: pointer;
+  background-color: #f8f6f6;
+  width: 100%;
+}
+
+.DragDropUpload .dropzone.active {
+  border-color: #3b82f6;
+}
+
+.DragDropUpload .upload-link {
+  text-decoration: underline;
+  /* font-size: 10px; */
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.DragDropUpload .upload-link:hover {
+  text-decoration: none;
+}
+
+.DragDropUpload .uploaded-image-container {
+  border: 2px dashed #d3d3d3;
+  border-radius: 10px;
+  padding: 20px 20px 10px;
+  text-align: center;
+  background-color: #eaffff;
+  width: 100%;
+}
+
+.DragDropUpload .uploaded-image {
+  width: 100%;
+  height: 50px;
+}
+
+.DragDropUpload .remove-button .upload-link {
+  text-decoration: underline;
+}
+
+.DragDropUpload .remove-button:hover .upload-link {
+  text-decoration: none;
+}

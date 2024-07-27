@@ -7,17 +7,24 @@ import Step4 from "./components/steps/Step3";
 import { Col, Container, Row } from "react-bootstrap";
 
 const BannerAds = () => {
-  const defaultSteps = ["Add Placement", "Upload Ad Banners", "Duration Plan", "Payment"];
+  const defaultSteps = [
+    "Add Placement",
+    "Upload Ad Banners",
+    "Duration Plan",
+    "Payment",
+  ];
   const stepContent = [<Step1 />, <Step2 />, <Step3 />, <Step4 />];
-
+  const pagesArr = ["Home page", "Search Page", "Details Page", "Other Places"];
+  const [activeTab, setActiveTab] = React.useState("Home page");
   return (
     <div className="d-flex w-100 align-items-center justify-content-center">
       <Container className="mt-5 pt-5">
         <Row>
-          <Col className="mx-auto " md={10}>
+          <Col className="mx-auto " md={9}>
             <GenericStepper steps={defaultSteps} stepContent={stepContent} />
           </Col>
         </Row>
+       
       </Container>
     </div>
   );
