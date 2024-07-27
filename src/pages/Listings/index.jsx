@@ -24,6 +24,38 @@ import BreadCrumb from "../../components/BreadCrumb";
 import SquareMenu from "../../assets/SVGs/SquareMenu";
 import MapComponent from "./components/MapComponent";
 
+// const debouncedSearch = debounce(
+//   (
+//     value,
+//     fetchData,
+//     setSearchKeywordsState,
+//     setLoading,
+//     setLoadingType,
+//     setCurrentPage,
+//     areaRange,
+//     placeState,
+//     autocompleteRef
+//   ) => {
+//     setSearchKeywordsState(value);
+//     setCurrentPage(0);
+//     setLoadingType("search");
+//     setLoading(true);
+//     fetchData({
+//       searchKeywordsState: value,
+//       areaRange,
+//       place: autocompleteRef.current
+//         ? {
+//             lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+//             lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+//             address: autocompleteRef.current.getPlace().formatted_address,
+//           }
+//         : placeState,
+//       currentPage: 0,
+//     });
+//   },
+//   300
+// );
+
 const Listings = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +76,7 @@ const Listings = () => {
 
   const autocompleteRef = useRef(null);
   const profilesPerPage = 10;
+  // const navigate = useNavigate();
   const location = useLocation();
   const { searchKeywords, place, filteredListings } = location.state || {};
   const fetchRequestRef = useRef(null);
@@ -348,6 +381,14 @@ const Listings = () => {
     fetchData({ searchKeywordsState, place, currentPage });
   }, [place, currentPage, fetchData]);
 
+  const center = {
+    lat:
+      placeState?.lat ||
+      (filteredProfiles?.length > 0 ? filteredProfiles[0].lat : 0),
+    lng:
+      placeState?.lng ||
+      (filteredProfiles?.length > 0 ? filteredProfiles[0].lng : 0),
+  };
   useEffect(() => {
     const applyFilters = () => {
       let filtered = profiles;
@@ -396,6 +437,27 @@ const Listings = () => {
 
     applyFilters();
   }, [profiles, selectedOptions, searchKeywordsState]);
+
+  const handleAreaRangeChange = (value) => {
+    setAreaRange(value);
+  };
+  const handleSearchButton = () => {
+    setCurrentPage(0);
+    setLoadingType("search");
+    setLoading(true);
+    fetchData({
+      searchKeywordsState,
+      areaRange,
+      place: autocompleteRef.current
+        ? {
+            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
+            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
+            address: autocompleteRef.current.getPlace().formatted_address,
+          }
+        : placeState,
+      currentPage: 0,
+    });
+  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
