@@ -33,7 +33,7 @@ const AdCard = () => {
               backgroundColor: "#F1F1F1",
               padding: "4px 8px",
               fontSize: "15px",
-              fontWeight: "500",
+              fontWeight: "600",
             }}
           >
             Highly Recommended

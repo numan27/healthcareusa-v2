@@ -6,6 +6,36 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import StepConnector from "@mui/material/StepConnector";
+import { withStyles } from "@mui/styles";
+
+// Custom Connector
+
+const CustomConnector = withStyles({
+  alternativeLabel: {
+    top: 22,
+  },
+
+  active: {
+    "& $line": {
+      borderColor: "#00CEC9",
+    },
+  },
+
+  completed: {
+    "& $line": {
+      borderColor: "#00CEC9",
+    },
+  },
+
+  line: {
+    borderColor: "#D3FBFB",
+
+    borderTopWidth: 4,
+
+    borderRadius: 4,
+  },
+})(StepConnector);
 
 const Wrapper = styled(Box)`
   width: 100%;
@@ -28,6 +58,12 @@ const Wrapper = styled(Box)`
   }
   .css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-active {
     color: #00c1b6 !important;
+  }
+  .css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed {
+    color: #00c1b6 !important;
+  }
+  .css-117w1su-MuiStepIcon-text.Mui-active {
+    fill: #fff !important;
   }
 `;
 
@@ -103,7 +139,7 @@ const GenericStepper = ({
 
   return (
     <Wrapper>
-      <Stepper activeStep={activeStep}>
+      <Stepper activeStep={activeStep} connector={<CustomConnector />}>
         {stepLabels.map((label, index) => {
           const stepProps = {};
           const labelProps = {};

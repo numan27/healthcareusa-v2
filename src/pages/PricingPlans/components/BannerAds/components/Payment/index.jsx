@@ -2,6 +2,7 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { FiCheck } from "react-icons/fi";
 import { TiFlash } from "react-icons/ti";
+import IMAGES from "../../../../../../assets/images";
 
 const index = () => {
   return (
@@ -118,9 +119,24 @@ const index = () => {
                   />
                 </div>
                 <div>
-                  <p className="mb-1 fs_14" style={{ fontWeight: "600" }}>
-                    Postal code
-                  </p>
+                  <div className="centerIt justify-content-between">
+                    <p className="mb-1 fs_14" style={{ fontWeight: "600" }}>
+                      Postal code
+                    </p>
+                    <div className=" centerIt pb-1">
+                      <img
+                        src={IMAGES.VISA}
+                        alt=""
+                        className="me-1"
+                        style={{ width: "30px" }}
+                      />
+                      <img
+                        src={IMAGES.MASTER}
+                        alt=""
+                        style={{ width: "30px" }}
+                      />
+                    </div>
+                  </div>
                   <input
                     type="text"
                     className="rounded-2 w-100 payment-input mb-3"
