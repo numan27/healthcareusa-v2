@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+.find-healthcare-dropdown-icon #dropdown-menu-align-end {
+    background: unset;
+    border: unset;
+    padding: 0;
+}
+
+.find-healthcare-dropdown-icon .dropdown-toggle::after{
+    display: none;
+}
+.find-healthcare-dropdown-icon .banner-status-edit.btn:hover{
+    background-color: unset;
+    outline: unset;
+    border: unset;
+}
+
+.banner-status-edit .dropdown-menu.show.dropdown-menu-end {
+    padding: 0;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.15);
+}
+.banner-status-edit .dropdown-item {
+    padding: 0;
+    font-family: "Manrope", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 52.32px;
+    text-align: center;
+    color: #070026;
+}

@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+.find-healthcare-my-profile {
+    margin: 0px 26.5px;
+}
+
+.find-healthcare-my-profile .my-profile-heading {
+    font-weight: 700;
+    line-height: 31.2px;
+    font-size: 24px;
+    color: #35404A;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans';
+    padding: 16px 24px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.find-healthcare-my-profile .my-profile-information {
+    margin-top: 31px;
+    background-color: white;
+    padding: 32px 60px;
+    border-radius: 8px 8px 0px 0px;
+    border: 1px solid #E1E1E1;
+}
+
+.find-healthcare-my-profile .my-profile-information-heading {
+    margin-bottom: 8px;
+    font-weight: 600;
+    line-height: 30px;
+    font-size: 20px;
+    color: #23262F;
+    font-family: 'Plus Jakarta Sans';
+}
+.find-healthcare-my-profile .my-profile-information-sub-heading {
+    font-weight: 400;
+    line-height: 21px;
+    font-size: 14px;
+    color: #35404A;
+    margin-bottom: 21px;
+}
+.find-healthcare-my-profile label {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 16px;
+    font-family: 'Plus Jakarta Sans';
+    color: #23262F;
+    margin-bottom: 11px;
+    display: block;
+}
+.find-healthcare-my-profile .my-profile-information-form input#fulname {
+    margin-bottom: 21px;
+}
+.find-healthcare-my-profile input {
+    width: 100%;
+    border: 1px solid #E6E6E6;
+    border-radius: 4px;
+    padding: 16px 24px;
+}
+.find-healthcare-my-profile input:focus-visible {
+    outline: unset;
+}
+.find-healthcare-my-profile .my-profile-information-form input::placeholder {
+    color: #C2C2C2;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 400;
+    font-family: 'Plus Jakarta Sans';
+}
+.my-profile-information .my-profile-information-upload-image .my-profile-information-image-button {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.find-healthcare-my-profile .my-profile-information .my-profile-information-upload-image {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 100%;
+    height: 100%;
+}
+.my-profile-information-upload-image .my-profile-information-image-button .my-profile-information-image {
+    margin-bottom: 16px;
+    border: 2px solid #D6D6D6;
+    border-radius: 50%;
+    width: 182px;
+    height: 182px;
+}
+.my-profile-information-upload-image .my-profile-information-image-button .my-profile-information-button {
+    border: 1px solid #CACACA;
+    background: unset;
+    padding: 6px 12px;
+    color: #35404A;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 400;
+    font-family: 'Plus Jakarta Sans';
+    border-radius: 4px;
+}
+.find-healthcare-my-profile .my-profile-information-save-button {
+    margin: 0;
+    background-color: #EAFFFF;
+    padding: 16px;
+    border-radius: 0px 0px 8px 8px;
+    text-align: end;
+    margin-bottom: 24px;
+}
+.find-healthcare-my-profile .my-profile-information-save-button .information-save-button {
+    border: unset;
+    background-color: #00C1B6;
+    padding: 6px 19px;
+    border-radius: 4px;
+    color: #FFFFFF;
+    line-height: 21px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans';
+}
+
+.find-healthcare-my-profile .my-profile-update-password input#cpassword {
+    margin-bottom: 21px;
+}
+
+.find-healthcare-my-profile .delete-request-style{
+    background-color: #FFCACA !important;
+}
+
+.find-healthcare-my-profile .delete-request-style button{
+    background-color: #C10000 !important;
+}
