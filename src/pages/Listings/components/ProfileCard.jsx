@@ -6,7 +6,7 @@ import {
   Typography,
 } from "../../../components/GenericComponents";
 import { Col, Row } from "react-bootstrap";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PhoneCircleIcon from "../../../assets/SVGs/PhoneCircle";
 import MapIcon from "../../../assets/SVGs/Map";
 import CallIcon from "../../../assets/SVGs/Call";
@@ -16,7 +16,6 @@ import IMAGES from "../../../assets/images";
 import { GoDotFill } from "react-icons/go";
 import classNames from "classnames";
 
-// Function to calculate distance using the Haversine formula
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const toRad = (value) => (value * Math.PI) / 180;
 
@@ -48,7 +47,6 @@ const ProfileCard = ({
   filteredProfiles,
 }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [distance, setDistance] = useState(null);
 
   useEffect(() => {
@@ -78,7 +76,7 @@ const ProfileCard = ({
     status,
     id,
   } = singleProfile;
-  
+
   const handleNavigate = (event, id) => {
     event.preventDefault();
     const { state: extractedState, city: extractedCity } = extractStateAndCity(
@@ -269,7 +267,7 @@ const ProfileCard = ({
                     </Box>
                   )}
 
-                  <Box style={{ maxWidth: "200px" }}>
+                  <Box style={{ maxWidth: "300px" }}>
                     <Typography
                       as="span"
                       color="#23262F"
@@ -288,7 +286,7 @@ const ProfileCard = ({
                 >
                   <PhoneCircleIcon />
                   <Typography
-                    className="mb-0"  
+                    className="mb-0"
                     as="h5"
                     color="#23262F"
                     weight="700"

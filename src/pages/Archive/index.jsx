@@ -325,6 +325,7 @@ const Archive = () => {
       setShowMap(true);
     }
   }, [placeState, searchKeywordsState, areaRange, fetchData]);
+  
 
   useEffect(() => {
     const savedQueryParams = sessionStorage.getItem("latestQueryParams");

@@ -24,38 +24,6 @@ import BreadCrumb from "../../components/BreadCrumb";
 import SquareMenu from "../../assets/SVGs/SquareMenu";
 import MapComponent from "./components/MapComponent";
 
-// const debouncedSearch = debounce(
-//   (
-//     value,
-//     fetchData,
-//     setSearchKeywordsState,
-//     setLoading,
-//     setLoadingType,
-//     setCurrentPage,
-//     areaRange,
-//     placeState,
-//     autocompleteRef
-//   ) => {
-//     setSearchKeywordsState(value);
-//     setCurrentPage(0);
-//     setLoadingType("search");
-//     setLoading(true);
-//     fetchData({
-//       searchKeywordsState: value,
-//       areaRange,
-//       place: autocompleteRef.current
-//         ? {
-//             lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-//             lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-//             address: autocompleteRef.current.getPlace().formatted_address,
-//           }
-//         : placeState,
-//       currentPage: 0,
-//     });
-//   },
-//   300
-// );
-
 const Listings = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -117,15 +85,28 @@ const Listings = () => {
 
   useEffect(() => {
     if (location.state) {
-      const { searchKeywords, place, filteredListings } = location.state;
+      const {
+        searchKeywords,
+        place,
+        filteredListings,
+        currentPage,
+        areaRange,
+      } = location.state; // Add areaRange
       setSearchKeywordsState(searchKeywords || "");
       setPlaceState(place || null);
+      setCurrentPage(currentPage || 0); // Set current page
+      setAreaRange(areaRange || 10); // Set area range
       if (filteredListings && filteredListings.length > 0) {
         const profilesData = filteredListings.flatMap((group) => group.items);
         setProfiles(profilesData);
         setFilteredProfiles(profilesData);
       } else {
-        fetchData({ searchKeywordsState: searchKeywords || "", place });
+        fetchData({
+          searchKeywordsState: searchKeywords || "",
+          place,
+          currentPage,
+          areaRange,
+        });
       }
     } else {
       const savedState = sessionStorage.getItem("listingsState");
@@ -155,6 +136,25 @@ const Listings = () => {
       }
     }
   }, [location.state]);
+
+  useEffect(() => {
+    const stateToSave = {
+      searchKeywords: searchKeywordsState,
+      place: placeState,
+      filteredListings: filteredProfiles,
+      areaRange: areaRange,
+      currentPage: currentPage,
+      selectedOptions: selectedOptions,
+    };
+    sessionStorage.setItem("listingsState", JSON.stringify(stateToSave));
+  }, [
+    searchKeywordsState,
+    placeState,
+    filteredProfiles,
+    areaRange,
+    currentPage,
+    selectedOptions,
+  ]);
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -197,7 +197,6 @@ const Listings = () => {
 
       const searchKeywords =
         params.searchKeywordsState || searchKeywordsState || "";
-
       const query = new URLSearchParams({
         "cwp_query[post_type]": "listing",
         "cwp_query[orderby]": "ASC",
@@ -335,6 +334,17 @@ const Listings = () => {
 
         setProfiles(sortedProfiles);
         setFilteredProfiles(sortedProfiles);
+
+        // Save state to sessionStorage
+        const listingsState = {
+          searchKeywords: searchKeywordsState,
+          place: params.place,
+          filteredListings: sortedProfiles,
+          areaRange: params.areaRange,
+          currentPage: params.currentPage,
+          selectedOptions,
+        };
+        sessionStorage.setItem("listingsState", JSON.stringify(listingsState));
 
         setLoading(false);
       } catch (error) {
@@ -514,6 +524,16 @@ const Listings = () => {
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth" });
     }
+
+    const listingsState = {
+      searchKeywords: searchKeywordsState,
+      place: placeState,
+      filteredListings: filteredProfiles,
+      areaRange,
+      currentPage: selected,
+      selectedOptions,
+    };
+    sessionStorage.setItem("listingsState", JSON.stringify(listingsState));
   };
 
   useEffect(() => {
@@ -526,7 +546,7 @@ const Listings = () => {
         currentPage,
       });
     }
-  }, [placeState, searchKeywordsState, areaRange, currentPage, fetchData]);
+  }, [currentPage, placeState, searchKeywordsState, areaRange, fetchData]);
 
   if (loading && loadingType === "initial") {
     return (
