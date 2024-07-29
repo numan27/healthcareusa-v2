@@ -87,10 +87,10 @@ const DropdownFilter = ({
       setSelectedOptions(updatedOptions);
 
       fetchData({
-        searchKeywordsState,
-        areaRange,
+        searchKeywordsState: searchKeywordsState,
+        areaRange: areaRange,
         place: placeState,
-        currentPage,
+        currentPage: currentPage,
         selectedOptions: updatedOptions,
       });
     },

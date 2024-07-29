@@ -91,11 +91,12 @@ const Listings = () => {
         filteredListings,
         currentPage,
         areaRange,
-      } = location.state; // Add areaRange
+      } = location.state;
       setSearchKeywordsState(searchKeywords || "");
       setPlaceState(place || null);
-      setCurrentPage(currentPage || 0); // Set current page
-      setAreaRange(areaRange || 10); // Set area range
+      setLoading(false);
+      setCurrentPage(currentPage || 0);
+      setAreaRange(areaRange || 10);
       if (filteredListings && filteredListings.length > 0) {
         const profilesData = filteredListings.flatMap((group) => group.items);
         setProfiles(profilesData);
@@ -121,6 +122,7 @@ const Listings = () => {
         } = JSON.parse(savedState);
         setSearchKeywordsState(searchKeywords || "");
         setPlaceState(place || null);
+        setLoading(false);
         setAreaRange(areaRange || 10);
         setCurrentPage(currentPage || 0);
         setSelectedOptions(selectedOptions || []);
@@ -130,8 +132,6 @@ const Listings = () => {
           setFilteredProfiles(profilesData);
         }
       } else {
-        setLoadingType("initial");
-        setLoading(true);
         fetchData({ searchKeywordsState, areaRange, place: null, currentPage });
       }
     }
@@ -197,7 +197,8 @@ const Listings = () => {
 
       const searchKeywords =
         params.searchKeywordsState || searchKeywordsState || "";
-      const query = new URLSearchParams({
+
+      const queryParams = {
         "cwp_query[post_type]": "listing",
         "cwp_query[orderby]": "ASC",
         "cwp_query[s]": searchKeywords,
@@ -208,7 +209,33 @@ const Listings = () => {
         "cwp_query[posts_per_page]": profilesPerPage,
         "cwp_query[paged]": params.currentPage + 1,
         "cwp_query[page_num]": params.currentPage + 1,
-      }).toString();
+      };
+
+      (params.selectedOptions || selectedOptions).forEach((option) => {
+        switch (option.label) {
+          case "Gender":
+            option.values.forEach((v) => {
+              queryParams[`cwp_query[cwp_field_224925973684].meta_value`] =
+                v.value;
+            });
+            break;
+          case "Languages":
+            option.values.forEach((v) => {
+              queryParams[`cwp_query[fc-languages].meta_value`] = v.value;
+            });
+            break;
+          case "Specialty":
+            option.values.forEach((v) => {
+              queryParams[`cwp_query[cwp_field_136461069401].meta_value`] =
+                v.value;
+            });
+            break;
+          default:
+            break;
+        }
+      });
+
+      const query = new URLSearchParams(queryParams).toString();
 
       try {
         const response = await axios.get(
@@ -311,40 +338,12 @@ const Listings = () => {
           }))
           .sort((a, b) => a.distance - b.distance);
 
-        let filteredProfiles = sortedProfiles;
-
-        if (searchKeywords) {
-          const keywordsLower = searchKeywords.toLowerCase();
-          filteredProfiles = sortedProfiles.filter(
-            (profile) =>
-              (profile.specialization &&
-                profile.specialization.some((spec) =>
-                  spec.toLowerCase().includes(keywordsLower)
-                )) ||
-              (profile.taxonomies &&
-                profile.taxonomies.some((taxonomy) =>
-                  taxonomy.toLowerCase().includes(keywordsLower)
-                ))
-          );
-        }
-
         const totalProfiles = response.data.total_posts;
         setTotalPages(Math.ceil(totalProfiles / profilesPerPage));
         setTotalPosts(totalProfiles);
 
         setProfiles(sortedProfiles);
         setFilteredProfiles(sortedProfiles);
-
-        // Save state to sessionStorage
-        const listingsState = {
-          searchKeywords: searchKeywordsState,
-          place: params.place,
-          filteredListings: sortedProfiles,
-          areaRange: params.areaRange,
-          currentPage: params.currentPage,
-          selectedOptions,
-        };
-        sessionStorage.setItem("listingsState", JSON.stringify(listingsState));
 
         setLoading(false);
       } catch (error) {
@@ -358,7 +357,7 @@ const Listings = () => {
   );
 
   useEffect(() => {
-    if (placeState) {
+    if (placeState && location.state) {
       setLoading(true);
       fetchData({
         searchKeywordsState,
@@ -366,8 +365,10 @@ const Listings = () => {
         place: placeState,
         currentPage,
       });
+    } else if (location.state) {
+      setLoading(false);
     }
-  }, [currentPage, placeState, fetchData]);
+  }, [currentPage, placeState, location.state, fetchData]);
 
   useEffect(() => {
     if (filteredListings && filteredListings.length > 0) {
@@ -759,8 +760,24 @@ const Listings = () => {
               </Box>
 
               <DropdownFilter
-                setSelectedOptions={setSelectedOptions}
                 selectedOptions={selectedOptions}
+                setSelectedOptions={(options) => {
+                  setSelectedOptions(options);
+                  setLoading(true);
+                  setLoadingType("search");
+                  fetchData({
+                    searchKeywordsState,
+                    areaRange,
+                    place: placeState,
+                    currentPage,
+                    selectedOptions: options,
+                  });
+                }}
+                searchKeywordsState={searchKeywordsState}
+                areaRange={areaRange}
+                placeState={placeState}
+                currentPage={currentPage}
+                fetchData={fetchData}
               />
 
               <div className="pt-3 mb-3">

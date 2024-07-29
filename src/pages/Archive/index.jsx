@@ -87,6 +87,7 @@ const Archive = () => {
   useEffect(() => {
     if (selectedSpecialty && selectedSpecialty.length > 0) {
       setLoading(true);
+      setLoadingType("search");
       fetchData({
         searchKeywordsState,
         areaRange,
@@ -205,9 +206,9 @@ const Archive = () => {
         specialty = selectedItem ? selectedItem.name : "",
       } = params;
 
-      setLatestQueryParams(params); // Store the latest query parameters
+      setLatestQueryParams(params);
 
-      const query = new URLSearchParams({
+      const queryParams = {
         "cwp_query[post_type]": "listing",
         "cwp_query[orderby]": "ASC",
         "cwp_query[s]": searchKeywordsState,
@@ -219,7 +220,25 @@ const Archive = () => {
         "cwp_query[paged]": currentPage + 1,
         "cwp_query[page_num]": currentPage + 1,
         "cwp_query[service]": specialty,
-      }).toString();
+      };
+
+      (params.selectedOptions || selectedOptions).forEach((option) => {
+        switch (option.label) {
+          case "Gender":
+            queryParams[`cwp_query[cwp_field_224925973684].meta_value`] =
+              option.values.map((v) => v.value).join(",");
+            break;
+          case "Languages":
+            queryParams[`cwp_query[fc-languages].meta_value`] = option.values
+              .map((v) => v.value)
+              .join(",");
+            break;
+          default:
+            break;
+        }
+      });
+
+      const query = new URLSearchParams(queryParams).toString();
 
       try {
         const response = await axios.get(
@@ -325,7 +344,6 @@ const Archive = () => {
       setShowMap(true);
     }
   }, [placeState, searchKeywordsState, areaRange, fetchData]);
-  
 
   useEffect(() => {
     const savedQueryParams = sessionStorage.getItem("latestQueryParams");
@@ -342,7 +360,7 @@ const Archive = () => {
   }, []);
 
   useEffect(() => {
-    setLoadingType("initial");
+    setLoadingType("search");
     setLoading(true);
     const initialParams = {
       searchKeywordsState: searchKeywords || "",
@@ -578,7 +596,7 @@ const Archive = () => {
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
-                              handleFormSubmit(e); // Trigger form submit on Enter key
+                              handleFormSubmit(e);
                             }
                           }}
                         />
@@ -630,7 +648,7 @@ const Archive = () => {
                                 onKeyDown={(e) => {
                                   if (e.key === "Enter") {
                                     e.preventDefault();
-                                    handleFormSubmit(e); // Trigger form submit on Enter key
+                                    handleFormSubmit(e);
                                   }
                                 }}
                               />
@@ -667,10 +685,21 @@ const Archive = () => {
               </Box>
 
               <DropdownFilter
-                setSelectedOptions={setSelectedOptions}
                 selectedOptions={selectedOptions}
                 specialtyOptions={specialtyOptions}
                 onSpecialtyChange={handleSpecialtyChange}
+                setSelectedOptions={(options) => {
+                  setSelectedOptions(options);
+                  setLoading(true);
+                  setLoadingType("search");
+                  fetchData({
+                    // searchKeywordsState,
+                    areaRange,
+                    place: placeState,
+                    currentPage,
+                    selectedOptions: options,
+                  });
+                }}
                 onOptionChange={() => {
                   setLoading(true);
                   fetchData({

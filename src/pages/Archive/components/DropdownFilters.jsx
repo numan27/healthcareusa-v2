@@ -5,7 +5,8 @@ const DropdownFilter = ({
   setSelectedOptions,
   selectedOptions,
   specialtyOptions,
-  onSpecialtyChange, // Added prop
+  fetchData,
+  onSpecialtyChange
 }) => {
   const [dropdownOptions, setDropdownOptions] = useState({});
 
@@ -23,11 +24,7 @@ const DropdownFilter = ({
           const fields = data.groups["112156535"].fields;
           const optionsMap = {};
 
-          const dropdownLabels = [
-            "Gender",
-            "Languages",
-            "Specialty",
-          ];
+          const dropdownLabels = ["Gender", "Languages", "Specialty"];
 
           dropdownLabels.forEach((label) => {
             const field = fields.find((field) => {
@@ -50,7 +47,7 @@ const DropdownFilter = ({
             }
           });
 
-          console.log("Dropdown Options:", optionsMap); // Added log
+          console.log("Dropdown Options:", optionsMap);
           setDropdownOptions(optionsMap);
         } else {
           console.error("No groups found in data");
@@ -74,37 +71,42 @@ const DropdownFilter = ({
 
   const handleDropdownOptions = useCallback(
     (label, selectedOption) => {
-      setSelectedOptions((prevSelectedOptions) => {
-        const updatedOptions = [...prevSelectedOptions];
-        const optionIndex = updatedOptions.findIndex(
-          (option) => option.label === label
-        );
+      const updatedOptions = [...selectedOptions];
+      const optionIndex = updatedOptions.findIndex(
+        (option) => option.label === label
+      );
 
-        const values = selectedOption.map((item) => ({
-          id: item.id,
-          label: item.label,
-          value: item.value,
-        }));
+      const values = selectedOption.map((item) => ({
+        id: item.id,
+        label: item.label,
+        value: item.value,
+      }));
 
-        if (optionIndex >= 0) {
-          if (values.length > 0) {
-            updatedOptions[optionIndex] = { label, values };
-          } else {
-            updatedOptions.splice(optionIndex, 1); // Remove the option if no values are selected
-          }
-        } else if (values.length > 0) {
-          updatedOptions.push({ label, values });
+      if (optionIndex >= 0) {
+        if (values.length > 0) {
+          updatedOptions[optionIndex] = { label, values };
+        } else {
+          updatedOptions.splice(optionIndex, 1);
         }
-
-        console.log("Updated selected options:", updatedOptions);
-        return updatedOptions;
-      });
-
-      if (label === "Specialty" && onSpecialtyChange) {
-        onSpecialtyChange(selectedOption);
+      } else if (values.length > 0) {
+        updatedOptions.push({ label, values });
       }
+
+      setSelectedOptions(updatedOptions);
+
+      fetchData({
+        searchKeywordsState,
+        areaRange,
+        place: placeState,
+        currentPage,
+        selectedOptions: updatedOptions,
+      });
     },
-    [setSelectedOptions, onSpecialtyChange]
+    [
+      selectedOptions,
+      setSelectedOptions,
+      fetchData,
+    ]
   );
 
   return (
