@@ -573,6 +573,7 @@ const Archive = () => {
                         step={1}
                         value={areaRange}
                         onChange={handleAreaRangeChange}
+                        disabled={!locationState || locationState.length === 0}
                       />
                     </Col>
                     <Col
@@ -841,13 +842,15 @@ const Archive = () => {
             </Col>
           </Row>
 
-          <div className="d-flex justify-content-end mt-5">
-            <Pagination
-              pageCount={totalPages}
-              onPageChange={handlePageClick}
-              currentPage={currentPage}
-            />
-          </div>
+          {filteredProfiles.length > 9 && (
+            <div className="d-flex justify-content-start mt-5">
+              <Pagination
+                pageCount={totalPages}
+                onPageChange={handlePageClick}
+                currentPage={currentPage}
+              />
+            </div>
+          )}
         </Container>
       </>
     </LoadScriptNext>

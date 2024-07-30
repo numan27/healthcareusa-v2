@@ -17,6 +17,7 @@ const StyledSelect = styled(Select)`
     outline: none;
     box-shadow: none;
     cursor: pointer;
+    text-wrap: no-wrap !important;
     border-radius: ${(props) => props.borderRadius};
   }
   .react-select__control:hover {
@@ -29,6 +30,7 @@ const StyledSelect = styled(Select)`
     padding-bottom: 0px !important;
     border-radius: 4px;
     font-size: 14px;
+    text-wrap: nowrap !important;
   }
   .react-select__menu {
     padding-top: 0px !important;
@@ -36,6 +38,7 @@ const StyledSelect = styled(Select)`
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
     width: ${(props) => props.width};
     z-index: 999 !important;
+    width: 100% !important;
   }
   .react-select__option {
     background-color: transparent;

@@ -41,7 +41,7 @@ const Tooltip = styled.div`
 
 const StyledSlider = styled(Slider)`
   .MuiSlider-rail {
-    color: #E4E4E4 !important;
+    color: #e4e4e4 !important;
   }
   .MuiSlider-track {
     color: #00c1b6 !important;
@@ -58,7 +58,7 @@ const StyledSlider = styled(Slider)`
     &:hover,
     &.Mui-focusVisible {
       box-shadow: 0px 0px 0px 8px rgba(0, 193, 182, 0.16);
-      color: #00C1B6 !important;
+      color: #00c1b6 !important;
     }
   }
   .MuiSlider-valueLabel {
@@ -97,6 +97,7 @@ export default function RangeSlider({
   max = 100,
   step = 1,
   onChange,
+  disabled = false,
 }) {
   const [value, setValue] = useState(defaultValue);
 
@@ -122,6 +123,7 @@ export default function RangeSlider({
         min={min}
         max={max}
         step={step}
+        disabled={disabled}
       />
       <Tooltip left={(value / max) * 100}>
         <img src={IMAGES.MAP_PIN} alt="icon" />

@@ -177,12 +177,10 @@ body {
 }
 
 .btn-grad {
-  background-image: linear-gradient(
-    to right,
-    #314755 0%,
-    #26a0da 51%,
-    #314755 100%
-  );
+  background-image: linear-gradient(to right,
+      #314755 0%,
+      #26a0da 51%,
+      #314755 100%);
   margin: 10px;
   padding: 15px 45px;
   text-align: center;
@@ -392,8 +390,7 @@ body {
 }
 
 .service-box:hover img {
-  filter: invert(98%) sepia(47%) saturate(96%) hue-rotate(233deg)
-    brightness(117%) contrast(100%);
+  filter: invert(98%) sepia(47%) saturate(96%) hue-rotate(233deg) brightness(117%) contrast(100%);
 }
 
 /* Blogs */
@@ -575,11 +572,9 @@ body {
 }
 
 .pricing-top-bar {
-  background: linear-gradient(
-    270deg,
-    rgba(103, 143, 220, 0.85) 0%,
-    rgba(22, 201, 190, 0.85) 100%
-  ) !important;
+  background: linear-gradient(270deg,
+      rgba(103, 143, 220, 0.85) 0%,
+      rgba(22, 201, 190, 0.85) 100%) !important;
 }
 
 /* Listing Submission Form */
@@ -612,11 +607,9 @@ body {
 }
 
 .form-top-gradient .progress-bar {
-  background: linear-gradient(
-    270deg,
-    rgba(22, 201, 190, 0.85) 0%,
-    rgba(103, 143, 220, 0.85) 100%
-  );
+  background: linear-gradient(270deg,
+      rgba(22, 201, 190, 0.85) 0%,
+      rgba(103, 143, 220, 0.85) 100%);
   /* background: linear-gradient(270deg, rgba(103, 143, 220, 0.85) 0%, rgba(22, 201, 190, 0.85) 100%); */
   /* background: linear-gradient(90deg, #5C48FC 0%, #8CD2F9 49.4%, #7DFEA9 119.05%); */
 }
@@ -677,8 +670,8 @@ body {
   align-items: center;
 }
 
-.pagination > li > a,
-.pagination > li > span {
+.pagination>li>a,
+.pagination>li>span {
   color: #09bbb1;
 }
 
@@ -703,16 +696,21 @@ body {
   border-color: #14a077 !important;
 }
 
-.pagination > li > a,
-.pagination > li > span {
+.pagination>li>a,
+.pagination>li>span {
   color: #23262f;
-  font-size: 15.777px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  border-radius: 100%;
+  padding: 4px 10px;
+  width: fit-content;
+  height: fit-content;
+  min-width: 36px;
+  min-height: 36px;
+  max-width: 48px;
+  max-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -807,6 +805,10 @@ body {
   width: 20px !important;
   margin-left: auto !important;
   margin-right: 10px;
+}
+
+.react-select__clear-indicator {
+  display: none !important;
 }
 
 /* .gm-style-iw-ch {
@@ -1029,23 +1031,28 @@ body {
     width: 95% !important;
   }
 }
+
 .pages-tab.active {
   color: #ffffff;
   background-color: #23262f;
 }
+
 .pages-tab.active:hover {
   color: #ffffff !important;
 }
+
 .centerIt {
   display: flex;
   align-items: center;
 }
+
 .plan-tab-card {
   border: 1px solid #00c1b6;
   border-radius: 8px;
 }
-.plan-tab-card .content {
-}
+
+.plan-tab-card .content {}
+
 .ad-size-badge {
   background-color: #adf4f4;
   padding: 4px 8px;
@@ -1053,21 +1060,25 @@ body {
   font-weight: 500;
   width: fit-content;
 }
+
 .card-check {
   background-color: #00c1b6;
   width: 26px;
   height: 26px;
   justify-content: center;
 }
+
 .tab-pane .MuiButton-textPrimary {
   background-color: #00c1b6;
   color: #fff;
 }
+
 .tab-pane .MuiButton-textInherit {
   border: 1.5px solid #d8d8da;
   color: #999999;
   font-weight: 600;
 }
+
 .tab-pane .MuiButtonBase-root {
   margin-bottom: 50px;
 }
@@ -1127,9 +1138,11 @@ body {
 .DragDropUpload .remove-button:hover .upload-link {
   text-decoration: none;
 }
+
 .fs_14 {
   font-size: 14px;
 }
+
 .payment-input {
   border: 1px solid #e6e6e6;
   outline: none;

@@ -35,8 +35,6 @@ const Listings = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  const [locationState, setLocationState] = useState("");
-  const [placeState, setPlaceState] = useState(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [selectedListing, setSelectedListing] = useState("");
 
@@ -46,6 +44,11 @@ const Listings = () => {
   const profilesPerPage = 10;
   // const navigate = useNavigate();
   const location = useLocation();
+
+  const [locationState, setLocationState] = useState(
+    location.state?.place?.address || ""
+  );
+  const [placeState, setPlaceState] = useState(location.state?.place || null);
   const { searchKeywords, place, filteredListings } = location.state || {};
   const fetchRequestRef = useRef(null);
 
@@ -212,27 +215,22 @@ const Listings = () => {
       };
 
       (params.selectedOptions || selectedOptions).forEach((option) => {
-        switch (option.label) {
-          case "Gender":
-            option.values.forEach((v) => {
+        option.values.forEach((v) => {
+          switch (option.label) {
+            case "Specialty":
+              queryParams["cwp_query[service].meta_value"] = v.value;
+              break;
+            case "Gender":
               queryParams[`cwp_query[cwp_field_224925973684].meta_value`] =
                 v.value;
-            });
-            break;
-          case "Languages":
-            option.values.forEach((v) => {
+              break;
+            case "Languages":
               queryParams[`cwp_query[fc-languages].meta_value`] = v.value;
-            });
-            break;
-          case "Specialty":
-            option.values.forEach((v) => {
-              queryParams[`cwp_query[cwp_field_136461069401].meta_value`] =
-                v.value;
-            });
-            break;
-          default:
-            break;
-        }
+              break;
+            default:
+              break;
+          }
+        });
       });
 
       const query = new URLSearchParams(queryParams).toString();
@@ -353,7 +351,13 @@ const Listings = () => {
         }
       }
     }, 300),
-    []
+    [
+      searchKeywordsState,
+      areaRange,
+      placeState,
+      profilesPerPage,
+      selectedOptions,
+    ]
   );
 
   useEffect(() => {
@@ -404,22 +408,6 @@ const Listings = () => {
     const applyFilters = () => {
       let filtered = profiles;
 
-      // if (searchKeywordsState) {
-      //   const keywordsLower = searchKeywordsState.toLowerCase();
-      //   filtered = filtered.filter(
-      //     (profile) =>
-      //       profile.title?.toLowerCase().includes(keywordsLower) ||
-      //       (profile.specialization &&
-      //         profile.specialization.some((spec) =>
-      //           spec.toLowerCase().includes(keywordsLower)
-      //         )) ||
-      //       (profile.taxonomies &&
-      //         profile.taxonomies.some((taxonomy) =>
-      //           taxonomy.toLowerCase().includes(keywordsLower)
-      //         ))
-      //   );
-      // }
-
       selectedOptions.forEach((filter) => {
         filtered = filtered.filter((profile) => {
           const filterValues = filter.values.map((selected) =>
@@ -433,7 +421,7 @@ const Listings = () => {
               );
             case "gender":
               return filterValues.includes(profile.gender.toLowerCase());
-            case "specialty":
+            case "specialization":
               return profile.specialization.some((specialty) =>
                 filterValues.includes(specialty.toLowerCase())
               );
@@ -658,6 +646,7 @@ const Listings = () => {
                         step={1}
                         value={areaRange}
                         onChange={(value) => setAreaRange(value)}
+                        disabled={!locationState || locationState.length === 0}
                       />
                     </Col>
                     <Col
@@ -706,7 +695,6 @@ const Listings = () => {
                       className="d-flex align-items-center mb-md-3 mb-2"
                     >
                       <div className="d-flex align-items-center w-100">
-                        {/* {window.google && ( */}
                         <Autocomplete
                           className="w-100"
                           onLoad={onLoad}
@@ -742,7 +730,6 @@ const Listings = () => {
                             {isLoadingLocation && <LoaderCenter />}
                           </InputGroup>
                         </Autocomplete>
-                        {/* )} */}
                       </div>
                       <div className="ms-1">
                         <GenericButton
@@ -759,27 +746,28 @@ const Listings = () => {
                 </Form>
               </Box>
 
-              <DropdownFilter
-                selectedOptions={selectedOptions}
-                setSelectedOptions={(options) => {
-                  setSelectedOptions(options);
-                  setLoading(true);
-                  setLoadingType("search");
-                  fetchData({
-                    searchKeywordsState,
-                    areaRange,
-                    place: placeState,
-                    currentPage,
-                    selectedOptions: options,
-                  });
-                }}
-                searchKeywordsState={searchKeywordsState}
-                areaRange={areaRange}
-                placeState={placeState}
-                currentPage={currentPage}
-                fetchData={fetchData}
-              />
-
+              <div>
+                <DropdownFilter
+                  selectedOptions={selectedOptions}
+                  setSelectedOptions={(options) => {
+                    setSelectedOptions(options);
+                    setLoading(true);
+                    setLoadingType("search");
+                    fetchData({
+                      searchKeywordsState,
+                      areaRange,
+                      place: placeState,
+                      currentPage,
+                      selectedOptions: options,
+                    });
+                  }}
+                  searchKeywordsState={searchKeywordsState}
+                  areaRange={areaRange}
+                  placeState={placeState}
+                  currentPage={currentPage}
+                  fetchData={fetchData}
+                />
+              </div>
               <div className="pt-3 mb-3">
                 {loadingType === "search" && loading ? (
                   <LoaderCenter />
@@ -807,7 +795,8 @@ const Listings = () => {
                         size="16px"
                         lineHeight="26px"
                       >
-                        All results
+                        All results{" "}
+                        <span className="text-dark">{totalPosts}</span>
                       </Typography>
                     )}
                   </div>
@@ -877,15 +866,15 @@ const Listings = () => {
                   </Typography>
                 )}
               </div>
-
-              <div className="d-flex justify-content-start mt-5">
-                <Pagination
-                  pageCount={totalPages}
-                  onPageChange={handlePageClick}
-                  currentPage={currentPage}
-                />
-              </div>
-
+              {filteredProfiles.length > 9 && (
+                <div className="d-flex justify-content-start mt-5">
+                  <Pagination
+                    pageCount={totalPages}
+                    onPageChange={handlePageClick}
+                    currentPage={currentPage}
+                  />
+                </div>
+              )}
               <AdsSection margin={3} padding={0} />
             </Col>
 

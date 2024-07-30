@@ -97,6 +97,7 @@ export default function RangeSlider({
   max = 100,
   step = 1,
   onChange,
+  disabled = false,
 }) {
   const [value, setValue] = useState(defaultValue);
 
@@ -122,6 +123,7 @@ export default function RangeSlider({
         min={min}
         max={max}
         step={step}
+        disabled={disabled}
       />
       <Tooltip left={(value / max) * 100}>
         <img src={IMAGES.MAP_PIN} alt="icon" />

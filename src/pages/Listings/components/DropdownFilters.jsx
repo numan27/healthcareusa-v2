@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import { GenericSelect } from "../../../components/GenericComponents";
+import { ServicesContext } from "../../../components/api/ServicesContext";
 
 const DropdownFilter = ({
   setSelectedOptions,
@@ -11,10 +12,7 @@ const DropdownFilter = ({
   fetchData,
 }) => {
   const [dropdownOptions, setDropdownOptions] = useState({});
-
-  useEffect(() => {
-    fetchDropdownOptions();
-  }, []);
+  const { groupedServices, loading } = useContext(ServicesContext);
 
   const fetchDropdownOptions = async () => {
     try {
@@ -22,8 +20,6 @@ const DropdownFilter = ({
         "https://jsappone.demowp.io/wp-json/cubewp-forms/v1/get_form?post_type=listing&form_type=post_type"
       );
       const data = await response.json();
-
-      console.log("Fetched data:", data);
 
       if (data && data.groups) {
         const fields = data.groups["112156535"].fields;
@@ -51,7 +47,17 @@ const DropdownFilter = ({
           }
         });
 
-        console.log("Dropdown Options:", optionsMap);
+        if (groupedServices.length > 0) {
+          const specialtyOptions = groupedServices.flatMap((group) =>
+            group.items.map((item) => ({
+              id: item.id,
+              label: item.name,
+              value: item.name, // Use name as value for specialty
+            }))
+          );
+          optionsMap["Specialty"] = specialtyOptions;
+        }
+
         setDropdownOptions(optionsMap);
       } else {
         console.error("No groups found in data");
@@ -60,6 +66,12 @@ const DropdownFilter = ({
       console.error("Error fetching dropdown options:", error);
     }
   };
+
+  useEffect(() => {
+    if (!loading) {
+      fetchDropdownOptions();
+    }
+  }, [loading, groupedServices]);
 
   const handleDropdownOptions = useCallback(
     (label, selectedOption) => {
@@ -116,6 +128,7 @@ const DropdownFilter = ({
             isMulti
             name={label}
             minWidth="120px"
+            width="100%"
             minHeight="34px"
             height="34px"
             borderColor="#EEF0F5"
