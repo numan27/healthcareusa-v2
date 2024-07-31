@@ -1,5 +1,10 @@
 import React, { useMemo, useRef, useEffect } from "react";
-import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  InfoWindow,
+  MarkerClusterer,
+} from "@react-google-maps/api";
 import { Link } from "react-router-dom";
 import { Typography } from "../../../components/GenericComponents";
 import IMAGES from "../../../assets/images";
@@ -44,6 +49,8 @@ const MapComponent = ({
     borderRadius: "8px",
   };
 
+  const createKey = (profile) => profile.id;
+
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
@@ -54,31 +61,36 @@ const MapComponent = ({
         }
       }}
     >
-      {filteredProfiles?.map((profile) =>
-        checkIfValidLatitudeAndLongitude(profile.lat, profile.lng) ? (
-          <Marker
-            key={profile.id}
-            position={{ lat: profile.lat, lng: profile.lng }}
-            onClick={() => handleMarkerClick(profile)}
-            icon={{
-              url: getProfileImgUrl(profile.profileImg),
-              scaledSize: new window.google.maps.Size(38, 38),
-              origin: new window.google.maps.Point(0, 0),
-              anchor: new window.google.maps.Point(19, 19),
-              labelOrigin: new window.google.maps.Point(19, 38),
-            }}
-            options={{
-              shape: {
-                type: "circle",
-                coords: [19, 19, 19],
-              },
-              icon: {
-                ...markerStyle,
-              },
-            }}
-          />
-        ) : null
-      )}
+      <MarkerClusterer>
+        {(clusterer) =>
+          filteredProfiles?.map((profile) =>
+            checkIfValidLatitudeAndLongitude(profile.lat, profile.lng) ? (
+              <Marker
+                key={createKey(profile)}
+                position={{ lat: profile.lat, lng: profile.lng }}
+                onClick={() => handleMarkerClick(profile)}
+                icon={{
+                  url: getProfileImgUrl(profile.profileImg),
+                  scaledSize: new window.google.maps.Size(38, 38),
+                  origin: new window.google.maps.Point(0, 0),
+                  anchor: new window.google.maps.Point(19, 19),
+                  labelOrigin: new window.google.maps.Point(19, 38),
+                }}
+                options={{
+                  shape: {
+                    type: "circle",
+                    coords: [19, 19, 19],
+                  },
+                  icon: {
+                    ...markerStyle,
+                  },
+                }}
+                clusterer={clusterer}
+              />
+            ) : null
+          )
+        }
+      </MarkerClusterer>
       {selectedListing &&
         checkIfValidLatitudeAndLongitude(
           selectedListing.lat,

@@ -646,7 +646,7 @@ const Listings = () => {
                             size="16px"
                             lineHeight="26px"
                           >
-                            All results{" "}
+                            results{" "}
                             <span className="text-dark">{totalPosts}</span>
                           </Typography>
                         )}
