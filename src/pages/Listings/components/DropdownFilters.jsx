@@ -52,7 +52,7 @@ const DropdownFilter = ({
             group.items.map((item) => ({
               id: item.id,
               label: item.name,
-              value: item.name, // Use name as value for specialty
+              value: item.name,
             }))
           );
           optionsMap["Specialty"] = specialtyOptions;
@@ -71,7 +71,7 @@ const DropdownFilter = ({
     if (!loading) {
       fetchDropdownOptions();
     }
-  }, [loading, groupedServices]);
+  }, []);
 
   const handleDropdownOptions = useCallback(
     (label, selectedOption) => {

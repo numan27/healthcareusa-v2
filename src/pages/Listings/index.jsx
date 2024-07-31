@@ -1,28 +1,22 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import debounce from "lodash.debounce";
-import { Form, InputGroup, Container, Row, Col } from "react-bootstrap";
-import {
-  Box,
-  GenericButton,
-  Typography,
-} from "../../components/GenericComponents";
+import { Container, Row, Col } from "react-bootstrap";
+import { Box, Typography } from "../../components/GenericComponents";
 import AdsSection from "../../components/Shared/AdsSection";
-import RangeSlider from "./components/RangeSlider";
 import ProfileCard from "./components/ProfileCard";
-import { FaCircleInfo, FaLocationCrosshairs } from "react-icons/fa6";
-import SearchIcon from "../../assets/SVGs/Search";
+import { FaCircleInfo } from "react-icons/fa6";
 import { useLocation } from "react-router-dom";
-import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
+import { LoadScriptNext } from "@react-google-maps/api";
 import axios from "axios";
 import IMAGES from "../../assets/images";
 import NavigateToListings from "../AdScreens/NavigateToListings";
 import DropdownFilter from "./components/DropdownFilters";
 import { LoaderCenter } from "../../assets/Loader";
-import { FaTimes } from "react-icons/fa";
 import Pagination from "../../components/PaginationComponent";
 import BreadCrumb from "../../components/BreadCrumb";
-import SquareMenu from "../../assets/SVGs/SquareMenu";
 import MapComponent from "./components/MapComponent";
+import SearchFormListings from "./components/SearchFormListings";
+import { calculateDistance } from "../../assets/utils";
 
 const Listings = () => {
   const [profiles, setProfiles] = useState([]);
@@ -35,14 +29,11 @@ const Listings = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  // const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [selectedListing, setSelectedListing] = useState("");
-
-  console.log("selectedListing", selectedListing);
 
   const autocompleteRef = useRef(null);
   const profilesPerPage = 10;
-  // const navigate = useNavigate();
   const location = useLocation();
 
   const [locationState, setLocationState] = useState(
@@ -52,7 +43,7 @@ const Listings = () => {
   const { searchKeywords, place, filteredListings } = location.state || {};
   const fetchRequestRef = useRef(null);
 
-  console.log("searchKeywords", searchKeywords);
+  // Initialize autocomplete onLoad callback
 
   const onLoad = useCallback((autocomplete) => {
     if (!autocompleteRef.current) {
@@ -60,6 +51,8 @@ const Listings = () => {
       autocomplete.addListener("place_changed", onPlaceChanged);
     }
   }, []);
+
+  // Handle place change from autocomplete
 
   const onPlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -135,10 +128,13 @@ const Listings = () => {
           setFilteredProfiles(profilesData);
         }
       } else {
+        setLoading(false);
         fetchData({ searchKeywordsState, areaRange, place: null, currentPage });
       }
     }
   }, [location.state]);
+
+  // Save state to session storage whenever dependencies change
 
   useEffect(() => {
     const stateToSave = {
@@ -159,11 +155,15 @@ const Listings = () => {
     selectedOptions,
   ]);
 
+  // Clear session storage when navigating to home
+
   useEffect(() => {
     if (location.pathname === "/") {
       sessionStorage.removeItem("listingsState");
     }
   }, [location.pathname]);
+
+  // Updates SearchKeywords and Place States
 
   useEffect(() => {
     if (searchKeywords) {
@@ -174,20 +174,7 @@ const Listings = () => {
     }
   }, [searchKeywords, place]);
 
-  function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of the Earth in km
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in km
-    return distance / 1.609; // Convert km to miles
-  }
+  // Fetch Data
 
   const fetchData = useCallback(
     debounce(async (params) => {
@@ -384,6 +371,7 @@ const Listings = () => {
     }
   }, [filteredListings, searchKeywords, place, fetchData]);
 
+  // Initial Data Fetch
   useEffect(() => {
     setLoadingType("initial");
     setLoading(true);
@@ -396,14 +384,8 @@ const Listings = () => {
     fetchData({ searchKeywordsState, place, currentPage });
   }, [place, currentPage, fetchData]);
 
-  const center = {
-    lat:
-      placeState?.lat ||
-      (filteredProfiles?.length > 0 ? filteredProfiles[0].lat : 0),
-    lng:
-      placeState?.lng ||
-      (filteredProfiles?.length > 0 ? filteredProfiles[0].lng : 0),
-  };
+  // Apply Filters
+
   useEffect(() => {
     const applyFilters = () => {
       let filtered = profiles;
@@ -437,27 +419,6 @@ const Listings = () => {
     applyFilters();
   }, [profiles, selectedOptions, searchKeywordsState]);
 
-  const handleAreaRangeChange = (value) => {
-    setAreaRange(value);
-  };
-  const handleSearchButton = () => {
-    setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
-    fetchData({
-      searchKeywordsState,
-      areaRange,
-      place: autocompleteRef.current
-        ? {
-            lat: autocompleteRef.current.getPlace().geometry.location.lat(),
-            lng: autocompleteRef.current.getPlace().geometry.location.lng(),
-            address: autocompleteRef.current.getPlace().formatted_address,
-          }
-        : placeState,
-      currentPage: 0,
-    });
-  };
-
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setCurrentPage(0);
@@ -489,14 +450,15 @@ const Listings = () => {
     setPlaceState(null);
     setLocationState("");
     setCurrentPage(0);
-    setLoadingType("search");
+    loadingType("search");
     setLoading(true);
+    sessionStorage.removeItem("placeState");
     fetchData({
       searchKeywordsState,
       areaRange,
+      place: null,
       currentPage: 0,
-      place,
-    });
+    }).finally(() => setLoading(false));
   };
 
   const topRef = useRef(null);
@@ -527,7 +489,8 @@ const Listings = () => {
 
   useEffect(() => {
     if (placeState) {
-      // setLoading(true);
+      setLoading(true);
+      setLoadingType("search");
       fetchData({
         searchKeywordsState,
         areaRange,
@@ -560,9 +523,7 @@ const Listings = () => {
   };
 
   const handleMarkerClick = (profile) => {
-    // if (!selectedListing || selectedListing.id !== profile.id) {
     setSelectedListing(profile);
-    // }
   };
 
   const handleCloseInfoWindow = () => {
@@ -613,137 +574,25 @@ const Listings = () => {
                   Heart Attack Prevention. (FDA)
                 </Typography>
               </Box>
-
               <Box
                 border="1px solid #E4E4E4"
                 radius="8px"
                 className="custom-shadow-2 py-3 px-3 w-100"
               >
-                <Form
-                  className="h-100 p-1"
-                  autoComplete="off"
-                  onSubmit={handleFormSubmit}
-                >
-                  <Row className="d-flex align-items-center pt-3">
-                    <Col
-                      md={4}
-                      className="d-flex align-items-center gap-2 pe-4 mb-md-0 mb-2"
-                    >
-                      <Typography
-                        className="text-nowrap mt-2"
-                        as="span"
-                        color="#00C1B6"
-                        weight="700"
-                        lineHeight="18px"
-                      >
-                        Near Me
-                      </Typography>
-                      <RangeSlider
-                        className="mt-3"
-                        defaultValue={areaRange}
-                        min={0}
-                        max={500}
-                        step={1}
-                        value={areaRange}
-                        onChange={(value) => setAreaRange(value)}
-                        disabled={!locationState || locationState.length === 0}
-                      />
-                    </Col>
-                    <Col
-                      md={4}
-                      className="d-flex align-items-center section-responsive-border h-100 mb-md-3 mb-2"
-                    >
-                      <InputGroup className="search-bar">
-                        <InputGroup.Text
-                          className="bg-white border-0 p-2"
-                          id="basic-addon1"
-                        >
-                          <SquareMenu />
-                        </InputGroup.Text>
-                        <Form.Control
-                          placeholder="Key words or company"
-                          aria-label="Search Keywords"
-                          aria-describedby="basic-addon1"
-                          className=""
-                          value={searchKeywordsState}
-                          onChange={(e) =>
-                            setSearchKeywordsState(e.target.value)
-                          }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              handleFormSubmit(e);
-                            }
-                          }}
-                        />
-                        {searchKeywordsState && (
-                          <InputGroup.Text
-                            onClick={handleResetSearch}
-                            style={{
-                              cursor: "pointer",
-                              background: "transparent",
-                              border: "none",
-                            }}
-                          >
-                            <FaTimes />
-                          </InputGroup.Text>
-                        )}
-                      </InputGroup>
-                    </Col>
-                    <Col
-                      md={4}
-                      className="d-flex align-items-center mb-md-3 mb-2"
-                    >
-                      <div className="d-flex align-items-center w-100">
-                        <Autocomplete
-                          className="w-100"
-                          onLoad={onLoad}
-                          onPlaceChanged={onPlaceChanged}
-                        >
-                          <InputGroup className="search-bar w-100">
-                            <InputGroup.Text
-                              className="bg-white border-0 p-2"
-                              id="basic-addon1"
-                            >
-                              <FaLocationCrosshairs color="#06312E" size={20} />
-                            </InputGroup.Text>
-                            <Form.Control
-                              placeholder="city, state or zip"
-                              aria-label="Location"
-                              aria-describedby="basic-addon1"
-                              className="py-2"
-                              value={locationState}
-                              onChange={(e) => setLocationState(e.target.value)}
-                            />
-                            {locationState && (
-                              <InputGroup.Text
-                                onClick={handleResetLocation}
-                                style={{
-                                  cursor: "pointer",
-                                  background: "transparent",
-                                  border: "none",
-                                }}
-                              >
-                                <FaTimes />
-                              </InputGroup.Text>
-                            )}
-                            {isLoadingLocation && <LoaderCenter />}
-                          </InputGroup>
-                        </Autocomplete>
-                      </div>
-                      <div className="ms-1">
-                        <GenericButton
-                          type="submit"
-                          width="50px"
-                          height="50px"
-                          padding="0"
-                        >
-                          <SearchIcon />
-                        </GenericButton>
-                      </div>
-                    </Col>
-                  </Row>
-                </Form>
+                <SearchFormListings
+                  handleFormSubmit={handleFormSubmit}
+                  searchKeywordsState={searchKeywordsState}
+                  setSearchKeywordsState={setSearchKeywordsState}
+                  handleResetSearch={handleResetSearch}
+                  locationState={locationState}
+                  setLocationState={setLocationState}
+                  handleResetLocation={handleResetLocation}
+                  // isLoadingLocation={isLoadingLocation}
+                  areaRange={areaRange}
+                  setAreaRange={setAreaRange}
+                  onLoad={onLoad}
+                  onPlaceChanged={onPlaceChanged}
+                />
               </Box>
 
               <div>
@@ -782,38 +631,45 @@ const Listings = () => {
                         lineHeight="26px"
                       >
                         <span className="text-dark">{totalPosts}</span> search
-                        result(s){" "}
+                        result(s) {searchKeywordsState && <span> for</span>}
                         <span className="fw-bold">{searchKeywordsState} </span>
                         in
                         <span className="fw-bold"> {placeState?.address} </span>
                       </Typography>
                     ) : (
-                      <Typography
-                        as="p"
-                        color="#7B7B7B"
-                        weight="400"
-                        size="16px"
-                        lineHeight="26px"
-                      >
-                        All results{" "}
-                        <span className="text-dark">{totalPosts}</span>
-                      </Typography>
+                      <>
+                        {filteredProfiles.length > 0 && totalPosts && (
+                          <Typography
+                            as="p"
+                            color="#7B7B7B"
+                            weight="400"
+                            size="16px"
+                            lineHeight="26px"
+                          >
+                            All results{" "}
+                            <span className="text-dark">{totalPosts}</span>
+                          </Typography>
+                        )}
+                      </>
                     )}
                   </div>
                 )}
-                <div className="d-flex align-items-center gap-2">
-                  <Typography
-                    as="h3"
-                    className="mb-1"
-                    color="#23262F"
-                    weight="700"
-                    size="18px"
-                    lineHeight="27px"
-                  >
-                    Sponsored
-                  </Typography>
-                  <FaCircleInfo className="cursor-pointer" color="#B1B1B1" />
-                </div>
+
+                {filteredProfiles?.length > 0 && (
+                  <div className="d-flex align-items-center gap-2">
+                    <Typography
+                      as="h3"
+                      className="mb-1"
+                      color="#23262F"
+                      weight="700"
+                      size="18px"
+                      lineHeight="27px"
+                    >
+                      Sponsored
+                    </Typography>
+                    <FaCircleInfo className="cursor-pointer" color="#B1B1B1" />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -861,9 +717,13 @@ const Listings = () => {
                     ))}
                   </>
                 ) : (
-                  <Typography size="24px" weight="600">
-                    No profiles found
-                  </Typography>
+                  <>
+                    {!loading && (
+                      <Typography size="24px" weight="600">
+                        No profiles found
+                      </Typography>
+                    )}
+                  </>
                 )}
               </div>
               {filteredProfiles.length > 9 && (
