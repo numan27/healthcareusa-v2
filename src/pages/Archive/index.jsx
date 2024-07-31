@@ -24,6 +24,7 @@ import Pagination from "../../components/PaginationComponent";
 import { GroupedListingsContext } from "../../components/api/GroupedListingsContext";
 import BreadCrumb from "../../components/BreadCrumb";
 import MapComponent from "../Listings/components/MapComponent";
+import { calculateDistance } from "../../assets/utils";
 
 const Archive = () => {
   const { groupedListings } = useContext(GroupedListingsContext);
@@ -75,6 +76,8 @@ const Archive = () => {
         const address = placeResult.formatted_address;
         setPlaceState({ lat, lng, address });
         setLocationState(address);
+        setLoading(true);
+        setLoadingType("search");
         setShowMap(true);
       } else {
         setPlaceState(null);
@@ -98,6 +101,7 @@ const Archive = () => {
     } else {
       // Trigger initial query when specialty filter is reset
       setLoading(true);
+      setLoadingType("search");
       fetchData({
         searchKeywordsState,
         areaRange,
@@ -275,6 +279,9 @@ const Archive = () => {
 
         const detailedProfiles = await Promise.all(detailedProfilesPromises);
 
+        const userLat = params.place?.lat;
+        const userLng = params.place?.lng;
+
         const transformedProfileData = detailedProfiles.map((profile) => {
           const addressMeta =
             profile?.cubewp_post_meta?.["fc-google-address"]?.meta_value || {};
@@ -314,12 +321,25 @@ const Archive = () => {
           };
         });
 
+        // Sort the profiles based on distance
+        const sortedProfiles = transformedProfileData
+          .map((profile) => ({
+            ...profile,
+            distance: calculateDistance(
+              userLat,
+              userLng,
+              profile.lat,
+              profile.lng
+            ),
+          }))
+          .sort((a, b) => a.distance - b.distance);
+
         const totalProfiles = response.data.total_posts;
         setTotalPages(Math.ceil(totalProfiles / profilesPerPage));
         setTotalPosts(totalProfiles);
 
-        setProfiles(transformedProfileData);
-        setFilteredProfiles(transformedProfileData);
+        setProfiles(sortedProfiles);
+        setFilteredProfiles(sortedProfiles);
         setLoading(false);
       } catch (error) {
         if (!axios.isCancel(error)) {
@@ -335,6 +355,7 @@ const Archive = () => {
     if (placeState) {
       setLoadingType("location");
       setLoading(true);
+      setLoadingType("search");
       fetchData({
         searchKeywordsState,
         areaRange,
@@ -455,6 +476,7 @@ const Archive = () => {
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
     setLoading(true);
+    setLoadingType("search");
     fetchData({
       ...latestQueryParams,
       currentPage: selected,
@@ -469,7 +491,7 @@ const Archive = () => {
     setPlaceState(null);
     setLocationState("");
     setCurrentPage(0);
-    setLoadingType("initial");
+    setLoadingType("search");
     setLoading(true);
     setShowMap(false);
     const initialParams = {
@@ -770,6 +792,7 @@ const Archive = () => {
                         singleProfile={profileItem}
                         searchKeywordsState={searchKeywordsState}
                         areaRange={areaRange}
+                        placeState={placeState}
                         currentPage={currentPage}
                         selectedOptions={selectedOptions}
                       />
@@ -802,6 +825,7 @@ const Archive = () => {
                       singleProfile={profileItem}
                       searchKeywordsState={searchKeywordsState}
                       areaRange={areaRange}
+                      placeState={placeState}
                       currentPage={currentPage}
                       selectedOptions={selectedOptions}
                     />

@@ -41,6 +41,7 @@ const ProfileCard = ({
   searchKeywordsState,
   areaRange,
   place,
+  placeState,
   currentPage,
   selectedOptions,
   profiles,
@@ -50,16 +51,16 @@ const ProfileCard = ({
   const [distance, setDistance] = useState(null);
 
   useEffect(() => {
-    if (place && singleProfile.lat && singleProfile.lng) {
+    if (placeState && singleProfile.lat && singleProfile.lng) {
       const dist = calculateDistance(
-        place.lat,
-        place.lng,
+        placeState.lat,
+        placeState.lng,
         singleProfile.lat,
         singleProfile.lng
       );
       setDistance(dist);
     }
-  }, [place, singleProfile.lat, singleProfile.lng]);
+  }, [placeState, singleProfile.lat, singleProfile.lng]);
 
   if (!singleProfile) {
     return null;

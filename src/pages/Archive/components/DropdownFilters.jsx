@@ -6,7 +6,7 @@ const DropdownFilter = ({
   selectedOptions,
   specialtyOptions,
   fetchData,
-  onSpecialtyChange
+  onSpecialtyChange,
 }) => {
   const [dropdownOptions, setDropdownOptions] = useState({});
 
@@ -92,6 +92,10 @@ const DropdownFilter = ({
         updatedOptions.push({ label, values });
       }
 
+      if (label === "Specialty" && onSpecialtyChange) {
+        onSpecialtyChange(selectedOption);
+      }
+
       setSelectedOptions(updatedOptions);
 
       fetchData({
@@ -102,11 +106,8 @@ const DropdownFilter = ({
         selectedOptions: updatedOptions,
       });
     },
-    [
-      selectedOptions,
-      setSelectedOptions,
-      fetchData,
-    ]
+
+    [selectedOptions, setSelectedOptions, fetchData]
   );
 
   return (
