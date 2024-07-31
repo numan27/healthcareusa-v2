@@ -50,9 +50,9 @@ const ListingSubmission = () => {
     if (e) e.preventDefault();
     setLoading(true);
 
-    // if (!formData.profilePicture) {
-    //   throw new Error("Please select a profile picture");
-    // }
+    if (!formData.profilePicture) {
+      throw new Error("Please select a profile picture");
+    }
 
     const credentials = btoa("numankhalil27@gmail.com:findhealthcareusa");
     const uploadFormData = new FormData();
