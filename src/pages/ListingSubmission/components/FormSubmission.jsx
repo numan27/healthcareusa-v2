@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { useMemo } from "react";
 import BasicInfo from "./Step1BasicInfo";
 import BusinessAddress from "./Step2BusinessAddress";
 import OperationalHours from "./Step3OperationalHours";
@@ -7,93 +8,123 @@ import SocialMedia from "./Step5SocialMedia";
 import AdditionalDetails from "./Step6AdditionalDetails";
 import SubmittedBy from "./Step7SubmittedBy";
 import UploadMedia from "./Step8UploadMedia";
+import Review from "./Step9Review";
 import FinalStep from "./FinalStep";
 
 const FormSubmission = ({
   formData,
   setFormData,
+  plan,
   nextStep,
   prevStep,
   step,
   handleSubmit,
 }) => {
-  switch (step) {
-    case 1:
-      return (
+  const basicPlanSteps = useMemo(
+    () => ({
+      1: (
         <BasicInfo
           formData={formData}
           setFormData={setFormData}
           nextStep={nextStep}
         />
-      );
-    case 2:
-      return (
+      ),
+      2: (
         <BusinessAddress
           formData={formData}
           setFormData={setFormData}
           nextStep={nextStep}
           prevStep={prevStep}
         />
-      );
-    case 3:
-      return (
-        <OperationalHours
-          formData={formData}
-          setFormData={setFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-        />
-      );
-    case 4:
-      return (
-        <Languages
-          formData={formData}
-          setFormData={setFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-        />
-      );
-    case 5:
-      return (
-        <SocialMedia
-          formData={formData}
-          setFormData={setFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-        />
-      );
-    case 6:
-      return (
-        <AdditionalDetails
-          formData={formData}
-          setFormData={setFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-        />
-      );
-    case 7:
-      return (
+      ),
+      3: (
         <SubmittedBy
           formData={formData}
           setFormData={setFormData}
           nextStep={nextStep}
           prevStep={prevStep}
         />
-      );
-    case 8:
-      return (
+      ),
+      4: <FinalStep />,
+    }),
+    [formData, setFormData, nextStep, prevStep]
+  );
+
+  const advancedPlanSteps = useMemo(
+    () => ({
+      1: (
+        <BasicInfo
+          formData={formData}
+          setFormData={setFormData}
+          nextStep={nextStep}
+        />
+      ),
+      2: (
+        <BusinessAddress
+          formData={formData}
+          setFormData={setFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      3: (
+        <OperationalHours
+          formData={formData}
+          setFormData={setFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      4: (
+        <Languages
+          formData={formData}
+          setFormData={setFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      5: (
+        <SocialMedia
+          formData={formData}
+          setFormData={setFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      6: (
+        <AdditionalDetails
+          formData={formData}
+          setFormData={setFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      7: (
         <UploadMedia
           formData={formData}
           setFormData={setFormData}
           prevStep={prevStep}
           handleSubmit={handleSubmit}
         />
-      );
-    case 9:
-      return <FinalStep />;
-    default:
-      return null;
-  }
+      ),
+      8: (
+        <SubmittedBy
+          formData={formData}
+          setFormData={setFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      9: <FinalStep />,
+    }),
+    [formData, setFormData, nextStep, prevStep, handleSubmit]
+  );
+
+  const currentSteps = ["basic"].includes(plan)
+    ? basicPlanSteps
+    : advancedPlanSteps;
+
+  return currentSteps[step] || null;
 };
 
 FormSubmission.propTypes = {

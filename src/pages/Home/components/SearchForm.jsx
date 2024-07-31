@@ -15,6 +15,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import SquareMenu from "../../../assets/SVGs/SquareMenu";
 import { Box, GenericButton } from "../../../components/GenericComponents";
 import { LoaderCenter } from "../../../assets/Loader";
+import Select, { components } from "react-select";
+import axios from "axios";
 
 const libraries = ["places"];
 
@@ -28,6 +30,40 @@ const SearchForm = () => {
   const navigate = useNavigate();
   const locationPath = useLocation();
   const autocompleteRef = useRef(null);
+
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const [selectOptions, setSelectOptions] = useState([]);
+
+  const getServices = useCallback(async () => {
+    const url = `https://jsappone.demowp.io/wp-json/wp/v2/service?per_page=50`;
+
+    try {
+      const response = await axios.get(url);
+
+      const options = [];
+
+      response.data.map((item) => {
+        options.push({
+          value: item.slug,
+
+          label: item.name,
+        });
+      });
+
+      setSelectOptions(options);
+    } catch (error) {
+      console.error("Error fetching specialities:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getServices();
+  }, []);
+
+  const searchKeywordValue = (event) => {
+    setSearchKeywords(event.value);
+  };
 
   const onLoad = useCallback((autocomplete) => {
     autocompleteRef.current = autocomplete;
@@ -170,6 +206,23 @@ const SearchForm = () => {
     }
   }, [locationPath.pathname]);
 
+  // Custom Option component
+
+  const CustomOption = (props) => {
+    return (
+      <components.Option {...props}>
+        <div
+          className={`custom-option ${
+            props.isSelected ? "custom-option--selected" : ""
+          }`}
+          aria-selected={props.isSelected ? "true" : "false"}
+        >
+          {props.children}
+        </div>
+      </components.Option>
+    );
+  };
+
   return (
     <LoadScriptNext
       googleMapsApiKey="AIzaSyDjy5ZXZ1Fk-xctiZeEKIDpAaT1CEGgxlg"
@@ -187,13 +240,19 @@ const SearchForm = () => {
             >
               <SquareMenu />
             </InputGroup.Text>
-            <Form.Control
-              placeholder="Key words or company"
-              aria-label="Username"
+            <Select
+              placeholder="Keywords or company"
+              aria-label="Search Keywords"
               aria-describedby="basic-addon1"
-              className="py-2"
-              value={searchKeywords}
-              onChange={(e) => setSearchKeywords(e.target.value)}
+              id="keywords-search"
+              border="0"
+              className="keywords-search border-0 outline-0"
+              defaultValue={selectedOption}
+              onChange={searchKeywordValue}
+              options={selectOptions}
+              components={{ Option: CustomOption }}
+              isSearchable={true}
+              name={true}
             />
           </InputGroup>
 
@@ -209,7 +268,11 @@ const SearchForm = () => {
                   id="basic-addon1"
                   onClick={handleFetchCurrentLocation}
                 >
-                  <FaLocationCrosshairs className="cursor-pointer" color="#06312E" size={20} />
+                  <FaLocationCrosshairs
+                    className="cursor-pointer"
+                    color="#06312E"
+                    size={20}
+                  />
                 </InputGroup.Text>
                 <Form.Control
                   placeholder="city, state or zip"

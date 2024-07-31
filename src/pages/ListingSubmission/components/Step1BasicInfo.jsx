@@ -8,9 +8,11 @@ import {
 } from "../../../components/GenericComponents";
 import { ServicesContext } from "../../../components/api/ServicesContext";
 import { LoaderCenter } from "../../../assets";
+import { PlanContext } from "../../../components/api/PlanContext";
 
 const BasicInfo = ({ formData, setFormData }) => {
   const { groupedServices, loading } = useContext(ServicesContext);
+  const { selectedPlan, selectedPlanName } = useContext(PlanContext);
   const [primaryCategoryOptions, setPrimaryCategoryOptions] = useState([]);
   const [subCategoryOptions, setSubCategoryOptions] = useState([]);
   const [selectedPrimaryCategory, setSelectedPrimaryCategory] = useState(null);
@@ -131,7 +133,7 @@ const BasicInfo = ({ formData, setFormData }) => {
               )}
             />
           </Col>
-          <Col md={6} className="mb-2">
+          <Col md={5} className="mb-2">
             <GenericInput
               type="text"
               background="#F8F9FC"
@@ -144,7 +146,7 @@ const BasicInfo = ({ formData, setFormData }) => {
               onChange={handleChange}
             />
           </Col>
-          <Col md={6} className="mb-2">
+          <Col md={5} className="mb-2">
             <GenericInput
               type="text"
               background="#F8F9FC"
@@ -154,6 +156,19 @@ const BasicInfo = ({ formData, setFormData }) => {
               height="34px"
               placeholder="Enter Last Name"
               value={formData.lastName}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col md={2} className="mb-2">
+            <GenericInput
+              type="text"
+              background="#F8F9FC"
+              borderColor="#EEF0F5"
+              name="suffix"
+              label="Suffix"
+              height="34px"
+              placeholder="D.D.S"
+              value={formData.suffix}
               onChange={handleChange}
             />
           </Col>
@@ -183,6 +198,7 @@ const BasicInfo = ({ formData, setFormData }) => {
               onChange={handleChange}
             />
           </Col>
+          {['standard', 'regional'].includes(selectedPlanName) && (
           <Col xs={12} className="mb-2">
             <GenericInput
               type="text"
@@ -196,6 +212,7 @@ const BasicInfo = ({ formData, setFormData }) => {
               onChange={handleChange}
             />
           </Col>
+          )}
         </Row>
       </Form>
     </div>

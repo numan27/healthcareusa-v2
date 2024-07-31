@@ -6,6 +6,7 @@ import { LoaderPageWithoutBG } from "./assets";
 import { ServicesProvider } from "./components/api/ServicesContext";
 import { GroupedListingsProvider } from "./components/api/GroupedListingsContext.jsx";
 import { ListingsProvider } from "./components/api/ListingsContext.jsx";
+import { ModalProvider, PlanProvider } from "./components/api/PlanContext.jsx";
 
 function App() {
   return (
@@ -15,7 +16,11 @@ function App() {
         <ListingsProvider>
           <GroupedListingsProvider>
             <ServicesProvider>
-              <RouterConfig />
+              <ModalProvider>
+                <PlanProvider>
+                  <RouterConfig />
+                </PlanProvider>
+              </ModalProvider>
             </ServicesProvider>
           </GroupedListingsProvider>
         </ListingsProvider>

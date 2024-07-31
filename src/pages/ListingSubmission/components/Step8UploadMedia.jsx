@@ -5,13 +5,16 @@ import { v4 as uuidv4 } from "uuid";
 import {
   GenericInput,
   Typography,
+  Checkbox,
 } from "../../../components/GenericComponents";
 import { FaCheckCircle, FaTimesCircle, FaUserCircle } from "react-icons/fa";
 
 const UploadMedia = ({ formData, setFormData }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [isProfilePictureSelected, setIsProfilePictureSelected] =
-    useState(false);
+  const [isProfilePictureSelected, setIsProfilePictureSelected] = useState(
+    false
+  );
+  const [businessLogoSelected, setBusinessLogoSelected] = useState(false);
 
   useEffect(() => {
     if (!formData.gallery) {
@@ -22,6 +25,10 @@ const UploadMedia = ({ formData, setFormData }) => {
   useEffect(() => {
     setIsProfilePictureSelected(!!formData.profilePicture);
   }, [formData.profilePicture]);
+
+  const handleBusinessLogo = (e) => {
+    setBusinessLogoSelected(!businessLogoSelected);
+  };
 
   const handleGalleryChange = (files) => {
     const fileList = Array.from(files);
@@ -70,7 +77,7 @@ const UploadMedia = ({ formData, setFormData }) => {
 
     if (index === selectedImage) {
       setSelectedImage(null);
-      setIsProfilePictureSelected(false); 
+      setIsProfilePictureSelected(false);
     }
 
     setIsProfilePictureSelected(false); // Update profile picture selection state
@@ -88,15 +95,23 @@ const UploadMedia = ({ formData, setFormData }) => {
     handleGalleryChange(files);
   };
 
+  const handleCustomUploadClick = () => {
+    document.getElementById("custom-file-upload").click();
+  };
+
+  const handleCustomLogoUploadClick = () => {
+    document.getElementById("custom-logo-upload").click();
+  };
+
   return (
-    <div onDragOver={handleDragOver} onDrop={handleDrop}>
+    <div onDragOver={handleDragOver} onDrop={handleDrop} className="media-uploader-wrapper">
       <Typography
-        weight="600"
+        weight="700"
         align="center"
         color="#070026"
         size="24px"
-        font="Inter"
         lineHeight="36px"
+        className="section-title"
       >
         Upload featured and gallery images
       </Typography>
@@ -105,30 +120,82 @@ const UploadMedia = ({ formData, setFormData }) => {
         align="center"
         color="#73777D"
         size="16px"
-        font="Inter"
         lineHeight="24px"
+        className="section-sub-title"
       >
         Upload multiple high-quality photos. (Max 4 images)
       </Typography>
-      <Form className="mt-5">
-        <Row>
-          <Col xs={12} className="mb-2">
-            <GenericInput
-              type="file"
-              name="gallery"
-              label="Gallery"
-              multiple
-              onFileChange={(e) => handleGalleryChange(e.target.files)}
-              // disabled={formData.gallery.length >= 4}
-            />
-          </Col>
-        </Row>
-      </Form>
+      <div className="custom-upload-section">
+        <svg
+          className="uploadIcon"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 15.2461V18.1231C4 19.7121 4.9 21.0001 6 21.0001H18C19.1 21.0001 20 19.7121 20 18.1231V15.2461"
+            stroke="#151E42"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M7 9L12 4L17 9"
+            stroke="#151E42"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M12 4.125V16.125"
+            stroke="#151E42"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <button
+          onClick={handleCustomUploadClick}
+          className="custom-upload-button"
+        >
+          Drag Here or <span>Upload photos</span>
+        </button>
+        <input
+          type="file"
+          id="custom-file-upload"
+          multiple
+          style={{ display: "none" }}
+          onChange={(e) => handleGalleryChange(e.target.files)}
+        />
+        <Typography
+          weight="400"
+          align="center"
+          color="#676767"
+          size="14px"
+          font="Inter"
+          lineHeight="24px"
+        >
+          Supported formates: JPG or PNG
+        </Typography>
+      </div>
+      <Typography
+          weight="500"
+          align="center"
+          color="#3D3C3C"
+          size="13px"
+          lineHeight="20px"
+          className="description"
+          >
+        Select an image from below to be set as the featured image.
+      </Typography>
       <Row>
         {formData.gallery &&
           formData.gallery.map((item, index) => (
             <Col key={item.id} xs={3} className="mb-2">
               <div
+                  className="image-wrapper"
                 style={{
                   position: "relative",
                   cursor: "pointer",
@@ -143,18 +210,20 @@ const UploadMedia = ({ formData, setFormData }) => {
                 />
                 {item.isSelected && (
                   <FaCheckCircle
+                   className="set-featured-image"
                     size={24}
-                    color="green"
-                    style={{ position: "absolute", top: 10, right: 10 }}
+                    color="white"
+                    style={{ position: "absolute", top: 2, right: 6 }}
                   />
                 )}
                 <FaTimesCircle
+                  className="remove-image"
                   size={24}
-                  color="red"
+                  color="white"
                   style={{
                     position: "absolute",
-                    top: 10,
-                    left: 10,
+                    top: 2,
+                    left: 6,
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -165,24 +234,96 @@ const UploadMedia = ({ formData, setFormData }) => {
                 {formData.profilePicture === item.file && (
                   <FaUserCircle
                     size={24}
-                    color="blue"
-                    style={{ position: "absolute", bottom: 10, right: 10 }}
+                    color="white"
+                    style={{ position: "absolute", bottom: 2, right: 6 }}
                   />
                 )}
               </div>
             </Col>
           ))}
       </Row>
-      <Typography
-        weight="400"
-        align="center"
-        color="#73777D"
-        size="16px"
-        font="Inter"
-        lineHeight="24px"
-      >
-        Please upload a profile picture to proceed.
-      </Typography>
+      {/*<Typography*/}
+      {/*  weight="400"*/}
+      {/*  align="center"*/}
+      {/*  color="#73777D"*/}
+      {/*  size="16px"*/}
+      {/*  font="Inter"*/}
+      {/*  lineHeight="24px"*/}
+      {/*>*/}
+      {/*  Please upload a profile picture to proceed.*/}
+      {/*</Typography>*/}
+      <Checkbox
+        name="businesslogo"
+        label="Check this box to upload a business logo."
+        onChange={(e) => handleBusinessLogo(e)}
+      ></Checkbox>
+      {businessLogoSelected && (
+        <>
+          <Typography
+            className="logo-section-description"
+            weight="500"
+            color="#3D3C3C"
+            size="13px"
+            lineHeight="20px"
+          >
+            Recommended logo dimensions: 100px (W) x 65px (H)
+          </Typography>
+          <div className="custom-upload-section">
+            <svg
+              className="uploadIcon"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 15.2461V18.1231C4 19.7121 4.9 21.0001 6 21.0001H18C19.1 21.0001 20 19.7121 20 18.1231V15.2461"
+                stroke="#151E42"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M7 9L12 4L17 9"
+                stroke="#151E42"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 4.125V16.125"
+                stroke="#151E42"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <button
+              onClick={handleCustomLogoUploadClick}
+              className="custom-upload-button"
+            >
+              Drag Here or <span>Upload Logo</span>
+            </button>
+            <input
+              type="file"
+              id="custom-logo-upload"
+              style={{ display: "none" }}
+              onChange={(e) => handleGalleryChange(e.target.files)}
+            />
+            <Typography
+              weight="400"
+              align="center"
+              color="#676767"
+              size="12px"
+              font="Inter"
+              lineHeight="24px"
+            >
+              Supported formates: JPG or PNG
+            </Typography>
+          </div>
+        </>
+      )}
     </div>
   );
 };

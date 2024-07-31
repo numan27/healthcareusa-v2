@@ -1,37 +1,39 @@
-import { useState } from "react";
+import { useContext, useState, useMemo } from "react";
 import { Col, Row, ProgressBar } from "react-bootstrap";
 import FormSubmission from "./components/FormSubmission";
 import FormLayout from "../../components/Layout/FormLayout/FormLayout";
 import ProfileCardListingSubmission from "./components/ProfileCardListingSubmission";
+import { PlanContext } from "../../components/api/PlanContext";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ListingSubmission = () => {
-  const totalSteps = 9;
+  const { selectedPlan, selectedPlanName } = useContext(PlanContext);
+  const choosenPlan = useMemo(() => Number(selectedPlan), [selectedPlan]);
+  const choosenPlanName = useMemo(() => selectedPlanName, [selectedPlanName]);
+  const navigate = useNavigate();
+  let totalSteps = 4;
+  if (["standard", "regional"].includes(choosenPlanName)) {
+    totalSteps = 9;
+  }
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     primaryCategory: [],
-    // subCategory: [],
     fullName: "",
     email: "",
     phone: "",
     website: "",
     streetAddress: "",
-    // weeklySchedule: [],
     languages: [],
-    // socialMediaLinks: [],
     descDetail: "",
-    // submittingPersonFullName: "",
-    // submittingPersonEmail: "",
-    // submittingPersonPhone: "",
     updatedGallery: [],
     profilePicture: null,
     qualificationValues: [],
     specializationValues: [],
-    package: [],
+    package: choosenPlan,
     lat: "",
     lng: "",
-    // taxonomies: [],
   });
 
   const nextStep = () => {
@@ -44,39 +46,15 @@ const ListingSubmission = () => {
 
   const prevStep = () => setStep(step - 1);
 
-  const handleImageSelect = (index) => {
-    setSelectedImage(index);
-
-    // Update isSelected flag for the selected image
-    const updatedGallery = formData.gallery.map((item, idx) => ({
-      ...item,
-      isSelected: idx === index,
-    }));
-
-    // Set the selected image index as the profile picture
-    setFormData({
-      ...formData,
-      gallery: updatedGallery,
-      profilePicture: index, // Store index as the profile picture
-    });
-  };
-
-  const uploadFormData = new FormData();
-  uploadFormData.append("file", formData.profilePicture);
-
-  const mediaId = uploadFormData.id;
-
-  console.log("mediaId", mediaId);
-
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setLoading(true);
 
-    if (!formData.profilePicture) {
-      throw new Error("Please select a profile picture");
-    }
+    // if (!formData.profilePicture) {
+    //   throw new Error("Please select a profile picture");
+    // }
 
-    const credentials = btoa("numan27:findhealthcareusa");
+    const credentials = btoa("numankhalil27@gmail.com:findhealthcareusa");
     const uploadFormData = new FormData();
     uploadFormData.append("file", formData.profilePicture);
 
@@ -98,7 +76,6 @@ const ListingSubmission = () => {
     const uploadData = await uploadResponse.json();
     const mediaId = uploadData.id;
 
-    // Upload gallery images
     const mediaIds = await Promise.all(
       formData.updatedGallery.map(async (picture) => {
         const uploadFormData = new FormData();
@@ -141,12 +118,8 @@ const ListingSubmission = () => {
           "fc-google-address": {
             address: formData.streetAddress,
           },
-          // meta_value: formData?.streetAddress,
-          // lat: "",
-          // lng: "",
-
-          "fc-google-address_lat": formData.lat, // ensure lat is included
-          "fc-google-address_lng": formData.lng, // ensure lng is included
+          "fc-google-address_lat": formData.lat,
+          "fc-google-address_lng": formData.lng,
           "fc-phone": formData.phone,
           "fc-website": formData.website,
           "fc-languages": formData.languages,
@@ -159,6 +132,7 @@ const ListingSubmission = () => {
           cwp_field_69043287672: {
             meta_value: formData.primaryCategory,
           },
+          plan_id: choosenPlan,
         },
       };
 
@@ -178,6 +152,34 @@ const ListingSubmission = () => {
         throw new Error("Failed to create listing on WordPress");
       }
 
+      const responseData = await response.json();
+      localStorage.setItem("listingId", responseData.id);
+
+      // Fetch the redirection URL based on the listing ID
+      try {
+        const listingId = responseData.id;
+        const redirectResponse = await fetch(
+          `https://jsappone.demowp.io/wp-json/banner-ad/v1/listing-plan?post_id=${listingId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Basic ${credentials}`,
+            },
+          }
+        );
+
+        const redirectData = await redirectResponse.json();
+
+        if (redirectData.type === "success") {
+          localStorage.setItem("redirectURL", redirectData.redirectURL);
+        }
+      } catch (error) {
+        console.error(
+          "There was a problem with the fetch operation for redirection:",
+          error
+        );
+      }
+
       setFormData({
         fullName: "",
         email: "",
@@ -190,8 +192,8 @@ const ListingSubmission = () => {
         descDetail: "",
         updatedGallery: null,
         profilePicture: null,
-        lat: "", // reset lat
-        lng: "", // reset lng
+        lat: "",
+        lng: "",
       });
 
       toast.success("Doctor added successfully!", {
@@ -205,8 +207,6 @@ const ListingSubmission = () => {
       setLoading(false);
     }
   };
-
-  console.log("formData final: ", formData);
 
   const progress =
     step > 1 ? Math.round(((step - 1) / (totalSteps - 1)) * 100) : 0;
@@ -238,6 +238,7 @@ const ListingSubmission = () => {
               <Row className="w-100">
                 <Col md={8} className="mx-auto px-md-0 px-4">
                   <FormSubmission
+                    plan={choosenPlan}
                     step={step}
                     formData={formData}
                     setFormData={setFormData}

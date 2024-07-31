@@ -3,7 +3,7 @@ import { GenericStepper } from "../../../../components/GenericComponents";
 import Step1 from "./components/steps/Step1";
 import Step2 from "./components/steps/Step2";
 import Step3 from "./components/steps/Step3";
-import Step4 from "./components/steps/Step4";
+import Step4 from "./components/steps/Step3";
 import { Col, Container, Row } from "react-bootstrap";
 
 const BannerAds = () => {
@@ -24,6 +24,7 @@ const BannerAds = () => {
             <GenericStepper steps={defaultSteps} stepContent={stepContent} />
           </Col>
         </Row>
+       
       </Container>
     </div>
   );

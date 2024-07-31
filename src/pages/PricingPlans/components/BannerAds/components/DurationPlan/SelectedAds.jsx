@@ -79,7 +79,7 @@ const SelectedAds = () => {
           }}
           onClick={() => setShowAds(!showAds)}
         >
-          {showAds ? "Hide All Selected Ads" : " Show All Selected Ads"}
+          {showAds ? "Hode All Selected Ads" : " Show All Selected Ads"}
         </div>
       </div>
       {showAds && (

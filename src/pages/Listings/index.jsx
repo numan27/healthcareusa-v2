@@ -452,18 +452,18 @@ const Listings = () => {
   };
 
   const handleResetLocation = () => {
-    setPlaceState(null);
+    // setPlaceState(null);
     setLocationState("");
     setCurrentPage(0);
-    setLoadingType("search");
-    setLoading(true);
-    sessionStorage.removeItem("placeState");
-    fetchData({
-      searchKeywordsState,
-      areaRange,
-      place: null,
-      currentPage: 0,
-    }).finally(() => setLoading(false));
+    // setLoadingType("search");
+    // setLoading(false);
+    // sessionStorage.removeItem("placeState");
+    // fetchData({
+    //   searchKeywordsState,
+    //   areaRange,
+    //   place: null,
+    //   currentPage: 0,
+    // })
   };
 
   const topRef = useRef(null);

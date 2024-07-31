@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { BsCheckLg } from "react-icons/bs";
 import { FaCheck } from "react-icons/fa";
@@ -6,6 +6,15 @@ import { MdOutlineCheck } from "react-icons/md";
 import IMAGES from "../../../../../../assets/images";
 import { PiMagnifyingGlassPlusBold } from "react-icons/pi";
 const AdCard = () => {
+
+  const [isCheckMarked, setisCheckMarked] = useState(false);
+
+  const toggleCheckmark = () => {
+    setisCheckMarked(prevState => !prevState);
+  };
+
+  const checkMarkStatus = isCheckMarked ? 'card-check' : 'card-normal';
+
   return (
     <Row className="plan-tab-card mb-4">
       <Col sm={8} className="content ps-4 pe-2 py-4">
@@ -13,8 +22,8 @@ const AdCard = () => {
           Ad Banner Size: 738 x 196 px
         </div>
         <div className="centerIt mb-2">
-          <div className="card-check rounded-circle centerIt text-white me-3">
-            <FaCheck className="" style={{ fontSize: "13px" }} />
+          <div className={`${checkMarkStatus} rounded-circle centerIt text-white me-3`}>
+            <FaCheck className="" style={{ fontSize: "13px" }} onClick={toggleCheckmark} />
           </div>
           <p
             className="m-0 me-2"
@@ -33,7 +42,7 @@ const AdCard = () => {
               backgroundColor: "#F1F1F1",
               padding: "4px 8px",
               fontSize: "15px",
-              fontWeight: "600",
+              fontWeight: "500",
             }}
           >
             Highly Recommended

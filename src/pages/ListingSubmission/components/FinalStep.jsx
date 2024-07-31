@@ -1,7 +1,24 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { Typography } from "../../../components/GenericComponents";
+import { PlanContext } from "../../../components/api/PlanContext";
 
 const FinalStep = () => {
+  const { selectedPlan } = useContext(PlanContext);
+
+  useEffect(() => {
+    const redirectToCheckout = async () => {
+      const redirectURL = localStorage.getItem("redirectURL");
+
+      if (redirectURL) {
+        window.location.href = redirectURL;
+      } else {
+        console.error("Submission was not successful");
+      }
+    };
+
+    redirectToCheckout();
+  }, [selectedPlan]);
+
   return (
     <div className="text-center mt-5">
       <Typography

@@ -1,3 +1,5 @@
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Col, Container, Row } from "react-bootstrap";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import {
@@ -7,12 +9,52 @@ import {
 } from "../../../../components/GenericComponents";
 import { MdOutlineWorkspacePremium } from "react-icons/md";
 import BulkUploadSection from "./BulkUploadSection";
+import { PATH } from "../../../../config";
+import SignInModal from "../../../Auth/SignIn";
+import ForgotPassword from "../../../Auth/ForgotPassword";
+import SignUpModal from "../../../Auth/SignUp";
+import { useNavigationHandlers } from "../../../../components/Shared/NavigationHandlers";
+import { useModal, PlanContext } from "../../../../components/api/PlanContext";
 
 const FeaturedListings = () => {
-  const PRICING_DATA = [
+  const { handleNavigateListingSubmission } = useNavigationHandlers();
+  const {
+    signInModalShow,
+    signUpModalShow,
+    forgetPassModalShow,
+    openSignInModal,
+    openSignUpModal,
+    openForgetPassModal,
+    CloseModal,
+  } = useModal();
+
+  const { selectedPlan, setSelectedPlan } = useContext(PlanContext);
+  const { selectedPlanName, setselectedPlanName } = useContext(PlanContext);
+  const navigate = useNavigate();
+
+  const fetchPlanIds = async () => {
+    const response = await fetch(
+      "https://jsappone.demowp.io/wp-json/wp/v2/price_plan/"
+    );
+    const data = await response.json();
+    const planIds = {};
+
+    data.forEach((plan) => {
+      if (plan.title.rendered.toLowerCase() === "basic") {
+        planIds.basic = plan.id;
+      } else if (plan.title.rendered.toLowerCase() === "single location") {
+        planIds.singleLocation = plan.id;
+      }
+    });
+
+    return planIds;
+  };
+  const [PRICING_DATA, setPRICING_DATA] = useState([
     {
+      id: null,
       icon: "",
       planType: "",
+      plan: "basic",
       title: "Basic Plan",
       desc: "For Local Businesses/Practices",
       locations: "One Location",
@@ -24,7 +66,9 @@ const FeaturedListings = () => {
       ],
     },
     {
+      id: null,
       icon: <MdOutlineWorkspacePremium size={24} />,
+      plan: "standard",
       planType: "Premium",
       title: "Standard Plan",
       desc: "For Local Businesses/Practices",
@@ -46,10 +90,13 @@ const FeaturedListings = () => {
       ],
     },
     {
+      id: null,
       icon: <MdOutlineWorkspacePremium size={24} />,
+      plan: "regional",
       planType: "Premium",
       title: "Regionally Featured",
-      desc: "For business with over 4 locations, please contact us special for pricing options.",
+      desc:
+        "For business with over 4 locations, please contact us special for pricing options.",
       price: "39",
       details: [
         { feature: "Company / Provider Name" },
@@ -66,10 +113,69 @@ const FeaturedListings = () => {
         { feature: "Affiliation Logos & Badges" },
       ],
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    const updatePlanIds = async () => {
+      const planIds = await fetchPlanIds();
+      setPRICING_DATA((prevData) =>
+        prevData.map((plan) => {
+          if (plan.plan === "basic") {
+            return { ...plan, id: planIds.basic };
+          } else if (plan.plan === "standard") {
+            return { ...plan, id: planIds.singleLocation };
+          }
+          return plan;
+        })
+      );
+    };
+
+    updatePlanIds();
+  }, []);
+
+  const auth = localStorage.getItem("token");
+
+  const handleGetStarted = (planID, planName) => {
+    if (auth) {
+      setSelectedPlan(planID);
+      setselectedPlanName(planName);
+      navigate(PATH.LISTING_SUBMISSION);
+      console.log(planID, planName);
+    } else {
+      setSelectedPlan(planID);
+      setselectedPlanName(planName);
+      handleNavigateListingSubmission;
+    }
+  };
 
   return (
     <>
+      {/* Modals */}
+      {signInModalShow && (
+        <SignInModal
+          show={signInModalShow}
+          onHide={CloseModal}
+          moveToForgetPassword={openForgetPassModal}
+          moveToFSignUp={openSignUpModal}
+          redirectPath={PATH.LISTING_SUBMISSION}
+        />
+      )}
+
+      {signUpModalShow && (
+        <SignUpModal
+          show={signUpModalShow}
+          onHide={CloseModal}
+          moveToSignIn={openSignInModal}
+        />
+      )}
+
+      {forgetPassModalShow && (
+        <ForgotPassword
+          show={forgetPassModalShow}
+          onHide={CloseModal}
+          moveToSignIn={openSignInModal}
+        />
+      )}
       <Container className="py-md-5 py-4 mt-3">
         <Row className="">
           {PRICING_DATA.map((items, index) => (
@@ -190,7 +296,7 @@ const FeaturedListings = () => {
 
                   <div className="w-100 px-4">
                     <GenericButton
-                      // onClick={handleSearchButton}
+                      onClick={() => handleGetStarted(items.id, items.plan)}
                       width="100%"
                       height="44px"
                       background={index === 0 ? "#000" : "#00C1B6"}
